@@ -3,13 +3,25 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_main.h"
 
+#include "Visualizer.h"
+
 class CGUI : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	CGUI(QWidget *parent = Q_NULLPTR);
+	CGUI(int argc, char* argv[], QWidget *parent = Q_NULLPTR);
+	~CGUI() override;
+
+private Q_SLOTS:
+
+
 
 private:
-	Ui::CMainGUI m_MainGUI;
+	void __initWidget();
+
+
+private:
+	std::shared_ptr<Ui::CMainGUI> m_pMainGUI;
+	std::shared_ptr<visualization::CVisualizer> m_pVisualizer;
 };
