@@ -14,6 +14,8 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 
 #include <boost/format.hpp>
 
@@ -29,5 +31,7 @@
 #include "common/EventLoggerInterface.h"
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
+
+#include "PointCloudType.h"
 
 #endif //PCH_H

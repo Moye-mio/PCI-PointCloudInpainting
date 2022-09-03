@@ -146,16 +146,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataCommon.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="PC.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PCLoader.h" />
     <ClInclude Include="PCManagement.h" />
+    <ClInclude Include="PCPLYLoader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PC.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PCLoader.cpp" />
+    <ClCompile Include="PCManagement.cpp" />
+    <ClCompile Include="PCPLYLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

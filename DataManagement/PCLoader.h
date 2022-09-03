@@ -1,8 +1,5 @@
 #pragma once
 
-#include "PointCloudType.h"
-
-
 namespace dataManagement
 {
 	class IPointCloudLoader : public hiveDesignPattern::IProduct

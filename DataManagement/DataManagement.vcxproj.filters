@@ -10,6 +10,9 @@
     <Filter Include="Management">
       <UniqueIdentifier>{b2b4d029-bb5a-4a20-b016-34dc17f7aa24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{01ca377f-9df6-4c7b-be29-2a90e2d2a136}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -27,12 +30,30 @@
     <ClInclude Include="PCManagement.h">
       <Filter>Management</Filter>
     </ClInclude>
+    <ClInclude Include="PC.h">
+      <Filter>Management</Filter>
+    </ClInclude>
+    <ClInclude Include="PCPLYLoader.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="DataCommon.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
     <ClCompile Include="PCLoader.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="PCManagement.cpp">
+      <Filter>Management</Filter>
+    </ClCompile>
+    <ClCompile Include="PC.cpp">
+      <Filter>Management</Filter>
+    </ClCompile>
+    <ClCompile Include="PCPLYLoader.cpp">
       <Filter>IO</Filter>
     </ClCompile>
   </ItemGroup>

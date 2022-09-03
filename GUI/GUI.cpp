@@ -23,4 +23,5 @@ void CGUI::__initWidget()
 {
 	m_pMainGUI->CVTKWidget->SetRenderWindow(m_pVisualizer->getRenderWindow());
 	m_pVisualizer->setInteractor(m_pMainGUI->CVTKWidget->GetInteractor(), m_pMainGUI->CVTKWidget->GetRenderWindow());
+	m_pVisualizer->loadModel("");
 }
