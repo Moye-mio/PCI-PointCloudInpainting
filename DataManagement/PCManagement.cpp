@@ -27,6 +27,8 @@ bool CPCManagement::loadModel(const std::string& vPath, const std::string& vId)
 		try
 		{
 			PC_t::Ptr pData = pTileLoader->loadDataFromFile(vPath);
+			int PointSize = pData->size();
+			int Size = _msize(pData->data());
 			pPCWrapper = std::make_shared<CPCWrapper>(pData, vId);
 		}
 		catch (...) {}

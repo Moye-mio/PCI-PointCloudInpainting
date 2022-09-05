@@ -18,11 +18,18 @@ CVisualizer::~CVisualizer()
 
 }
 
-bool visualization::CVisualizer::loadModel(const std::string& vPath)
+void CVisualizer::unloadModel()
+{
+	dataManagement::CPCManagement::getInstance()->destroy();
+	m_pPCLVisualizer->removeAllPointClouds();
+	m_pPCLVisualizer->removeAllShapes();
+	m_pPCLVisualizer->removeAllCoordinateSystems();
+}
+
+bool CVisualizer::loadModel(const std::string& vPath)
 {
 	std::string CloudId = "No.1";
-	std::string Path = "D:\\Models\\Cloud\\003-004.ply";
-	bool r = dataManagement::CPCManagement::getInstance()->loadModel(Path, CloudId);
+	bool r = dataManagement::CPCManagement::getInstance()->loadModel(vPath, CloudId);
 	if (!r) return false;
 	auto pCloud = dataManagement::CPCManagement::getInstance()->getPointCloud(CloudId);
 
@@ -41,4 +48,11 @@ void CVisualizer::setInteractor(const vtkSmartPointer<vtkRenderWindowInteractor>
 {
 	m_pPCLVisualizer->setupInteractor(vInteractor, vRenderWindow);
 	m_pPCLVisualizer->addOrientationMarkerWidgetAxes(vInteractor);
+}
+
+//*****************************************************************
+//FUNCTION:
+void CVisualizer::refresh()
+{
+	m_pPCLVisualizer->updateCamera();
 }
