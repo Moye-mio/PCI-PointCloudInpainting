@@ -1,0 +1,9 @@
+Append Property [Model_Directory]: d:/.
+[WARN]:[Mon Sep  5 17:12:56.971 2022] :
+  [WARNING]: The application throws a warning:
+    Description: Fail to load file [] because it does not exist.
+    Source: dataManagement::CPCManagement::loadModel
+    File: D:\Projects\PCI\DataManagement\PCManagement.cpp(19)
+
+
+

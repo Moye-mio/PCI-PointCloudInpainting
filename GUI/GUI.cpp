@@ -4,6 +4,7 @@
 
 #include "Definition.h"
 #include "Registry.h"
+#include "JsonParser.h"
 
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);
@@ -23,6 +24,7 @@ CGUI::~CGUI()
 
 void CGUI::init()
 {
+	__loadConfig();
 	__initWidget();
 	__connectSignal();
 }
@@ -36,6 +38,9 @@ void CGUI::__refresh()
 
 void CGUI::__loadConfig()
 {
+	common::CJsonParser Parser;
+	Parser.parseFromFile(definition::CONFIG_FILE_PATH);
+
 	GET_PROPERTY(definition::MODEL_DIRECTORY, m_DirectoryOpenPath);
 }
 

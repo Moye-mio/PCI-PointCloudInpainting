@@ -29,5 +29,5 @@ private:
 	std::shared_ptr<Ui::CMainGUI> m_pMainGUI;
 	std::shared_ptr<visualization::CVisualizer> m_pVisualizer;
 
-	std::string m_DirectoryOpenPath = "../Models";
+	std::string m_DirectoryOpenPath;
 };
