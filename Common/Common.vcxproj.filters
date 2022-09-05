@@ -8,18 +8,42 @@
     <Filter Include="PointCloud">
       <UniqueIdentifier>{c05088e7-7f26-4988-99ab-4c7fcff56456}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{ac66ee76-7954-4f25-b9b8-08e8bec7ca8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config\Definition">
+      <UniqueIdentifier>{ace2fdd0-576d-41cd-ae6d-d4ff3d112068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config\Registry">
+      <UniqueIdentifier>{dfc1067c-d218-469b-9485-056a6fea4998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config\JsonParser">
+      <UniqueIdentifier>{ce904abf-a360-4888-9923-85128d25e824}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudType.h">
       <Filter>PointCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonParser.h">
+      <Filter>Config\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Config\Registry</Filter>
+    </ClInclude>
+    <ClInclude Include="Definition.h">
+      <Filter>Config\Definition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PointCloudType.cpp">
-      <Filter>PointCloud</Filter>
+    <ClCompile Include="JsonParser.cpp">
+      <Filter>Config\JsonParser</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>Config\Registry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

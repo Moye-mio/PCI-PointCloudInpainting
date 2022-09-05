@@ -21,6 +21,7 @@ private Q_SLOTS:
 
 private:
 	void __refresh();
+	void __loadConfig();
 	void __initWidget();
 	void __connectSignal();
 

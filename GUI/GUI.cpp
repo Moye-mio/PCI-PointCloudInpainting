@@ -2,6 +2,9 @@
 #include <QtWidgets/QFileDialog>
 #include <vtkAutoInit.h>
 
+#include "Definition.h"
+#include "Registry.h"
+
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);
 
@@ -29,6 +32,11 @@ void CGUI::__refresh()
 	std::pair<int, int> CurGeo(this->width(), this->height());
 	this->adjustSize();
 	this->resize(CurGeo.first, CurGeo.second);
+}
+
+void CGUI::__loadConfig()
+{
+	GET_PROPERTY(definition::MODEL_DIRECTORY, m_DirectoryOpenPath);
 }
 
 void CGUI::__initWidget()

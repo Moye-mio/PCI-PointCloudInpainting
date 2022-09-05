@@ -60,7 +60,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Visualization;$(SolutionDir)\pcl_visualizer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Visualization;$(SolutionDir)\pcl_visualizer\include;$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -100,6 +100,7 @@
     <QtMoc Include="QDoubleSlider.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
