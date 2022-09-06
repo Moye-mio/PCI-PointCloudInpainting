@@ -23,7 +23,7 @@
       <Extensions>qrc;*</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
-    <Filter Include="UI">
+    <Filter Include="UI Plug-in">
       <UniqueIdentifier>{90b5348e-eae7-4639-84f7-dff42f1e3e3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -40,7 +40,7 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="QDoubleSlider.h">
-      <Filter>UI</Filter>
+      <Filter>UI Plug-in</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

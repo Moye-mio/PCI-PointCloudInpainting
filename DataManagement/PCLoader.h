@@ -2,11 +2,11 @@
 
 namespace dataManagement
 {
-	class IPointCloudLoader : public hiveDesignPattern::IProduct
+	class IPCLoader : public hiveDesignPattern::IProduct
 	{
 	public:
-		IPointCloudLoader() = default;
-		~IPointCloudLoader() override = default;
+		IPCLoader() = default;
+		~IPCLoader() override = default;
 
 		PC_t::Ptr loadDataFromFile(const std::string& vFileName);
 

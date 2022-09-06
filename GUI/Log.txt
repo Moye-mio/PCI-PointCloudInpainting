@@ -1,9 +1,7 @@
-Append Property [Model_Directory]: d:/.
-[WARN]:[Mon Sep  5 17:12:56.971 2022] :
-  [WARNING]: The application throws a warning:
-    Description: Fail to load file [] because it does not exist.
-    Source: dataManagement::CPCManagement::loadModel
-    File: D:\Projects\PCI\DataManagement\PCManagement.cpp(19)
+Append Property [Model_Directory]: ../Models/.
+[INFO]:[Tue Sep  6 15:36:10.916 2022] :
+  Succeed to load point cloud file [D:/Projects/PCI/Models/CrossPlane.ply].
 
-
+[INFO]:[Tue Sep  6 15:36:21.86 2022] :
+  Succeed to load point cloud file [D:/Projects/PCI/Models/CrossPlane2.ply].
 

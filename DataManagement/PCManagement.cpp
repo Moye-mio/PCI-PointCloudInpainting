@@ -2,7 +2,7 @@
 
 #include "PCManagement.h"
 #include "PCLoader.h"
-
+#include "PCSaver.h"
 
 using namespace dataManagement;
 
@@ -20,7 +20,7 @@ bool CPCManagement::loadModel(const std::string& vPath, const std::string& vId)
 		return false;
 	}
 	auto Suffix = hiveUtility::hiveGetFileSuffix(vPath);
-	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<IPointCloudLoader>(Suffix);
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<IPCLoader>(Suffix);
 	if (pTileLoader)
 	{
 		std::shared_ptr<CPCWrapper> pPCWrapper = nullptr;
@@ -45,6 +45,23 @@ bool CPCManagement::loadModel(const std::string& vPath, const std::string& vId)
 	}
 }
 
+
+bool CPCManagement::saveModel(const std::string& vPath)
+{
+	auto* pSaver = hiveDesignPattern::hiveGetOrCreateProduct<IPCSaver>(hiveUtility::hiveGetFileSuffix(vPath) + "_Save");
+	if (pSaver)
+	{
+		PC_t::Ptr pCloud(new PC_t);
+		__mergeAllCloud(pCloud);
+		pSaver->saveDataToFileV(*pCloud, vPath);
+	}
+	else
+	{
+		_HIVE_OUTPUT_WARNING(_FORMAT_STR1("Fail to save tile [%1%] due to unknown format.", vPath));
+	}
+	return true;
+}
+
 const std::shared_ptr<CPCWrapper> CPCManagement::getPointCloud(const std::string& vId) const
 {
 	auto Iter = m_CloudMap.find(vId);
@@ -56,3 +73,8 @@ const std::shared_ptr<CPCWrapper> CPCManagement::getPointCloud(const std::string
 		return nullptr;
 }
 
+void CPCManagement::__mergeAllCloud(PC_t::Ptr& voCloud)
+{
+	for (auto& e : m_CloudMap)
+		*voCloud += *e.second->getPointCloud();
+}

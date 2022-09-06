@@ -153,6 +153,8 @@
     <ClInclude Include="PCLoader.h" />
     <ClInclude Include="PCManagement.h" />
     <ClInclude Include="PCPLYLoader.h" />
+    <ClInclude Include="PCPLYSaver.h" />
+    <ClInclude Include="PCSaver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PC.cpp" />
@@ -162,6 +164,8 @@
     <ClCompile Include="PCLoader.cpp" />
     <ClCompile Include="PCManagement.cpp" />
     <ClCompile Include="PCPLYLoader.cpp" />
+    <ClCompile Include="PCPLYSaver.cpp" />
+    <ClCompile Include="PCSaver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

@@ -56,3 +56,14 @@ void CVisualizer::refresh()
 {
 	m_pPCLVisualizer->updateCamera();
 }
+
+bool CVisualizer::saveModel(const std::string& vPath)
+{
+	bool r = dataManagement::CPCManagement::getInstance()->saveModel(vPath);
+	if (!r)
+	{
+		std::cout << "Fail to save file..." << std::endl;
+		return false;
+	}
+	return true;
+}

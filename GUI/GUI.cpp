@@ -52,11 +52,12 @@ void CGUI::__initWidget()
 
 void CGUI::__connectSignal()
 {
-	QObject::connect(m_pMainGUI->COpenButton, SIGNAL(clicked(bool)), this, SLOT(__onActionOpen()));
+	QObject::connect(m_pMainGUI->COpenButton, SIGNAL(clicked(bool)), this, SLOT(__onActionLoad()));
 	QObject::connect(m_pMainGUI->CRemoveButton, SIGNAL(clicked(bool)), this, SLOT(__onActionRemove()));
+	QObject::connect(m_pMainGUI->CSaveButton, SIGNAL(clicked(bool)), this, SLOT(__onActionSave()));
 }
 
-void CGUI::__onActionOpen()
+void CGUI::__onActionLoad()
 {
 	QString FilePath = QFileDialog::getOpenFileName(this, tr("Open PointCloud"), QString::fromStdString(m_DirectoryOpenPath), tr("PointCloud Files(*.pcd *.ply *.las);;"));
 
@@ -70,4 +71,11 @@ void CGUI::__onActionOpen()
 void CGUI::__onActionRemove()
 {
 	m_pVisualizer->unloadModel();
+}
+
+void CGUI::__onActionSave()
+{
+	const std::string FilePath = QFileDialog::getSaveFileName(this, tr("Save PointCloud"), ".", tr("PLY files(*.ply);;")).toStdString();
+	m_pVisualizer->saveModel(FilePath);
+
 }

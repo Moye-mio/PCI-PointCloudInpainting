@@ -39,6 +39,12 @@
     <ClInclude Include="DataCommon.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="PCSaver.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="PCPLYSaver.h">
+      <Filter>IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -54,6 +60,12 @@
       <Filter>Management</Filter>
     </ClCompile>
     <ClCompile Include="PCPLYLoader.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="PCSaver.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="PCPLYSaver.cpp">
       <Filter>IO</Filter>
     </ClCompile>
   </ItemGroup>

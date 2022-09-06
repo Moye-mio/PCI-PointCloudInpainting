@@ -16,8 +16,9 @@ public:
 	void init();
 
 private Q_SLOTS:
-	void __onActionOpen();
+	void __onActionLoad();
 	void __onActionRemove();
+	void __onActionSave();
 
 private:
 	void __refresh();

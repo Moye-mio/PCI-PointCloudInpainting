@@ -6,7 +6,7 @@ using namespace dataManagement;
 
 //*****************************************************************
 //FUNCTION: 
-PC_t::Ptr IPointCloudLoader::loadDataFromFile(const std::string& vFileName)
+PC_t::Ptr IPCLoader::loadDataFromFile(const std::string& vFileName)
 {
 	_ASSERTE(!vFileName.empty());
 
