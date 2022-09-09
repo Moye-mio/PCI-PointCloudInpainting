@@ -13,6 +13,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{01ca377f-9df6-4c7b-be29-2a90e2d2a136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Method">
+      <UniqueIdentifier>{9a6c7378-a155-49dc-9448-ce0971dd588c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

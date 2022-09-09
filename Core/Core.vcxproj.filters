@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="HeightMap">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="HeightMap\Struct">
+      <UniqueIdentifier>{b15bf2bf-3ba2-48c6-b2d3-6bebb37b7d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HeightMap\Generator">
+      <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AABB">
+      <UniqueIdentifier>{48d919cf-da67-4034-9540-0090adb003c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AABB\Struct">
+      <UniqueIdentifier>{e1e3dc77-bbba-47e9-a760-74c662635fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AABB\Estimation">
+      <UniqueIdentifier>{97b78606-ef60-4ca6-996b-83505e660865}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMap.h">
+      <Filter>HeightMap\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardHeightMap.h">
+      <Filter>HeightMap\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMapGenerator.h">
+      <Filter>HeightMap\Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>AABB\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBEstimation.h">
+      <Filter>AABB\Estimation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMap.cpp">
+      <Filter>HeightMap\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardHeightMap.cpp">
+      <Filter>HeightMap\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMapGenerator.cpp">
+      <Filter>HeightMap\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBEstimation.cpp">
+      <Filter>AABB\Estimation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
