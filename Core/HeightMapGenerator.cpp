@@ -10,6 +10,7 @@ CHeightMapGenerator::CHeightMapGenerator()
 
 bool CHeightMapGenerator::setCloud(const PC_t::Ptr& vCloud)
 {
+	_ASSERTE(vCloud != nullptr);
 	_ASSERTE(vCloud->size());
 	m_pCloud = vCloud;
 	return true;
@@ -33,6 +34,7 @@ bool CHeightMapGenerator::generate(int vWidth, int vHeight)
 	{
 		CAABBEstimation AABBEstimation(m_pCloud);
 		m_Box = AABBEstimation.compute();
+		_ASSERTE(m_Box.isValid());
 	}
 
 	for (auto& e : *m_pCloud)

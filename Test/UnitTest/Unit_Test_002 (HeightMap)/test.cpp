@@ -27,7 +27,33 @@ protected:
 	}
 };
 
-TEST_F(TestHeightMap, 1)
+TEST_F(TestHeightMap, DT_NullCloud)
+{
+	PC_t::Ptr pCloud;
+	core::CHeightMapGenerator Generator;
+	ASSERT_DEATH(Generator.setCloud(pCloud), ".*");
+}
+
+TEST_F(TestHeightMap, DT_EmptyCloud)
+{
+	PC_t::Ptr pCloud(new PC_t);
+	core::CHeightMapGenerator Generator;
+	ASSERT_DEATH(Generator.setCloud(pCloud), ".*");
+}
+
+TEST_F(TestHeightMap, DT_IncorrectMapSize)
+{
+	core::CHeightMapGenerator Generator;
+	ASSERT_DEATH(Generator.generate(0, 0), ".*");
+}
+
+TEST_F(TestHeightMap, DT_SkipSetCloud)
+{
+	core::CHeightMapGenerator Generator;
+	ASSERT_DEATH(Generator.generate(1, 1), ".*");
+}
+
+TEST_F(TestHeightMap, NT_1)
 {
 	PC_t::Ptr pCloud = getCloud();
 	core::CHeightMap Map;
@@ -39,7 +65,7 @@ TEST_F(TestHeightMap, 1)
 	_ASSERTE(Map.getValueAt(0, 0) == 8);
 }
 
-TEST_F(TestHeightMap, 2)
+TEST_F(TestHeightMap, NT_2)
 {
 	PC_t::Ptr pCloud = getCloud();
 	core::CHeightMap Map;
@@ -54,7 +80,7 @@ TEST_F(TestHeightMap, 2)
 	_ASSERTE(Map.getValueAt(1, 1) == 8);
 }
 
-TEST_F(TestHeightMap, 3)
+TEST_F(TestHeightMap, NT_3)
 {
 	PC_t::Ptr pCloud = getCloud();
 	core::CHeightMap Map;
