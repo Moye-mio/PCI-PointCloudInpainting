@@ -11,6 +11,7 @@ CAABBEstimation::CAABBEstimation(const PC_t::Ptr& vCloud)
 
 SAABB CAABBEstimation::compute()
 {
+	_ASSERTE(m_pCloud != nullptr);
 	_ASSERTE(m_pCloud->size());
 
 	SAABB AABB(Eigen::Vector3f(FLT_MAX, FLT_MAX, FLT_MAX), Eigen::Vector3f(-FLT_MAX, -FLT_MAX, -FLT_MAX));
