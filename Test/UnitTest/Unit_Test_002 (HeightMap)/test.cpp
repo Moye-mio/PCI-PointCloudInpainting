@@ -27,6 +27,18 @@ protected:
 	}
 };
 
+TEST_F(TestHeightMap, 1)
+{
+	PC_t::Ptr pCloud = getCloud();
+	core::CHeightMap Map;
+	core::CHeightMapGenerator Generator;
+	Generator.setCloud(pCloud);
+	Generator.generate(1, 1);
+	Generator.dumpHeightMap(Map);
+
+	_ASSERTE(Map.getValueAt(0, 0) == 8);
+}
+
 TEST_F(TestHeightMap, 2)
 {
 	PC_t::Ptr pCloud = getCloud();

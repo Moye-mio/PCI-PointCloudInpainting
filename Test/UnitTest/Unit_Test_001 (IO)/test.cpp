@@ -1,5 +1,7 @@
 #include "pch.h"
 
+const std::string InexistentPath = TESTMODEL_DIR + std::string("/1.ply");
+const std::string UnsupportedFormatPath = TESTMODEL_DIR + std::string("/1.txt");
 const std::string ModelPath = TESTMODEL_DIR + std::string("/CrossPlane.ply");
 const std::string SavePath = TESTMODEL_DIR + std::string("/Save.ply");
 
@@ -20,7 +22,21 @@ protected:
 	}
 };
 
-TEST_F(TestIO, Load)
+TEST_F(TestIO, DT_Load_InexistentPath)
+{
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(InexistentPath));
+	ASSERT_TRUE(pTileLoader);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(InexistentPath);
+	ASSERT_FALSE(pData);
+}
+
+TEST_F(TestIO, DT_Load_UnsupportedFormat)
+{
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(UnsupportedFormatPath));
+	ASSERT_FALSE(pTileLoader);
+}
+
+TEST_F(TestIO, NT_Load)
 {
 	std::string LowerFileName = hiveUtility::hiveLocateFile(ModelPath);
 	ASSERT_FALSE(LowerFileName.empty());
@@ -34,7 +50,7 @@ TEST_F(TestIO, Load)
 	EXPECT_EQ(pData->size(), 14275);
 }
 
-TEST_F(TestIO, Save)
+TEST_F(TestIO, NT_Save)
 {
 	PC_t::Ptr pCloud(new PC_t);
 	pCloud->push_back(Point_t(0, 0, 0, 0, 0, 0, 0));
