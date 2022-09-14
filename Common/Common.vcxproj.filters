@@ -20,6 +20,9 @@
     <Filter Include="Config\JsonParser">
       <UniqueIdentifier>{ce904abf-a360-4888-9923-85128d25e824}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{48e40176-da38-4d82-b512-728860135391}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudType.h">
@@ -34,6 +37,9 @@
     <ClInclude Include="Definition.h">
       <Filter>Config\Definition</Filter>
     </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -44,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="Registry.cpp">
       <Filter>Config\Registry</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Image</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
