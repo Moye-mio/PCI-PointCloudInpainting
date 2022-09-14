@@ -11,12 +11,29 @@ CHeightMap::CHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap)
 
 bool CHeightMap::isEmptyValue(int vRow, int vCol)
 {
+	_ASSERTE(__isIndexValid(vRow, vCol));
 	return __isEmptyValue(vRow, vCol);
 }
 
-bool CHeightMap::__isEmptyValue(int vRow, int vCol)
+bool CHeightMap::isNeighborhoodEmpty(int vRow, int vCol)
 {
-	_ASSERTE(vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
+	_ASSERTE(__isIndexValid(vRow, vCol));
+	if (__isIndexValid(vRow + 1, vCol) && __isEmptyValue(vRow + 1, vCol)) return true;
+	if (__isIndexValid(vRow - 1, vCol) && __isEmptyValue(vRow - 1, vCol)) return true;
+	if (__isIndexValid(vRow, vCol + 1) && __isEmptyValue(vRow, vCol + 1)) return true;
+	if (__isIndexValid(vRow, vCol - 1) && __isEmptyValue(vRow, vCol - 1)) return true;
+
+	return false;
+}
+
+bool CHeightMap::__isIndexValid(int vRow, int vCol) const
+{
+	return (vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
+}
+
+bool CHeightMap::__isEmptyValue(int vRow, int vCol) const
+{
+	_ASSERTE(__isIndexValid(vRow, vCol));
 	return (m_Map(vRow, vCol) == m_Empty);
 }
 
@@ -36,21 +53,28 @@ bool CHeightMap::setHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap)
 
 bool CHeightMap::setValueAt(float vHeight, int vRow, int vCol)
 {
-	_ASSERTE(vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
+	_ASSERTE(__isIndexValid(vRow, vCol));
 	m_Map.coeffRef(vRow, vCol) = vHeight;
 	return true;
 }
 
 bool CHeightMap::setEmptyAt(int vRow, int vCol)
 {
-	_ASSERTE(vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
+	_ASSERTE(__isIndexValid(vRow, vCol));
 	m_Map.coeffRef(vRow, vCol) = m_Empty;
 	return true;
 }
 
 float CHeightMap::getValueAt(int vRow, int vCol) const
 {
-	_ASSERTE(vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
+	_ASSERTE(__isIndexValid(vRow, vCol));
 	return m_Map.coeff(vRow, vCol);
 }
+
+bool CHeightMap::isValid() const
+{
+	if (m_Map.size()) return true;
+	else return false;
+}
+
 

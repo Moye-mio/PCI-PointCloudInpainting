@@ -28,6 +28,15 @@
     <Filter Include="AABB\Estimation">
       <UniqueIdentifier>{97b78606-ef60-4ca6-996b-83505e660865}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GradientMap">
+      <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GradientMap\Struct">
+      <UniqueIdentifier>{255dd25e-00f4-4c52-8729-df5df5860fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GradientMap\Generator">
+      <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -51,6 +60,12 @@
     <ClInclude Include="AABBEstimation.h">
       <Filter>AABB\Estimation</Filter>
     </ClInclude>
+    <ClInclude Include="GradientMap.h">
+      <Filter>GradientMap\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="GradientMapGenerator.h">
+      <Filter>GradientMap\Generator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -67,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="AABBEstimation.cpp">
       <Filter>AABB\Estimation</Filter>
+    </ClCompile>
+    <ClCompile Include="GradientMap.cpp">
+      <Filter>GradientMap\Struct</Filter>
+    </ClCompile>
+    <ClCompile Include="GradientMapGenerator.cpp">
+      <Filter>GradientMap\Generator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

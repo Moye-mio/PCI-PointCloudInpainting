@@ -23,7 +23,6 @@ bool common::readImage(const std::string& vPath, Eigen::Matrix<int, -1, -1>& voI
 			voImage.coeffRef(i, k) = static_cast<std::uint32_t>(Image.at<unsigned char>(i, k));
 
 	return true;
-
 }
 
 void common::saveImage(const Eigen::Matrix<int, -1, -1>& vImage, const std::string& vPath)
