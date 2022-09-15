@@ -10,7 +10,10 @@ protected:
 	void TearDown() override
 	{
 	}
+
+	float m_Epsilon = 0.00001;
 };
+
 
 TEST_F(TestSolver, DT_ZeroMatrix)
 {
@@ -40,5 +43,24 @@ TEST_F(TestSolver, NT_Identity)
 	{
 		X = Solver.solve(i);
 		ASSERT_EQ(X, B);
+	}
+}
+
+TEST_F(TestSolver, NT_SimpleMatrix)
+{
+	Eigen::MatrixXf A(3, 3), X(3, 1), B(3, 1), GT(3, 1);
+
+	A << -4, 1, 0,
+		1, -4, 1,
+		0, 1, -4;
+	B << -3, -2, -3;
+	GT << 1, 1, 1;
+
+	core::CSparseLinearSolver Solver(A, B);
+	for (int i = 0; i < 5; i++)
+	{
+		X = Solver.solve(i);
+		for (int k = 0; k < 3; k++)
+			ASSERT_LT(std::fabsf(X(k, 0) - GT(k, 0)), m_Epsilon);
 	}
 }
