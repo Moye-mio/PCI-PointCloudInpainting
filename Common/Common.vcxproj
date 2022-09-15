@@ -22,6 +22,7 @@
     <ClInclude Include="Definition.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="JsonParser.h" />
+    <ClInclude Include="magic_enum.hpp" />
     <ClInclude Include="PointCloudType.h" />
     <ClInclude Include="Registry.h" />
   </ItemGroup>

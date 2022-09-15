@@ -23,6 +23,9 @@
     <Filter Include="Image">
       <UniqueIdentifier>{48e40176-da38-4d82-b512-728860135391}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MagicEnum">
+      <UniqueIdentifier>{b30f8e9f-804a-4757-a6b0-79b1a460f3d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudType.h">
@@ -39,6 +42,9 @@
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum.hpp">
+      <Filter>MagicEnum</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

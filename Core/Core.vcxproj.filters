@@ -37,6 +37,9 @@
     <Filter Include="GradientMap\Generator">
       <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Solver">
+      <UniqueIdentifier>{7b885a95-7ec3-4549-9759-8844a7923fb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -66,6 +69,9 @@
     <ClInclude Include="GradientMapGenerator.h">
       <Filter>GradientMap\Generator</Filter>
     </ClInclude>
+    <ClInclude Include="SparseLinearSolver.h">
+      <Filter>Solver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -88,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="GradientMapGenerator.cpp">
       <Filter>GradientMap\Generator</Filter>
+    </ClCompile>
+    <ClCompile Include="SparseLinearSolver.cpp">
+      <Filter>Solver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

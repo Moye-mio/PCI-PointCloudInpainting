@@ -160,6 +160,7 @@
     <ClInclude Include="GradientMapGenerator.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="HeightMapGenerator.h" />
+    <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -169,6 +170,7 @@
     <ClCompile Include="GradientMapGenerator.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="HeightMapGenerator.cpp" />
+    <ClCompile Include="SparseLinearSolver.cpp" />
     <ClCompile Include="StandardHeightMap.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

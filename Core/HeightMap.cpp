@@ -46,7 +46,7 @@ bool CHeightMap::setSize(int vWidth, int vHeight)
 
 bool CHeightMap::setHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap)
 {
-	_ASSERTE(vHeightMap.rows() == m_Map.rows() && vHeightMap.cols() == m_Map.cols());
+	_ASSERTE(vHeightMap.size() > 0);
 	m_Map = vHeightMap;
 	return true;
 }
