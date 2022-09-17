@@ -77,4 +77,25 @@ bool CHeightMap::isValid() const
 	else return false;
 }
 
+float CHeightMap::Sample(const std::pair<float, float>& vCoor)
+{
+	_ASSERTE(__isIndexValid(vCoor.first, vCoor.second));
+
+	std::pair<float, float> NewCoor;
+	NewCoor.first = std::clamp(vCoor.first - 0.5f, 0.0f, (float)m_Map.rows() - 1.0f);
+	NewCoor.second = std::clamp(vCoor.second - 0.5f, 0.0f, (float)m_Map.cols() - 1.0f);
+
+	std::pair<int, int> StartIndex = NewCoor;
+	if (NewCoor.first == m_Map.rows() - 1)	StartIndex.first = NewCoor.first - 1;
+	if (NewCoor.second == m_Map.cols() - 1)	StartIndex.second = NewCoor.second - 1;
+
+	std::vector<float> Values;
+	Values.push_back(m_Map.coeff(StartIndex.first, StartIndex.second));
+	Values.push_back(m_Map.coeff(StartIndex.first, StartIndex.second + 1));
+	Values.push_back(m_Map.coeff(StartIndex.first + 1, StartIndex.second));
+	Values.push_back(m_Map.coeff(StartIndex.first + 1, StartIndex.second + 1));
+
+	float Height = common::bilinearInterpolate(std::make_pair(NewCoor.first - (float)StartIndex.first, NewCoor.second - (float)StartIndex.second), Values);
+	return Height;
+}
 

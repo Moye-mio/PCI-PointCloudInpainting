@@ -159,6 +159,7 @@
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
     <ClInclude Include="HeightMap.h" />
+    <ClInclude Include="HeightMap2PCMapper.h" />
     <ClInclude Include="HeightMapGenerator.h" />
     <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="GradientMap.cpp" />
     <ClCompile Include="GradientMapGenerator.cpp" />
     <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="HeightMap2PCMapper.cpp" />
     <ClCompile Include="HeightMapGenerator.cpp" />
     <ClCompile Include="SparseLinearSolver.cpp" />
     <ClCompile Include="StandardHeightMap.cpp" />

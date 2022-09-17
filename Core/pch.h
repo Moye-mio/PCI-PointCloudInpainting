@@ -28,7 +28,9 @@
 #include "common/EventLoggerInterface.h"
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
+#include "common/MathInterface.h"
 
 #include "PointCloudType.h"
+#include "Interpolation.h"
 
 #endif //PCH_H

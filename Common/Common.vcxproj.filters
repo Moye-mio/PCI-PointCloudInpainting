@@ -26,6 +26,9 @@
     <Filter Include="MagicEnum">
       <UniqueIdentifier>{b30f8e9f-804a-4757-a6b0-79b1a460f3d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{0398ab61-67a5-46cd-9c46-3fa5c228dc38}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudType.h">
@@ -46,6 +49,9 @@
     <ClInclude Include="magic_enum.hpp">
       <Filter>MagicEnum</Filter>
     </ClInclude>
+    <ClInclude Include="Interpolation.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -59,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpolation.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

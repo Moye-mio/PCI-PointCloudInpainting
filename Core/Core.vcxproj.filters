@@ -40,6 +40,9 @@
     <Filter Include="Solver">
       <UniqueIdentifier>{7b885a95-7ec3-4549-9759-8844a7923fb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PCMap">
+      <UniqueIdentifier>{76168b25-2683-4637-9dec-1a8336a61ecc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -72,6 +75,9 @@
     <ClInclude Include="SparseLinearSolver.h">
       <Filter>Solver</Filter>
     </ClInclude>
+    <ClInclude Include="HeightMap2PCMapper.h">
+      <Filter>PCMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -97,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="SparseLinearSolver.cpp">
       <Filter>Solver</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMap2PCMapper.cpp">
+      <Filter>PCMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

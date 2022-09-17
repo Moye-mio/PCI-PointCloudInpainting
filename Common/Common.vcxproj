@@ -23,6 +23,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="JsonParser.h" />
     <ClInclude Include="magic_enum.hpp" />
+    <ClInclude Include="Interpolation.h" />
     <ClInclude Include="PointCloudType.h" />
     <ClInclude Include="Registry.h" />
   </ItemGroup>
@@ -32,6 +33,7 @@
   <ItemGroup>
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="JsonParser.cpp" />
+    <ClCompile Include="Interpolation.cpp" />
     <ClCompile Include="Registry.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

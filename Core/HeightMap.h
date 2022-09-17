@@ -20,6 +20,7 @@ namespace core
 		float getValueAt(int vRow, int vCol) const;
 		int getWidth() const { return m_Map.rows(); }
 		int getHeight() const { return m_Map.cols(); }
+		float Sample(const std::pair<float, float>& vCoor);
 
 	private:
 		bool __isIndexValid(int vRow, int vCol) const;

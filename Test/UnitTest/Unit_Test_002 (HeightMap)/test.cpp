@@ -25,6 +25,8 @@ protected:
 		pCloud->push_back(Point_t(2, 2, 8, 0, 0, 0, 0));
 		return pCloud;
 	}
+
+	float m_Epsilon = 0.00001;
 };
 
 TEST_F(TestHeightMap, DT_NullCloud)
@@ -92,4 +94,28 @@ TEST_F(TestHeightMap, NT_3)
 	for (int i = 0; i < Map.getWidth(); i++)
 		for (int k = 0; k < Map.getHeight(); k++)
 			_ASSERTE(Map.getValueAt(i, k) == k + i * 3);
+}
+
+TEST_F(TestHeightMap, NT_Sample)
+{
+	core::CHeightMap Map;
+	Eigen::MatrixXf Mat(3, 3);
+	Mat << 0, 0, 0,
+		1, 1, 1,
+		2, 2, 2;
+
+	Map.setHeightMap(Mat);
+	ASSERT_TRUE(Map.isValid());
+
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(0, 0)), 0);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(0.4, 2.3)), 0);
+	ASSERT_LT(Map.Sample(std::make_pair<float, float>(2.3, 0.4)) - 1.8, m_Epsilon);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(0.5, 0.5)), 0);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(1, 1)), 0.5);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(1.5, 1.5)), 1);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(2, 2)), 1.5);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(2.5, 2.5)), 2);
+	ASSERT_EQ(Map.Sample(std::make_pair<float, float>(2.9, 2.9)), 2);
+	ASSERT_LT(Map.Sample(std::make_pair<float, float>(1.9, 1.9)) - 1.4, m_Epsilon);
+	ASSERT_LT(Map.Sample(std::make_pair<float, float>(1.6, 1.9)) - 1.1, m_Epsilon);
 }
