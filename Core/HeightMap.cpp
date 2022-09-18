@@ -99,3 +99,16 @@ float CHeightMap::Sample(const std::pair<float, float>& vCoor)
 	return Height;
 }
 
+void CHeightMap::generateMask(CHeightMap& voMap)
+{
+	_ASSERTE(this->isValid());
+
+	voMap.setHeightMap(m_Map);
+	for (int i = 0; i < m_Map.rows(); i++)
+		for (int k = 0; k < m_Map.cols(); k++)
+		{
+			if (m_Map(i, k) == m_Empty)		voMap.setValueAt(1, i, k);
+			else							voMap.setValueAt(0, i, k);
+		}
+}
+

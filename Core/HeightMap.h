@@ -21,6 +21,7 @@ namespace core
 		int getWidth() const { return m_Map.rows(); }
 		int getHeight() const { return m_Map.cols(); }
 		float Sample(const std::pair<float, float>& vCoor);
+		void generateMask(CHeightMap& voMap);
 
 	private:
 		bool __isIndexValid(int vRow, int vCol) const;

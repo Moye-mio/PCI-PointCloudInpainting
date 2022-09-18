@@ -18,33 +18,24 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpp_example.cpp">
+    <ClCompile Include="inpainter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="inpaint.cpp">
+    <ClCompile Include="MeanShift.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="masked_image.cpp">
+    <ClCompile Include="PatchMatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="nnf.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="pyinterface.cpp">
+    <ClCompile Include="run.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inpaint.h">
+    <ClInclude Include="inpainter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="masked_image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="nnf.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="pyinterface.h">
+    <ClInclude Include="run.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -116,6 +116,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Core;$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,17 +144,22 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpp_example.cpp" />
-    <ClCompile Include="inpaint.cpp" />
-    <ClCompile Include="masked_image.cpp" />
-    <ClCompile Include="nnf.cpp" />
-    <ClCompile Include="pyinterface.cpp" />
+    <ClCompile Include="inpainter.cpp" />
+    <ClCompile Include="run.cpp" />
+    <ClCompile Include="MeanShift.cpp" />
+    <ClCompile Include="PatchMatch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inpaint.h" />
-    <ClInclude Include="masked_image.h" />
-    <ClInclude Include="nnf.h" />
-    <ClInclude Include="pyinterface.h" />
+    <ClInclude Include="inpainter.h" />
+    <ClInclude Include="run.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{f3fc1ad4-fae1-4ccd-9687-b5d63a97fb07}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.vcxproj">
+      <Project>{39c00d6d-7d00-4846-acd1-b0676b2a2993}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
