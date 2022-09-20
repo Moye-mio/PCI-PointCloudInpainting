@@ -10,6 +10,7 @@ namespace core
 		~CGradientMap() = default;
 
 		[[nodiscard]] bool isEmptyValue(int vRow, int vCol);
+		[[nodiscard]] bool isValid() const;
 		[[nodiscard]] bool setSize(int vWidth, int vHeight);
 		[[nodiscard]] bool setGradientMap(const Eigen::Matrix<Eigen::Vector2f, -1, -1>& vGradientMap);
 		[[nodiscard]] bool setValueAt(Eigen::Vector2f vGradient, int vRow, int vCol);
@@ -18,6 +19,7 @@ namespace core
 		Eigen::Vector2f getValueAt(int vRow, int vCol) const;
 		int getWidth() const { return m_Map.rows(); }
 		int getHeight() const { return m_Map.cols(); }
+		void generateMask(CHeightMap& voMap);
 
 	private:
 		bool __isEmptyValue(int vRow, int vCol);

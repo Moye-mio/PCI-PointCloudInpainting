@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GradientMap.h"
+#include "HeightMap.h"
 
 using namespace core;
 
@@ -54,3 +55,21 @@ Eigen::Vector2f CGradientMap::getValueAt(int vRow, int vCol) const
 	return m_Map.coeff(vRow, vCol);
 }
 
+bool CGradientMap::isValid() const
+{
+	if (m_Map.size()) return true;
+	else return false;
+}
+
+void CGradientMap::generateMask(CHeightMap& voMap)
+{
+	_ASSERTE(this->isValid());
+
+	voMap.setSize(m_Map.rows(), m_Map.rows());
+	for (int i = 0; i < m_Map.rows(); i++)
+		for (int k = 0; k < m_Map.rows(); k++)
+		{
+			if (this->__isEmptyValue(i, k))		voMap.setValueAt(1, i, k);
+			else								voMap.setValueAt(0, i, k);
+		}
+}
