@@ -26,7 +26,7 @@ TEST_F(TestPM, NT_PMTest)
 	cv::Mat Image = cv::imread("Images/test.png", cv::IMREAD_GRAYSCALE);
 	cv::Mat Mask = cv::imread("Images/mask.png", cv::IMREAD_GRAYSCALE);
 
-	cv::Mat Image2(Image.size(), CV_32FC2);
+	cv::Mat Image2(Image.size(), CV_32F);
 	for (int i = 0; i < Image.rows; i++)
 		for (int k = 0; k < Image.cols; k++)
 			Image2.at<float>(i, k) = (float)Image.at<unsigned char>(i, k);
