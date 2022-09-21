@@ -70,8 +70,6 @@ public:
     int m_HalfPatchWidth;
 
     int checkValidInputs();
-
-    void initializeMats();
     void inpaint(cv::VideoWriter & video);
 
 

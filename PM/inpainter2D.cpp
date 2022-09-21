@@ -1,68 +1,50 @@
-#include "inpainter.h"
+#include "inpainter2D.h"
 #include <opencv2/opencv.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/core/types_c.h>
 #include <vector>
 
-using namespace cv;
-using namespace std;
-
-Inpainter::Inpainter(cv::Mat inputImage, cv::Mat mask, int halfPatchWidth, int mode)
+Inpainter2D::Inpainter2D(const std::pair<cv::Mat, cv::Mat>& vImages, const cv::Mat& mask, int halfPatchWidth = 4, int mode = 1)
 {
-	this->m_InputImage = inputImage.clone();
-	this->m_Mask = mask.clone();
-	this->m_WorkImage = inputImage.clone();
-	this->m_Result.create(inputImage.size(), inputImage.type());
-	this->m_HalfPatchWidth = halfPatchWidth;
+	m_X = vImages.first.clone();
+	m_Y = vImages.second.clone();
+	m_Mask = mask.clone();
+	m_WorkX = vImages.first.clone();
+	m_WorkY = vImages.second.clone();
+	m_Result.create(m_X.size(), m_X.type());
+	m_HalfPatchWidth = halfPatchWidth;
 }
 
-int Inpainter::checkValidInputs() {
-	if (this->m_InputImage.type() != CV_8UC3)
-		return ERROR_INPUT_MAT_INVALID_TYPE;
-	if (this->m_Mask.type() != CV_8UC1)
-		return ERROR_INPUT_MASK_INVALID_TYPE;
-	if (!CV_ARE_SIZES_EQ(&m_Mask, &m_InputImage))
-		return ERROR_MASK_INPUT_SIZE_MISMATCH;
-	if (m_HalfPatchWidth == 0)
-		return ERROR_HALF_PATCH_WIDTH_ZERO;
-	return CHECK_VALID;
-}
+void PatchMatch(const cv::Mat& SourceImage, const cv::Mat& TargetImage, const cv::Mat& Mask, int nPatchSize, cv::Mat& NearestNeighbor);
 
-void PatchMatch(const Mat& SourceImage, const Mat& TargetImage, const Mat& Mask, int nPatchSize, Mat& NearestNeighbor);
+cv::Vec3f MeanShift(std::vector<cv::Vec3b> vecVoteColor, std::vector<float> vecVoteWeight, int sigma);
 
-Vec3f MeanShift(vector<Vec3b> vecVoteColor, vector<float> vecVoteWeight, int sigma);
-
-void Inpainter::inpaint(cv::VideoWriter& voVideo)
+void Inpainter2D::inpaint()
 {
-	Mat Weights = Mat(m_WorkImage.size(), CV_32F);
-	distanceTransform(m_Mask, Weights, DIST_L2, 3);
+	cv::Mat Weights(m_WorkX.size(), CV_32F);
+	cv::distanceTransform(m_Mask, Weights, cv::DIST_L2, 3);
 
-	srand((int)time(0));
+	std::srand((int)time(0));
 
 	// 先将mask区域设置为随机，表明该区域无信息
-	for (int i = 0; i < m_WorkImage.rows; i++)
+	for (int i = 0; i < m_WorkX.rows; i++)
 	{
-		for (int j = 0; j < m_WorkImage.cols; j++)
+		for (int j = 0; j < m_WorkX.cols; j++)
 		{
-			float Distance = Weights.at<float>(i, j);
-			Weights.at<float>(i, j) = (float)pow(1.3, -Distance);
+			Weights.at<float>(i, j) = (float)pow(1.3, Weights.at<float>(i, j));
 
-			int Random = rand() % 255;
+			int Random = std::rand() % 255;
 
 			if (m_Mask.at<uchar>(i, j))
 			{
-				m_InputImage.at<Vec3b>(i, j)[0] = Random;
-				m_InputImage.at<Vec3b>(i, j)[1] = Random;
-				m_InputImage.at<Vec3b>(i, j)[2] = Random;
+				m_X.at<cv::Vec3b>(i, j)[0] = Random;
+				m_X.at<cv::Vec3b>(i, j)[1] = Random;
+				m_X.at<cv::Vec3b>(i, j)[2] = Random;
 			}
 		}
 	}
 
 	// 多个不同的尺度
 	int PyramidNumber = 3;
-	Mat CurImage = Mat();
-	Mat CurMask;
+	cv::Mat CurImage = cv::Mat(), CurMask, CurWeight;
 	int PatchSize = 2 * m_HalfPatchWidth + 1;
 
 	float Convergence = 10.0f;
@@ -70,21 +52,22 @@ void Inpainter::inpaint(cv::VideoWriter& voVideo)
 	while (PyramidNumber >= -1)
 	{
 		float Scale = 1.0f / (1 << PyramidNumber);
-		
+
 		if (PyramidNumber < 0)
 		{
 			Scale = 1.0f;
 			m_HalfPatchWidth /= 2;
 			PatchSize = 2 * m_HalfPatchWidth + 1;
 		}
-		
-		resize(m_InputImage, m_WorkImage, Size(m_InputImage.cols * Scale, Scale * m_InputImage.rows));
-		resize(m_Mask, CurMask, Size(m_Mask.cols * Scale, Scale * m_Mask.rows));
-		//resize(Weights, CurWeight, Size(Weights.cols * Scale, Scale * Weights.rows));
+
+		cv::resize(m_X, m_WorkX, cv::Size(m_X.cols * Scale, Scale * m_X.rows));
+		cv::resize(m_Y, m_WorkY, cv::Size(m_Y.cols * Scale, Scale * m_Y.rows));
+		cv::resize(m_Mask, CurMask, cv::Size(m_Mask.cols * Scale, Scale * m_Mask.rows));
+		cv::resize(Weights, CurWeight, cv::Size(Weights.cols * Scale, Scale * Weights.rows));
 
 		if (CurImage.rows * CurImage.cols > 0)
 		{
-			resize(CurImage, CurImage, Size(m_InputImage.cols * Scale, Scale * m_InputImage.rows));
+			cv::resize(CurImage, CurImage, cv::Size(m_X.cols * Scale, Scale * m_X.rows));
 
 			// mask 外的区域用上一次的数据填充
 			for (int i = 0; i < CurImage.rows; i++)
@@ -94,8 +77,6 @@ void Inpainter::inpaint(cv::VideoWriter& voVideo)
 		}
 		else
 			CurImage = m_WorkImage.clone();
-
-
 
 		int IterMaxNumber = 100;
 		if (PyramidNumber <= 0)

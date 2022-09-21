@@ -1,4 +1,5 @@
 #pragma once
+#include "HeightMap.h"
 
 namespace core
 {

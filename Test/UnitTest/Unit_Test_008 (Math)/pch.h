@@ -19,5 +19,6 @@
 #include "common/EventLoggerInterface.h"
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
+#include "common/MathInterface.h"
 
 #include "Interpolation.h"

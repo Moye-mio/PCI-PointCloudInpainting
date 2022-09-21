@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="pch">
+      <UniqueIdentifier>{2844ebda-c21e-4be8-aaf3-8816d80b6605}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{de52d41c-c378-4f1c-858f-10742985aa1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inpainting">
+      <UniqueIdentifier>{0f9b80bc-62e1-4de9-86f7-7430ec5abdb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ALG">
+      <UniqueIdentifier>{d30f37b2-fd66-4e80-9a03-e043474a9565}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="PMInterface.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Inpaint.h">
+      <Filter>Inpainting</Filter>
+    </ClInclude>
+    <ClInclude Include="PatchMatch.h">
+      <Filter>ALG</Filter>
+    </ClInclude>
+    <ClInclude Include="MeanShift.h">
+      <Filter>ALG</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="PMInterface.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Inpaint.cpp">
+      <Filter>Inpainting</Filter>
+    </ClCompile>
+    <ClCompile Include="PatchMatch.cpp">
+      <Filter>ALG</Filter>
+    </ClCompile>
+    <ClCompile Include="MeanShift.cpp">
+      <Filter>ALG</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

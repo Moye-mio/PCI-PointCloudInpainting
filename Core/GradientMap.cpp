@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "GradientMap.h"
-#include "HeightMap.h"
 
 using namespace core;
 

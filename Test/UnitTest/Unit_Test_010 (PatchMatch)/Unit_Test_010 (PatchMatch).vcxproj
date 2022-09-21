@@ -48,14 +48,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ALG\PMTest\PMTest.vcxproj">
+      <Project>{6d283294-1ba4-49f0-b542-d38e374ef62d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\Common.vcxproj">
       <Project>{f3fc1ad4-fae1-4ccd-9687-b5d63a97fb07}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core.vcxproj">
       <Project>{39c00d6d-7d00-4846-acd1-b0676b2a2993}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\PM\PM.vcxproj">
-      <Project>{08e4f1ec-6803-4226-b5a6-c09f71f7b988}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemDefinitionGroup />
@@ -97,7 +97,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\PM;$(SolutionDir)\Core;$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Core;$(SolutionDir)\Common;$(SolutionDir)\ALG\PMTest;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

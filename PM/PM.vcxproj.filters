@@ -30,12 +30,18 @@
     <ClCompile Include="run.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="inpainter2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inpainter.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="run.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inpainter2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

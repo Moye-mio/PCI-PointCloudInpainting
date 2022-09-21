@@ -111,13 +111,13 @@ void PatchMatch(const Mat & vSourceImage,const Mat & vTargetImage, const Mat & v
 				// ÓÐÐ§·¶Î§ÄÚ
 				if (Row - Step < vSourceImage.rows - vPatchSize)
 				{
-					int nGuessX = voNearestNeighbor.at<Vec3i>(Row - Step, Col)[0];
-					int nGuessY = voNearestNeighbor.at<Vec3i>(Row - Step, Col)[1] + Step;
+					int GuessCol = voNearestNeighbor.at<Vec3i>(Row - Step, Col)[0];
+					int GuessRow = voNearestNeighbor.at<Vec3i>(Row - Step, Col)[1] + Step;
 
-					if (nGuessY < vTargetImage.rows - vPatchSize && nGuessY >= 0)
+					if (GuessRow < vTargetImage.rows - vPatchSize && GuessRow >= 0)
 					{
 						// propagation 
-						GuessAndImprove(vSourceImage, vTargetImage, vMask, Col, Row, nGuessX, nGuessY, vPatchSize, voNearestNeighbor);
+						GuessAndImprove(vSourceImage, vTargetImage, vMask, Col, Row, GuessCol, GuessRow, vPatchSize, voNearestNeighbor);
 					}
 				}
 

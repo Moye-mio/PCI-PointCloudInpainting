@@ -21,16 +21,32 @@ protected:
 	}
 };
 
-TEST_F(TestPM, NT_)
+TEST_F(TestPM, NT_PMTest)
 {
-	cv::Mat Image = cv::imread("test.png", cv::IMREAD_GRAYSCALE);
-	cv::Mat Mask = cv::imread("mask.png", cv::IMREAD_GRAYSCALE);
-	Eigen::MatrixXf ImageMat = castCV2Eigen(Image);
-	Eigen::MatrixXf MaskMat = castCV2Eigen(Mask);
+	cv::Mat Image = cv::imread("Images/test.png", cv::IMREAD_GRAYSCALE);
+	cv::Mat Mask = cv::imread("Images/mask.png", cv::IMREAD_GRAYSCALE);
 
-	core::CHeightMap ImageMap, MaskMap;
-	ImageMap.setHeightMap(ImageMat);
-	MaskMap.setHeightMap(MaskMat);
+	cv::Mat Image2(Image.size(), CV_32FC2);
+	for (int i = 0; i < Image.rows; i++)
+		for (int k = 0; k < Image.cols; k++)
+			Image2.at<float>(i, k) = (float)Image.at<unsigned char>(i, k);
 
-	RunPatchMatch(ImageMap, MaskMap);
+	cv::Mat Result = PM::run(Image2, Mask);
+	cv::imwrite("Images/Result.png", Result);
+	cv::imshow("Result", Result);
+	cv::waitKey();
 }
+
+//TEST_F(TestPM, NT_)
+//{
+//	cv::Mat Image = cv::imread("test.png", cv::IMREAD_GRAYSCALE);
+//	cv::Mat Mask = cv::imread("mask.png", cv::IMREAD_GRAYSCALE);
+//	Eigen::MatrixXf ImageMat = castCV2Eigen(Image);
+//	Eigen::MatrixXf MaskMat = castCV2Eigen(Mask);
+//
+//	core::CHeightMap ImageMap, MaskMap;
+//	ImageMap.setHeightMap(ImageMat);
+//	MaskMap.setHeightMap(MaskMat);
+//
+//	RunPatchMatch(ImageMap, MaskMap);
+//}
