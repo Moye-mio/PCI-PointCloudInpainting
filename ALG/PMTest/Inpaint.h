@@ -14,7 +14,9 @@ namespace PM
 
 	private:
 		void __inpaint(bool vIsWriteVideo, cv::VideoWriter& voWritter);
-		Eigen::Vector2f __computeRange();
+		void __inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter);
+		void __inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter);
+		Eigen::Vector2f __computeRange(const cv::Mat& vMat, const cv::Mat& vMask);
 
 
 	private:

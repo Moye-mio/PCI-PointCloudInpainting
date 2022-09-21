@@ -43,7 +43,6 @@ void propagate(const cv::Mat& vSource, const cv::Mat& vTarget, const cv::Mat& vM
 	}
 }
 
-
 cv::Mat PM::PatchMatch(const cv::Mat& vSource, const cv::Mat& vTarget, const cv::Mat& vMask, int vPatchSize)
 {
 	cv::Mat NN = cv::Mat::zeros(vSource.size(), CV_32FC3);		/* Col, Row, Dist */
