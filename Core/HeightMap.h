@@ -9,8 +9,8 @@ namespace core
 		CHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap);
 		~CHeightMap() = default;
 
-		[[nodiscard]] bool isEmptyValue(int vRow, int vCol);
-		[[nodiscard]] bool isNeighborhoodEmpty(int vRow, int vCol);
+		[[nodiscard]] bool isEmptyValue(int vRow, int vCol) const;
+		[[nodiscard]] bool isNeighborhoodEmpty(int vRow, int vCol) const;
 		[[nodiscard]] bool setSize(int vWidth, int vHeight);
 		[[nodiscard]] bool setHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap);
 		[[nodiscard]] bool setValueAt(float vHeight, int vRow, int vCol);

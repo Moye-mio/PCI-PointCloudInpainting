@@ -9,13 +9,13 @@ CHeightMap::CHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap)
 	m_Map = vHeightMap;
 }
 
-bool CHeightMap::isEmptyValue(int vRow, int vCol)
+bool CHeightMap::isEmptyValue(int vRow, int vCol) const
 {
 	_ASSERTE(__isIndexValid(vRow, vCol));
 	return __isEmptyValue(vRow, vCol);
 }
 
-bool CHeightMap::isNeighborhoodEmpty(int vRow, int vCol)
+bool CHeightMap::isNeighborhoodEmpty(int vRow, int vCol) const
 {
 	_ASSERTE(__isIndexValid(vRow, vCol));
 	if (__isIndexValid(vRow + 1, vCol) && __isEmptyValue(vRow + 1, vCol)) return true;
