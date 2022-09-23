@@ -19,7 +19,8 @@
 #include <cstdlib>
 
 #include <boost/format.hpp>
-
+#include <opencv2/opencv.hpp>
+#include <Eigen/Eigen>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 
@@ -40,6 +41,7 @@
 #include "AABBEstimation.h"
 #include "SparseLinearSolver.h"
 #include "HeightMap2PCMapper.h"
+#include "PMInterface.h"
 
 
 #endif //PCH_H
