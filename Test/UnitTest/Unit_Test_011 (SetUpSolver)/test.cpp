@@ -15,6 +15,28 @@ protected:
 	float m_Epsilon = 0.00001;
 };
 
+TEST_F(TestSetUpSolver, DT_MismatchingMaps)
+{
+	Eigen::Matrix<float, 3, 4> Mat;
+	Mat << 0, 0, 0, 0,
+		1, -FLT_MAX, -FLT_MAX, 1,
+		2, 2, 2, 2;
+
+	core::CHeightMap HeightMap;
+	ASSERT_TRUE(HeightMap.setHeightMap(Mat));
+
+	core::CGradientMap GradientMap, GoG;
+	core::CGradientMapGenerator Generator;
+	ASSERT_TRUE(Generator.generate(HeightMap));
+	Generator.dumpGradientMap(GradientMap);
+
+	ASSERT_TRUE(Generator.generate(GradientMap));
+	Generator.dumpGradientMap(GoG);
+
+	dataManagement::CSolverBuilder SolverBuilder;
+	ASSERT_DEATH(SolverBuilder.setUp(HeightMap, GoG, GradientMap), ".*");
+}
+
 TEST_F(TestSetUpSolver, NT)
 {
 	Eigen::Matrix<float, 3, 4> Mat, GT;
@@ -46,13 +68,17 @@ TEST_F(TestSetUpSolver, NT)
 	dataManagement::CSolverBuilder SolverBuilder;
 	SolverBuilder.setUp(HeightMap, GoG, GradientMap);
 
-	Eigen::MatrixXf Coeff, ConstNumbers;
-	std::vector<Eigen::Vector2f> Unknowns;
+	Eigen::MatrixXf Coeff, ConstNumbers, GTCoeff(2, 2), GTConst(2, 1);
+	std::vector<Eigen::Vector2f> Unknowns, GTUnknowns;
 	SolverBuilder.dumpMatrix(Coeff, ConstNumbers);
 	SolverBuilder.dumpUnknowns(Unknowns);
+	GTCoeff << -4, 1, 1, -4;
+	GTConst << -3, -3;
+	GTUnknowns.push_back({1, 1});
+	GTUnknowns.push_back({1, 2});
+	ASSERT_EQ(Coeff, GTCoeff);
+	ASSERT_EQ(ConstNumbers, GTConst);
 
-	std::cout << "Coeff: \n" << Coeff << std::endl;
-	std::cout << "Const: \n" << ConstNumbers << std::endl;
 	for (int i = 0; i < Unknowns.size(); i++)
-		std::cout << Unknowns[i] << ", ";
+		ASSERT_EQ(Unknowns[i], GTUnknowns[i]);
 }
