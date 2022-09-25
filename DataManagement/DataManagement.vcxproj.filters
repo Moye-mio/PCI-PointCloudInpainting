@@ -13,6 +13,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{01ca377f-9df6-4c7b-be29-2a90e2d2a136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transaction">
+      <UniqueIdentifier>{850b8d3b-d626-45a5-90d1-8e168334ff56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -45,6 +48,9 @@
     <ClInclude Include="PCPLYSaver.h">
       <Filter>IO</Filter>
     </ClInclude>
+    <ClInclude Include="SolverBuilder.h">
+      <Filter>Transaction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -67,6 +73,9 @@
     </ClCompile>
     <ClCompile Include="PCPLYSaver.cpp">
       <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="SolverBuilder.cpp">
+      <Filter>Transaction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

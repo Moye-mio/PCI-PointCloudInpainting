@@ -11,6 +11,7 @@ namespace core
 		~CGradientMap() = default;
 
 		[[nodiscard]] bool isEmptyValue(int vRow, int vCol);
+		[[nodiscard]] bool isNoEmptyValue() const;
 		[[nodiscard]] bool isValid() const;
 		[[nodiscard]] bool setSize(int vWidth, int vHeight);
 		[[nodiscard]] bool setGradientMap(const Eigen::Matrix<Eigen::Vector2f, -1, -1>& vGradientMap);
@@ -26,7 +27,7 @@ namespace core
 		void generateMask(CHeightMap& voMap);
 
 	private:
-		bool __isEmptyValue(int vRow, int vCol);
+		bool __isEmptyValue(int vRow, int vCol) const;
 
 	private:
 		Eigen::Matrix<Eigen::Vector2f, -1, -1> m_Map;

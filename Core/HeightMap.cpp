@@ -99,7 +99,7 @@ float CHeightMap::Sample(const std::pair<float, float>& vCoor)
 	return Height;
 }
 
-void CHeightMap::generateMask(CHeightMap& voMap)
+void CHeightMap::generateMask(CHeightMap& voMap) const
 {
 	_ASSERTE(this->isValid());
 
@@ -110,5 +110,15 @@ void CHeightMap::generateMask(CHeightMap& voMap)
 			if (m_Map(i, k) == m_Empty)		voMap.setValueAt(1, i, k);
 			else							voMap.setValueAt(0, i, k);
 		}
+}
+
+bool CHeightMap::operator==(CHeightMap& vRhs)
+{
+	if (this->getWidth() != vRhs.getWidth() || this->getHeight() != vRhs.getHeight()) return false;
+	for (int i = 0; i < this->getWidth(); i++)
+		for (int k = 0; k < this->getHeight(); k++)
+			if (this->getValueAt(i, k) != vRhs.getValueAt(i, k))
+				return false;
+	return true;
 }
 

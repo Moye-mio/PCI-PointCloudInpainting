@@ -155,6 +155,7 @@
     <ClInclude Include="PCPLYLoader.h" />
     <ClInclude Include="PCPLYSaver.h" />
     <ClInclude Include="PCSaver.h" />
+    <ClInclude Include="SolverBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PC.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="PCPLYLoader.cpp" />
     <ClCompile Include="PCPLYSaver.cpp" />
     <ClCompile Include="PCSaver.cpp" />
+    <ClCompile Include="SolverBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

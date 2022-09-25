@@ -14,7 +14,17 @@ bool CGradientMap::isEmptyValue(int vRow, int vCol)
 	return __isEmptyValue(vRow, vCol);
 }
 
-bool CGradientMap::__isEmptyValue(int vRow, int vCol)
+bool CGradientMap::isNoEmptyValue() const
+{
+	_ASSERTE(m_Map.size() > 0);
+	for (int i = 0; i < m_Map.rows(); i++)
+		for (int k = 0; k < m_Map.cols(); k++)
+			if (__isEmptyValue(i, k))
+				return false;
+	return true;
+}
+
+bool CGradientMap::__isEmptyValue(int vRow, int vCol) const
 {
 	_ASSERTE(vRow >= 0 && vRow < m_Map.rows() && vCol >= 0 && vCol < m_Map.cols());
 	return (m_Map(vRow, vCol) == m_Empty);

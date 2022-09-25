@@ -46,7 +46,25 @@ TEST_F(TestSolver, NT_Identity)
 	}
 }
 
-TEST_F(TestSolver, NT_SimpleMatrix)
+TEST_F(TestSolver, NT_SimpleMatrix1)
+{
+	Eigen::MatrixXf A(2, 2), X(2, 1), B(2, 1), GT(2, 1);
+
+	A << -4, 1,
+		1, -4;
+	B << -3, -3;
+	GT << 1, 1;
+
+	core::CSparseLinearSolver Solver(A, B);
+	for (int i = 0; i < 5; i++)
+	{
+		X = Solver.solve(i);
+		for (int k = 0; k < 2; k++)
+			ASSERT_LT(std::fabsf(X(k, 0) - GT(k, 0)), m_Epsilon);
+	}
+}
+
+TEST_F(TestSolver, NT_SimpleMatrix2)
 {
 	Eigen::MatrixXf A(3, 3), X(3, 1), B(3, 1), GT(3, 1);
 
