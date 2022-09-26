@@ -1,13 +1,13 @@
 #include "pch.h"
 
 const std::string ModelPath = TESTMODEL_DIR + std::string("/Pyramid.ply");
+const std::string ModelPath2 = TESTMODEL_DIR + std::string("/SlantPyramid.ply");
 
 class TestDepthInpainting : public testing::Test
 {
 protected:
 	void SetUp() override
 	{
-
 	}
 
 	void TearDown() override
@@ -19,9 +19,9 @@ protected:
 
 TEST_F(TestDepthInpainting, NT_)
 {
-	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(ModelPath));	/* 14175 */
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(ModelPath2));	/* 14175 */
 	ASSERT_TRUE(pTileLoader);
-	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath2);
 	ASSERT_TRUE(pData);
 	PC_t::Ptr pOutput;
 	dataManagement::CDepthInpaiting DepthInpainting;

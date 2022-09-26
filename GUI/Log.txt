@@ -1,1 +1,4 @@
 Append Property [Model_Directory]: ../Models/.
+[INFO]:[Mon Sep 26 15:17:47.742 2022] :
+  Succeed to load point cloud file [D:/Projects/PCI/Models/CrossPlane.ply].
+

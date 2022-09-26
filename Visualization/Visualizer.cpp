@@ -20,7 +20,7 @@ CVisualizer::~CVisualizer()
 
 void CVisualizer::unloadModel()
 {
-	dataManagement::CPCManagement::getInstance()->destroy();
+	//dataManagement::CPCManagement::getInstance()->destroy();
 	m_pPCLVisualizer->removeAllPointClouds();
 	m_pPCLVisualizer->removeAllShapes();
 	m_pPCLVisualizer->removeAllCoordinateSystems();

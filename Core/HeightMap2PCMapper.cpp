@@ -20,20 +20,25 @@ void CHeightMap2PCMapper::map2PC(PC_t::Ptr& voCloud, const std::pair<CHeightMap,
 	std::vector<std::pair<float, float>> RandomPoints;
 	__generateRandomPoints(m_RawMap.getWidth() * m_RawMap.getHeight() * vPointNumberPerPixel, RandomPoints);
 	__map2NewPoints(voCloud, RandomPoints);
-
 }
 
 void CHeightMap2PCMapper::__generateRandomPoints(int vNumber, std::vector<std::pair<float, float>>& voRandomPoints)
 {
 	std::pair<float, float> Span = std::make_pair<float, float>(m_Box._Max[0] - m_Box._Min[0], m_Box._Max[1] - m_Box._Min[1]);
-	const std::vector<unsigned int> BaseSet = { 2, 7 };
+	/*const std::vector<unsigned int> BaseSet = { 2, 7 };
 	std::vector<float> HaltonSequence = hiveMath::hiveGenerateHaltonSequence(BaseSet, vNumber);
 
 	_ASSERTE(HaltonSequence.size() == vNumber * BaseSet[0]);
 
-	for (int i = 0; i < HaltonSequence.size() / 2; i += 1)
+	for (int i = 0; i < HaltonSequence.size() / 2; i += 2)
 	{
 		voRandomPoints.push_back(std::make_pair(HaltonSequence[i] * Span.first + m_Box._Min[0], HaltonSequence[i + 1] * Span.second + m_Box._Min[1]));
+	}*/
+
+	std::vector<float> RandomSequence = hiveMath::hiveGenerateRandomRealSet(0.0f, 1.0f, vNumber * 2);
+	for (int i = 0; i < RandomSequence.size() / 2; i += 2)
+	{
+		voRandomPoints.push_back(std::make_pair(RandomSequence[i] * Span.first + m_Box._Min[0], RandomSequence[i + 1] * Span.second + m_Box._Min[1]));
 	}
 }
 
@@ -57,7 +62,6 @@ void CHeightMap2PCMapper::__map2NewPoints(PC_t::Ptr& voCloud, const std::vector<
 		if (m_RawMap.isEmptyValue((int)OffsetCoor.first, (int)OffsetCoor.second))
 		{
 			auto Coor = __computeCoor(e, false);
-
 			voCloud->emplace_back(Point_t(e.first, e.second, m_FilledMap.Sample(Coor)));
 		}
 	}
