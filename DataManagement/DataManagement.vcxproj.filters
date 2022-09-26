@@ -16,6 +16,9 @@
     <Filter Include="Transaction">
       <UniqueIdentifier>{850b8d3b-d626-45a5-90d1-8e168334ff56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transaction\DepthInpainting">
+      <UniqueIdentifier>{753daa01-87e7-4a44-a4f4-4fbff90ad271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -49,7 +52,10 @@
       <Filter>IO</Filter>
     </ClInclude>
     <ClInclude Include="SolverBuilder.h">
-      <Filter>Transaction</Filter>
+      <Filter>Transaction\DepthInpainting</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthInpainting.h">
+      <Filter>Transaction\DepthInpainting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +81,10 @@
       <Filter>IO</Filter>
     </ClCompile>
     <ClCompile Include="SolverBuilder.cpp">
-      <Filter>Transaction</Filter>
+      <Filter>Transaction\DepthInpainting</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthInpainting.cpp">
+      <Filter>Transaction\DepthInpainting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

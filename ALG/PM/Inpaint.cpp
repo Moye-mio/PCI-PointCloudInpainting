@@ -178,6 +178,7 @@ void CInpainter::__inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		}
 
 		m_Pyramid--;
+		m_MaxIterNumber *= 2;
 		m_Threshold = (m_Threshold > 0.01f) ? (m_Threshold / 10.0f) : 0.01f;
 	}
 
@@ -324,6 +325,7 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		}
 
 		m_Pyramid--;
+		m_MaxIterNumber *= 2;
 		m_Threshold = (m_Threshold > 0.01f) ? (m_Threshold / 10.0f) : 0.01f;
 	}
 

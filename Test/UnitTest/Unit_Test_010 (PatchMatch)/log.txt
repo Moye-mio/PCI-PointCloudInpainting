@@ -1,6 +1,0 @@
-Running main() from c:\a\1\s\thirdparty\googletest\googletest\src\gtest_main.cc
-[==========] Running 1 test from 1 test case.
-[----------] Global test environment set-up.
-[----------] 1 test from TestPM
-[ RUN      ] TestPM.NT_Channel2
-0

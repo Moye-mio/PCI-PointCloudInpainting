@@ -10,6 +10,7 @@ namespace core
 		~CHeightMap() = default;
 
 		[[nodiscard]] bool isEmptyValue(int vRow, int vCol) const;
+		[[nodiscard]] bool isNoEmptyValue() const;
 		[[nodiscard]] bool isNeighborhoodEmpty(int vRow, int vCol) const;
 		[[nodiscard]] bool setSize(int vWidth, int vHeight);
 		[[nodiscard]] bool setHeightMap(const Eigen::Matrix<float, -1, -1>& vHeightMap);
@@ -23,7 +24,7 @@ namespace core
 		float Sample(const std::pair<float, float>& vCoor);
 		void generateMask(CHeightMap& voMap) const;
 
-		bool operator==(CHeightMap& vRhs);
+		bool operator==(const CHeightMap& vRhs);
 
 	private:
 		bool __isIndexValid(int vRow, int vCol) const;

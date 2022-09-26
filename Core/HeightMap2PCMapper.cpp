@@ -51,7 +51,6 @@ void CHeightMap2PCMapper::__map2NewPoints(PC_t::Ptr& voCloud, const std::vector<
 	{
 		int Random = hiveMath::hiveGenerateRandomInteger(0, (int)Shift.size() - 1);
 		auto OffsetCoor = __computeCoor(std::make_pair(e.first + Shift[Random].first, e.second + Shift[Random].second), true);
-		std::cout << OffsetCoor.first << ", " << OffsetCoor.second << ", ";
 
 		if (OffsetCoor.first < 0 || OffsetCoor.first >= m_RawMap.getWidth() || OffsetCoor.second < 0 || OffsetCoor.second >= m_RawMap.getHeight())	continue;
 
@@ -59,7 +58,6 @@ void CHeightMap2PCMapper::__map2NewPoints(PC_t::Ptr& voCloud, const std::vector<
 		{
 			auto Coor = __computeCoor(e, false);
 
-			std::cout << e.first << ", " << e.second << ", " << Coor.first << ", " << Coor.second << std::endl;
 			voCloud->emplace_back(Point_t(e.first, e.second, m_FilledMap.Sample(Coor)));
 		}
 	}

@@ -112,12 +112,22 @@ void CHeightMap::generateMask(CHeightMap& voMap) const
 		}
 }
 
-bool CHeightMap::operator==(CHeightMap& vRhs)
+bool CHeightMap::operator==(const CHeightMap& vRhs)
 {
 	if (this->getWidth() != vRhs.getWidth() || this->getHeight() != vRhs.getHeight()) return false;
 	for (int i = 0; i < this->getWidth(); i++)
 		for (int k = 0; k < this->getHeight(); k++)
 			if (this->getValueAt(i, k) != vRhs.getValueAt(i, k))
+				return false;
+	return true;
+}
+
+bool CHeightMap::isNoEmptyValue() const
+{
+	_ASSERTE(m_Map.size() > 0);
+	for (int i = 0; i < m_Map.rows(); i++)
+		for (int k = 0; k < m_Map.cols(); k++)
+			if (__isEmptyValue(i, k))
 				return false;
 	return true;
 }

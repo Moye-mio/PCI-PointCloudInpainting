@@ -82,3 +82,43 @@ TEST_F(TestSolver, NT_SimpleMatrix2)
 			ASSERT_LT(std::fabsf(X(k, 0) - GT(k, 0)), m_Epsilon);
 	}
 }
+
+TEST_F(TestSolver, NT_SimpleMatrix3)
+{
+	Eigen::MatrixXf A(4, 4), X(4, 1), B(4, 1), GT(4, 1);
+
+	A << -2, 1, 0, 0,
+		1, -2, 0, 0,
+		0, 0, -4, 1,
+		1, 0, 1, -4;
+	B << 0, 0, -3, -3;
+	GT << 0, 0, 1, 1;
+
+	core::CSparseLinearSolver Solver(A, B);
+	for (int i = 0; i < 5; i++)
+	{
+		X = Solver.solve(i);
+		for (int k = 0; k < 3; k++)
+			ASSERT_LT(std::fabsf(X(k, 0) - GT(k, 0)), m_Epsilon);
+	}
+}
+
+TEST_F(TestSolver, NT_SimpleMatrix4)
+{
+	Eigen::MatrixXf A(4, 4), X(4, 1), B(4, 1), GT(4, 1);
+
+	A << -2, 1, 0, 0,
+		1, -2, 0, 1,
+		1, 0, -4, 1,
+		0, 1, 0, -2;
+	B << 0, 1, -3, -2;
+	GT << 0, 0, 1, 1;
+
+	core::CSparseLinearSolver Solver(A, B);
+	for (int i = 0; i < 5; i++)
+	{
+		X = Solver.solve(i);
+		for (int k = 0; k < 3; k++)
+			ASSERT_LT(std::fabsf(X(k, 0) - GT(k, 0)), m_Epsilon);
+	}
+}

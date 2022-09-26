@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const std::string ModelPath = TESTMODEL_DIR + std::string("/Pyramid.ply");
+const std::string ModelPath = TESTMODEL_DIR + std::string("/SlantPyramid.ply");
 
 class TestPM : public testing::Test
 {
@@ -76,14 +76,6 @@ TEST_F(TestPM, NT_Channel2)
 			Mask.at<unsigned char>(i, k) = MaskMap.getValueAt(i, k) * 255;
 
 	cv::Mat Result = PM::run(Raw, Mask);
-
-	for (int i = 0; i < Result.rows; i++)
-		for (int k = 0; k < Result.cols; k++)
-		{
-			if (Mask.at<unsigned char>(i, k))
-				std::cout << "Filled: \t";
-			std::cout << Result.at<cv::Vec2f>(i, k)[0] << ", " << Result.at<cv::Vec2f>(i, k)[1] << std::endl;
-		}
 
 	cv::Mat ResultC1(Result.size(), CV_8UC1), ResultC2(Result.size(), CV_8UC1);
 	for (int i = 0; i < Result.rows; i++)
