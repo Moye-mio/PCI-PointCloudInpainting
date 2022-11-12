@@ -25,6 +25,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+#include <liblas/liblas.hpp>
 
 #include "common/Product.h"
 #include "common/Factory.h"

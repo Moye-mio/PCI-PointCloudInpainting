@@ -43,6 +43,12 @@
     <Filter Include="PCMap">
       <UniqueIdentifier>{76168b25-2683-4637-9dec-1a8336a61ecc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PCFeature">
+      <UniqueIdentifier>{1ea2d047-1cef-4e4e-9cd6-4e292be5c577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\ExtremeValue">
+      <UniqueIdentifier>{c89cbef1-26b7-4a8b-a66c-921ec733b852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -78,6 +84,9 @@
     <ClInclude Include="HeightMap2PCMapper.h">
       <Filter>PCMap</Filter>
     </ClInclude>
+    <ClInclude Include="ExtremePoint.h">
+      <Filter>PCFeature\ExtremeValue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -106,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="HeightMap2PCMapper.cpp">
       <Filter>PCMap</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtremePoint.cpp">
+      <Filter>PCFeature\ExtremeValue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

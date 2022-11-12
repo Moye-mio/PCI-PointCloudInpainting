@@ -73,6 +73,10 @@ StyleCopReport.xml
 # log
 log.txt
 
+# Model file
+*.ply
+*.pcd
+
 # Files built by Visual Studio
 *_i.c
 *_p.c

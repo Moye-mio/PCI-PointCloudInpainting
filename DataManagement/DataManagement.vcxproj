@@ -155,6 +155,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="PC.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PCLASLoader.h" />
     <ClInclude Include="PCLoader.h" />
     <ClInclude Include="PCManagement.h" />
     <ClInclude Include="PCPLYLoader.h" />
@@ -169,6 +170,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PCLASLoader.cpp" />
     <ClCompile Include="PCLoader.cpp" />
     <ClCompile Include="PCManagement.cpp" />
     <ClCompile Include="PCPLYLoader.cpp" />
@@ -206,6 +208,9 @@
     <Import Project="..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets" Condition="Exists('..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets')" />
     <Import Project="..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
     <Import Project="..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
+    <Import Project="..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" />
+    <Import Project="..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" />
+    <Import Project="..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets" Condition="Exists('..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -228,5 +233,8 @@
     <Error Condition="!Exists('..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets'))" />
     <Error Condition="!Exists('..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
     <Error Condition="!Exists('..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
+    <Error Condition="!Exists('..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets'))" />
+    <Error Condition="!Exists('..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets'))" />
+    <Error Condition="!Exists('..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets'))" />
   </Target>
 </Project>

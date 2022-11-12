@@ -240,6 +240,8 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		if (std::min(Cur.rows, Cur.cols) < m_PatchSize * 2)
 		{
 			m_Pyramid--;
+			m_MaxIterNumber *= 2;
+			m_Threshold = (m_Threshold > 0.01f) ? (m_Threshold / 10.0f) : 0.01f;
 			continue;
 		}
 

@@ -57,6 +57,9 @@
     <ClInclude Include="DepthInpainting.h">
       <Filter>Transaction\DepthInpainting</Filter>
     </ClInclude>
+    <ClInclude Include="PCLASLoader.h">
+      <Filter>IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="DepthInpainting.cpp">
       <Filter>Transaction\DepthInpainting</Filter>
+    </ClCompile>
+    <ClCompile Include="PCLASLoader.cpp">
+      <Filter>IO</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

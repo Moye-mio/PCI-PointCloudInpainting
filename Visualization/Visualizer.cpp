@@ -33,7 +33,7 @@ bool CVisualizer::loadModel(const std::string& vPath)
 	if (!r) return false;
 	auto pCloud = dataManagement::CPCManagement::getInstance()->getPointCloud(CloudId);
 
-	m_pPCLVisualizer->setBackgroundColor(255, 255, 255);
+	//m_pPCLVisualizer->setBackgroundColor(255, 255, 255);
 	m_pPCLVisualizer->setBackgroundColor(0, 0, 0);
 	m_pPCLVisualizer->addPointCloud<Point_t>(pCloud->getPointCloud(), CloudId);
 	m_pPCLVisualizer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, CloudId);

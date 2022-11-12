@@ -19,7 +19,7 @@ void dataManagement::CDepthInpaiting::run(const PC_t::Ptr& vCloud, PC_t::Ptr& vo
 	core::CHeightMap HeightMap, HeightMapInpainted;
 	core::CHeightMapGenerator HGenerator;
 	HGenerator.setCloud(vCloud);
-	HGenerator.generate(128, 128);
+	HGenerator.generate(128, 128);			/* Magic Number */
 	HGenerator.dumpHeightMap(HeightMap);
 	_ASSERTE(HeightMap.isValid());
 
@@ -61,12 +61,24 @@ void dataManagement::CDepthInpaiting::run(const PC_t::Ptr& vCloud, PC_t::Ptr& vo
 	_ASSERTE(HeightMapInpainted.isValid());
 	__setValueInMap(HeightMapInpainted, Unknowns, Solutions);
 
+	{
+		cv::Mat Save(cv::Size(HeightMapInpainted.getWidth(), HeightMapInpainted.getHeight()), CV_8UC1);
+		for (int i = 0; i < Save.rows; i++)
+			for (int k = 0; k < Save.cols; k++)
+				Save.at<unsigned char>(i, k) = (unsigned char)(HeightMapInpainted.getValueAt(i, k) * 51);
+		cv::imwrite("Save.png", Save);
+		for (int i = 0; i < Mask.rows; i++)
+			for (int k = 0; k < Mask.cols; k++)
+				Mask.at<unsigned char>(i, k) *= 255;
+		cv::imwrite("Mask.png", Mask);
+	}
+
 	/* Map to Cloud */
 	core::CAABBEstimation Estimation(vCloud);
 	core::SAABB Box = Estimation.compute();
 	_ASSERTE(Box.isValid());
 	core::CHeightMap2PCMapper Mapper;
-	Mapper.map2PC(voResultCloud, std::make_pair(HeightMap, HeightMapInpainted), Box, 10);	/* Magic Number */
+	Mapper.map2PC(voResultCloud, std::make_pair(HeightMap, HeightMapInpainted), Box, 50);	/* Magic Number */
 }
 
 void CDepthInpaiting::__setValueInMap(core::CHeightMap& vioMap, const std::vector<Eigen::Vector2f>& vUnknowns, const Eigen::MatrixXf& vSolutions)

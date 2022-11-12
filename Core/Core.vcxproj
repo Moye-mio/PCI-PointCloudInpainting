@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AABBEstimation.h" />
+    <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
@@ -169,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
+    <ClCompile Include="ExtremePoint.cpp" />
     <ClCompile Include="GradientMap.cpp" />
     <ClCompile Include="GradientMapGenerator.cpp" />
     <ClCompile Include="HeightMap.cpp" />

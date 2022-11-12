@@ -89,7 +89,7 @@ void CGradientMap::generateMask(CHeightMap& voMap)
 {
 	_ASSERTE(this->isValid());
 
-	voMap.setSize(m_Map.rows(), m_Map.rows());
+	voMap.setSize(m_Map.rows(), m_Map.cols());
 	for (int i = 0; i < m_Map.rows(); i++)
 		for (int k = 0; k < m_Map.rows(); k++)
 		{
