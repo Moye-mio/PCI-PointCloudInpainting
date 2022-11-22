@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const std::string ModelPath = TESTMODEL_DIR + std::string("/CrossPlane.ply");
+const std::string ModelPath = TESTMODEL_DIR + std::string("/UniformSeg.ply");
 
 class TestExtractHoleBoundary : public testing::Test
 {
@@ -14,16 +14,41 @@ protected:
 	}
 };
 
-TEST_F(TestExtractHoleBoundary, 1)
+TEST_F(TestExtractHoleBoundary, DT_InvalidData)
 {
-	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(ModelPath));
-	ASSERT_TRUE(pTileLoader);
-	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath);
-	ASSERT_TRUE(pData);
+	PC_t::Ptr pData;
+	core::CBorderExtractor Extractor(pData);
+	ASSERT_DEATH(Extractor.Compute(0.5f), "");
 
-	core::CAABBEstimation Estimation(pData);
-	core::SAABB Box = Estimation.compute();
-	ASSERT_TRUE(Box.isValid());
-	ASSERT_EQ(Box._Max, Eigen::Vector3f(10, 10, 5));
-	ASSERT_EQ(Box._Min, Eigen::Vector3f(0, 0, 0));
+	PC_t::Ptr pData2(new PC_t);
+	core::CBorderExtractor Extractor2(pData2);
+	ASSERT_DEATH(Extractor.Compute(0.5f), "");
+}
+
+TEST_F(TestExtractHoleBoundary, DT_NegativeRaduis)
+{
+	PC_t::Ptr pData(new PC_t);
+	core::CBorderExtractor Extractor(pData);
+	ASSERT_DEATH(Extractor.Compute(-1.0f), "");
+}
+
+TEST_F(TestExtractHoleBoundary, NT_UniformSeg)
+{
+	std::string FileName = hiveUtility::hiveLocateFile(ModelPath);
+	ASSERT_FALSE(FileName.empty());
+
+	PC_t::Ptr pData(new PC_t);
+	ASSERT_TRUE(pcl::io::loadPLYFile<Point_t>(ModelPath, *pData) != -1);
+	ASSERT_TRUE(pData->size());
+
+	std::vector<int> Indices;
+	core::CBorderExtractor Extractor(pData);
+	Extractor.Compute(0.4);
+	Extractor.dumpBorderIndices(Indices);
+
+	PC_t::Ptr pCloud(new PC_t);
+	for (auto e : Indices)
+		pCloud->push_back(pData->at(e));
+
+	ASSERT_EQ(pCloud->size(), 1170);
 }

@@ -10,18 +10,13 @@
 // 添加要在此处预编译的标头
 #include "framework.h"
 
-#include <algorithm>
-#include <cmath>
-
-#include <cstdlib>
-#include <numbers>
-#include <numeric>
 #include <vector>
 #include <string>
 #include <map>
-#include <random>
+#include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <cstdlib>
 
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
@@ -35,7 +30,6 @@
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
 
-#include "PointCloudType.h"
-#include "Interpolation.h"
+
 
 #endif //PCH_H

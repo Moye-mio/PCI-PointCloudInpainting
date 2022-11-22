@@ -27,3 +27,7 @@
 
 #include "PointCloudType.h"
 #include "BorderExtractor.h"
+#include "RegionRrowing3D.h"
+#include "AABB.h"
+#include "AABBEstimation.h"
+#include "ExtremePoint.h"

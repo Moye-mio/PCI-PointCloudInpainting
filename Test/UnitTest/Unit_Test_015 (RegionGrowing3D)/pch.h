@@ -14,8 +14,8 @@
 
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
-#include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
 
 #include "common/Product.h"
 #include "common/Factory.h"
@@ -24,6 +24,7 @@
 #include "common/EventLoggerInterface.h"
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
+#include "common/CpuTimer.h"
 
 #include "PointCloudType.h"
-#include "BorderExtractor.h"
+#include "RegionRrowing3D.h"

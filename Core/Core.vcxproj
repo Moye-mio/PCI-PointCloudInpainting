@@ -120,7 +120,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -157,25 +157,35 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AABBEstimation.h" />
+    <ClInclude Include="BorderExtractor.h" />
     <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GaussianDistribution1D.h" />
+    <ClInclude Include="GaussianDistribution2D.h" />
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="HeightMap2PCMapper.h" />
     <ClInclude Include="HeightMapGenerator.h" />
+    <ClInclude Include="PlaneFitting.h" />
+    <ClInclude Include="RegionRrowing3D.h" />
     <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
+    <ClCompile Include="BorderExtractor.cpp" />
     <ClCompile Include="ExtremePoint.cpp" />
+    <ClCompile Include="GaussianDistribution1D.cpp" />
+    <ClCompile Include="GaussianDistribution2D.cpp" />
     <ClCompile Include="GradientMap.cpp" />
     <ClCompile Include="GradientMapGenerator.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="HeightMap2PCMapper.cpp" />
     <ClCompile Include="HeightMapGenerator.cpp" />
+    <ClCompile Include="PlaneFitting.cpp" />
+    <ClCompile Include="RegionRrowing3D.cpp" />
     <ClCompile Include="SparseLinearSolver.cpp" />
     <ClCompile Include="StandardHeightMap.cpp" />
     <ClCompile Include="pch.cpp">

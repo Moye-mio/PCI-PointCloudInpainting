@@ -49,6 +49,18 @@
     <Filter Include="PCFeature\ExtremeValue">
       <UniqueIdentifier>{c89cbef1-26b7-4a8b-a66c-921ec733b852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RegionGrowing">
+      <UniqueIdentifier>{b27e26fe-99e2-481e-95f8-63aee1d0f203}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Border">
+      <UniqueIdentifier>{e1f05ee4-1048-43cc-a401-299843776f67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GaussianDistribution">
+      <UniqueIdentifier>{f02a37e7-9990-41dd-b753-9f02e887047b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Fit">
+      <UniqueIdentifier>{68c809cd-a105-4f63-9883-a64c4d6542c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -87,6 +99,21 @@
     <ClInclude Include="ExtremePoint.h">
       <Filter>PCFeature\ExtremeValue</Filter>
     </ClInclude>
+    <ClInclude Include="RegionRrowing3D.h">
+      <Filter>RegionGrowing</Filter>
+    </ClInclude>
+    <ClInclude Include="BorderExtractor.h">
+      <Filter>PCFeature\Border</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianDistribution1D.h">
+      <Filter>GaussianDistribution</Filter>
+    </ClInclude>
+    <ClInclude Include="GaussianDistribution2D.h">
+      <Filter>GaussianDistribution</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneFitting.h">
+      <Filter>PCFeature\Fit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -118,6 +145,21 @@
     </ClCompile>
     <ClCompile Include="ExtremePoint.cpp">
       <Filter>PCFeature\ExtremeValue</Filter>
+    </ClCompile>
+    <ClCompile Include="RegionRrowing3D.cpp">
+      <Filter>RegionGrowing</Filter>
+    </ClCompile>
+    <ClCompile Include="BorderExtractor.cpp">
+      <Filter>PCFeature\Border</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianDistribution1D.cpp">
+      <Filter>GaussianDistribution</Filter>
+    </ClCompile>
+    <ClCompile Include="GaussianDistribution2D.cpp">
+      <Filter>GaussianDistribution</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneFitting.cpp">
+      <Filter>PCFeature\Fit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

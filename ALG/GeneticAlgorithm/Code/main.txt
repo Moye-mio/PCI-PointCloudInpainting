@@ -1,0 +1,372 @@
+#include <boost/format.hpp>
+#include <Eigen/Eigen>
+
+#include <numeric>
+#include <algorithm>
+#include <cmath>
+#include <numbers>
+#include <random>
+#include <unordered_map>
+
+#include <pcl/io/ply_io.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/sample_consensus/ransac.h>
+#include <pcl/sample_consensus/sac_model_plane.h>
+#include<pcl/kdtree/kdtree_flann.h>
+
+#include "common/CommonInterface.h"
+#include "common/MathInterface.h"
+
+#include "PointCloudType.h"
+#include "OBBPCA.h"
+
+float computeOBBVolume(const PC_t::Ptr& vCloud)
+{
+	COBBPCA PCAE;
+	PCAE.compute(vCloud);
+	SOBB OBB = PCAE.getOBB();
+	return (OBB.MaxPosition[0] - OBB.MinPosition[0]) * (OBB.MaxPosition[1] - OBB.MinPosition[1]) * (OBB.MaxPosition[2] - OBB.MinPosition[2]);
+}
+
+float ff(const PC_t::Ptr& vCloud, std::vector<int>& vSolution, float K, float V, int T)
+{
+	// f = kV −Vall √n
+
+	std::vector<float> Vall;
+	for (int i = 0; i < T; i++)
+	{
+		PC_t::Ptr pCloud(new PC_t);
+		int Count = -1;
+		for (auto e : vSolution)
+		{
+			Count++;
+			if (e != i) continue;
+			pCloud->emplace_back(vCloud->at(Count));
+		}
+
+		if (pCloud->size() == 0) continue;
+		Vall.push_back(computeOBBVolume(pCloud));
+	}
+
+	return (K * V - std::accumulate(Vall.begin(), Vall.end(), 0)) / std::sqrt(Vall.size());
+}
+
+Eigen::VectorXf fitRansacPlane(const PC_t::Ptr& vCloud)
+{
+	// Ransac
+	Eigen::VectorXf Coef;
+	pcl::SampleConsensusModelPlane<Point_t>::Ptr ModelPlane(new pcl::SampleConsensusModelPlane<Point_t>(vCloud));
+	pcl::RandomSampleConsensus<Point_t> Ransac(ModelPlane);
+	Ransac.setDistanceThreshold(0.1);
+	Ransac.computeModel();
+	Ransac.getModelCoefficients(Coef);
+	//std::cout << "平面方程为：\n" << Coef[0] << "x + " << Coef[1] << "y + " << Coef[2] << "z + " << Coef[3] << " = 0" << std::endl;
+
+	return Coef;
+}
+
+void Gaussian1D(const std::vector<float>& vData, std::vector<float>& voGaussian)
+{
+	// μ1
+	float Mean = std::accumulate(vData.begin(), vData.end(), 0) / vData.size();
+
+	// σ1^2
+	float Variance = 0.0f;
+	for (int i = 0; i < vData.size(); i++)
+		Variance += std::powf((vData[i] - Mean), 2);
+	Variance /= vData.size();
+
+	if (Variance == 0)
+	{
+		voGaussian = std::vector<float>(voGaussian.size(), 1.0f);
+		return;
+	}
+
+	// Gaussian
+	float GaussianCoef = 1 / std::sqrt(2 * std::numbers::pi * Variance);
+	for (int i = 0; i < vData.size(); i++)
+		voGaussian.push_back(GaussianCoef * std::expf(-std::powf(vData[i] - Mean, 2) / (2 * Variance)));
+}
+
+void Gaussian2D(const std::vector<float>& vData1, const std::vector<float>& vData2, std::vector<float>& voGaussian)
+{
+	// μ1, μ2
+	float Mean1 = std::accumulate(vData1.begin(), vData1.end(), 0.0f) / vData1.size();
+	float Mean2 = std::accumulate(vData2.begin(), vData2.end(), 0.0f) / vData2.size();
+
+	// σ1^2, σ2^2
+	float Variance1 = 0.0f;
+	for (int i = 0; i < vData1.size(); i++)
+		Variance1 += std::powf((vData1[i] - Mean1), 2);
+	Variance1 /= vData1.size();
+
+	float Variance2 = 0.0f;
+	for (int i = 0; i < vData2.size(); i++)
+		Variance2 += std::powf((vData2[i] - Mean2), 2);
+	Variance2 /= vData2.size();
+
+	if (Variance1 == 0 || Variance2 == 0)
+	{
+		voGaussian = std::vector<float>(voGaussian.size(), 1.0f);
+		return;
+	}
+
+	// Gaussian
+	float GaussianCoef = 1 / (2 * std::numbers::pi * std::sqrt(Variance1 * Variance2));
+	for (int i = 0; i < vData1.size(); i++)
+		voGaussian.push_back(GaussianCoef * std::expf(-0.5 * (std::powf(vData1[i] - Mean1, 2) / Variance1 + std::powf(vData2[i] - Mean2, 2) / Variance2)));
+}
+
+// Point 2 Plane Distance
+void fc1(const PC_t::Ptr& vCloud, const Eigen::Vector4f& vCoef, std::vector<float>& voDistGaussian)
+{
+	float Divisor = std::sqrt(vCoef[0] * vCoef[0] + vCoef[1] * vCoef[1] + vCoef[2] * vCoef[2]);
+
+	std::vector<float> Dists;
+	for (auto& e : *vCloud)
+		Dists.push_back(std::fabsf(vCoef[0] * e.x + vCoef[1] * e.y + vCoef[2] * e.z + vCoef[3]) / Divisor);
+
+	Gaussian1D(Dists, voDistGaussian);
+}
+
+void fc2(const PC_t::Ptr& vCloud, const Eigen::Vector4f& vCoef, std::vector<float>& voAngleGaussian, const NormalPC_t::Ptr& vNormals)
+{
+	float Divisor = std::sqrt(vCoef[0] * vCoef[0] + vCoef[1] * vCoef[1] + vCoef[2] * vCoef[2]);
+	std::vector<float> Angles;
+
+	//std::cout << "-------------SinValue-------------" << std::endl;
+
+	for (int i = 0; i < vCloud->size(); i++)
+	{
+		auto e = vNormals->at(i);
+		float InnerProduct = e.normal_x * vCoef[0] + e.normal_y * vCoef[1] + e.normal_z * vCoef[2];
+		float PointNormal = std::sqrt(e.normal_x * e.normal_x + e.normal_y * e.normal_y + e.normal_z * e.normal_z);
+		float SinValue = std::fabsf(InnerProduct) / Divisor * PointNormal;
+		//float Angle = std::asin(SinValue);
+
+		//std::cout << SinValue << std::endl;
+		Angles.push_back(SinValue);
+	}
+
+	Gaussian1D(Angles, voAngleGaussian);
+}
+
+void fc3(const PC_t::Ptr& vCloud, const Eigen::Vector4f& vPlaneCoef, std::vector<float>& voProjGaussian)
+{
+	// 求Plane和z轴的交点，以该交点为旋转点，交点处法线为z'轴，y=0和平面交线为x'轴，建立临时坐标系，目标为将临时坐标系绕旋转点旋转到新坐标系
+	float Divisor = std::sqrt(vPlaneCoef[0] * vPlaneCoef[0] + vPlaneCoef[1] * vPlaneCoef[1] + vPlaneCoef[2] * vPlaneCoef[2]);
+
+	Eigen::Vector3f RotationPoint;
+	if (vPlaneCoef[2] == 0)
+		RotationPoint = Eigen::Vector3f(0, 0, 0);
+	else
+		RotationPoint = Eigen::Vector3f(0, 0, -vPlaneCoef[3] / vPlaneCoef[2]);
+
+	float InnerProduct = vPlaneCoef[2];
+	float SinAngle = std::fabsf(InnerProduct) / (Divisor * std::fabsf(vPlaneCoef[2]));
+	float CosAngle = std::sqrt(1 - SinAngle * SinAngle);
+	//float Angle = std::asin(SinAngle);
+
+	using std::cos;
+	using std::sin;
+	Eigen::Matrix3f Rotation;
+	Rotation << CosAngle, SinAngle, 0,
+		-SinAngle, CosAngle, 0,
+		0, 0, 1;
+
+	std::cout << "Proj: " << std::endl;
+	std::vector<float> Proj1, Proj2;
+	for (auto& e : *vCloud)
+	{
+		Eigen::Vector3f Pos = Rotation * e.getVector3fMap();
+		Proj1.push_back(Pos[0]);
+		Proj2.push_back(Pos[1]);
+	}
+	Gaussian2D(Proj1, Proj2, voProjGaussian);
+
+}
+
+float fc(const PC_t::Ptr& vCloud, const NormalPC_t::Ptr& vNormals, std::vector<float>& voPointFitness2Cluster)
+{
+	Eigen::VectorXf Coef = fitRansacPlane(vCloud);
+
+	std::vector<float> r1, r2, r3;
+	fc1(vCloud, Coef, r1);
+	fc2(vCloud, Coef, r2, vNormals);
+	fc3(vCloud, Coef, r3);
+
+	_ASSERTE(r1.size() == r2.size() && r1.size() == r3.size());
+
+	std::vector<float> PointFitness;
+	for (int i = 0; i < vCloud->size(); i++)
+	{
+		//std::cout << r1[i] << "\t" << r2[i] << "\t" << r3[i] << std::endl;
+		PointFitness.push_back(r1[i] * r2[i] * r3[i]);
+	}
+
+	voPointFitness2Cluster = PointFitness;
+
+	/*std::sort(PointFitness.begin(), PointFitness.end(),
+		[&](float a, float b) -> bool
+		{
+			return a > b;
+		});
+
+	std::cout << "-------------------------------------------------------------\n";
+	for (auto e : PointFitness) std::cout << e << std::endl;*/
+
+	return 1;
+}
+
+bool loadFile(const std::string& vPath, PC_t::Ptr& voCloud)
+{
+	if (pcl::io::loadPLYFile<Point_t>(vPath, *voCloud) == -1)
+	{
+		PCL_ERROR("Couldn't read file test_pcd.pcd \n");
+		return 0;
+	}
+}
+
+int main()
+{
+	/* Load File */ 
+	std::string ModelPath = "./Model/UniformRaw.ply";
+	PC_t::Ptr pCloud(new PC_t);
+	loadFile(ModelPath, pCloud);
+
+	/* Estimate Normals */
+	pcl::NormalEstimation<Point_t, Normal_t> NE;
+	NormalPC_t::Ptr Normals(new NormalPC_t);
+	NE.setInputCloud(pCloud);
+	pcl::search::KdTree<Point_t>::Ptr KdTree(new pcl::search::KdTree<Point_t>());
+	NE.setSearchMethod(KdTree);
+	NE.setRadiusSearch(0.3);
+	NE.compute(*Normals);
+
+	// GA
+	// 创建n个染色体，指定最多有T类
+	// 设立ff
+	// 计算每个染色体的ff结果
+	// 选择算子：EVM，留下10%到下一代
+	// 交叉算子：选择40%，计算fc，确定交叉点的位置，交叉后到下一代
+	// 变异算子：选择50%，计算fc，确定变异点位置，变异后到下一代
+	// 迭代
+
+	/* Set Parameters */
+	int n = 100;
+	int T = 8;
+	int L = pCloud->size();
+	float K = T * 2;
+	float V = computeOBBVolume(pCloud);
+
+	/* Init Solutions */
+	std::vector<std::vector<int>> Solutions;
+	for (int i = 0; i < n; i++)
+	{
+		std::vector<int> Solution = hiveMath::hiveGenerateRandomIntegerSet<int>(0, T - 1, L);
+		Solutions.emplace_back(Solution);
+	}
+
+	/* Compute Fitness for Each Solution */
+	std::vector<float> Fitness;
+	for (int i = 0; i < n; i++)
+		Fitness.push_back(ff(pCloud, Solutions[i], K, V, T));
+
+	/* Compute Expected Values */
+	float MeanFitness = std::accumulate(Fitness.begin(), Fitness.end(), 0.0f) / n;
+	std::vector < std::pair<int, float> > ExpectedValue;	// solution <index, fitness>
+	for (int i = 0; i < n; i++)
+		ExpectedValue.emplace_back(std::make_pair(i, Fitness[i] / MeanFitness));
+
+	/* Sort Solutions by Fitness */
+	std::sort(ExpectedValue.begin(), ExpectedValue.end(),
+		[&](const std::pair<int, float>& a, const std::pair<int, float>& b) -> bool { return a.second > b.second; });
+
+	/* Preparation Work: Compute Each Point FC in Each Solution */
+	std::vector<std::vector<int>> NextSolutions;
+	std::unordered_map<int, std::vector<float>> PCs;	// PCs < index, fc >
+	// 10% selection; 40% cross; 50% mutation
+	for (int i = 0; i < n; i++)
+	{
+		std::vector<int> CurSolution = Solutions[ExpectedValue[i].first];
+
+		if (i < n * 0.1)
+		{
+			NextSolutions.emplace_back(CurSolution);
+			continue;
+		}
+
+		if (i < n * 0.5)
+		{
+			std::vector<float> PFC(n, 0);
+
+			/* Traverse Each Cluster and Point in Current Solution */
+			for (int t = 0; t < T; t++)
+			{
+				/* Extract Cloud and Normals for Each Solution */
+				PC_t::Ptr pNewCloud(new PC_t);
+				NormalPC_t::Ptr pNewNormals(new NormalPC_t);
+				std::vector<float> PointFitness2Cloud;
+
+				for (int k = 0; k < L; k++)
+					if (CurSolution[k] == t)
+					{
+						pNewCloud->emplace_back(pCloud->at(i));
+						pNewNormals->emplace_back(Normals->at(i));
+					}
+
+				fc(pNewCloud, pNewNormals, PointFitness2Cloud);
+				
+				int Count = 0;
+				for (int k = 0; k < L; k++)
+					if (CurSolution[k] == t)
+					{
+						PFC[k] = PointFitness2Cloud[Count];
+						Count++;
+					}
+			}
+
+			PCs.insert(std::make_pair(i, PFC));
+		}
+		else
+		{
+
+		}
+
+	}
+
+	auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(int(n * 0.1f), int(n * 0.5f - 1), int(n * 0.4f));
+	for (int i = 0; i < RandomSet.size(); i += 2)
+	{
+		int M = (RandomSet[i] < RandomSet[i + 1]) ? RandomSet[i] : RandomSet[i + 1];
+		int m = (RandomSet[i] >= RandomSet[i + 1]) ? RandomSet[i] : RandomSet[i + 1];
+
+		auto IterM = PCs.find(M);
+		auto Iterm = PCs.find(m);
+		_ASSERTE(IterM != PCs.end() && Iterm != PCs.end());
+
+		auto PCMajor = IterM->second;
+		auto PCMinor = Iterm->second;
+		_ASSERTE(PCMajor.size() == PCMinor.size() && PCMajor.size() == L);
+
+		std::vector<int> CrossSolution = Solutions[ExpectedValue[M].first];
+		for (int k = 0; k < L; k++)
+		{
+			if (PCMajor[k] == PCMinor[k]) continue;
+
+			float Random = hiveMath::hiveGenerateRandomReal(0.0f, 1.0f);
+			float Confidence = PCMajor[k] / (PCMajor[k] + PCMinor[k]);
+			if (Random <= Confidence) continue;
+
+			// Cross
+			CrossSolution[k] = Solutions[ExpectedValue[m].first][k];
+		}
+		NextSolutions.emplace_back(CrossSolution);
+	}
+
+
+
+
+
+
+}
