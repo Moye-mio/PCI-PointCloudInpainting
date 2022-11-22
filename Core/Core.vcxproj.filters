@@ -19,15 +19,6 @@
     <Filter Include="HeightMap\Generator">
       <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AABB">
-      <UniqueIdentifier>{48d919cf-da67-4034-9540-0090adb003c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AABB\Struct">
-      <UniqueIdentifier>{e1e3dc77-bbba-47e9-a760-74c662635fff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AABB\Estimation">
-      <UniqueIdentifier>{97b78606-ef60-4ca6-996b-83505e660865}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GradientMap">
       <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
     </Filter>
@@ -61,6 +52,27 @@
     <Filter Include="PCFeature\Fit">
       <UniqueIdentifier>{68c809cd-a105-4f63-9883-a64c4d6542c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BB">
+      <UniqueIdentifier>{4d664d0c-286e-4991-8682-7b21c054b525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\AABB">
+      <UniqueIdentifier>{48d919cf-da67-4034-9540-0090adb003c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\AABB\Struct">
+      <UniqueIdentifier>{e1e3dc77-bbba-47e9-a760-74c662635fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\AABB\Estimation">
+      <UniqueIdentifier>{97b78606-ef60-4ca6-996b-83505e660865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\OBB">
+      <UniqueIdentifier>{a885fa98-c0bf-41be-b34c-4cb8caca9502}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\OBB\Struct">
+      <UniqueIdentifier>{3d5034eb-8764-44be-adce-48d3b36e783f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BB\OBB\Estimation">
+      <UniqueIdentifier>{59c89795-4ba8-42e7-82f3-1f52b2969bc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -79,10 +91,10 @@
       <Filter>HeightMap\Generator</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
-      <Filter>AABB\Struct</Filter>
+      <Filter>BB\AABB\Struct</Filter>
     </ClInclude>
     <ClInclude Include="AABBEstimation.h">
-      <Filter>AABB\Estimation</Filter>
+      <Filter>BB\AABB\Estimation</Filter>
     </ClInclude>
     <ClInclude Include="GradientMap.h">
       <Filter>GradientMap\Struct</Filter>
@@ -114,6 +126,12 @@
     <ClInclude Include="PlaneFitting.h">
       <Filter>PCFeature\Fit</Filter>
     </ClInclude>
+    <ClInclude Include="OBB.h">
+      <Filter>BB\OBB\Struct</Filter>
+    </ClInclude>
+    <ClInclude Include="OBBPCA.h">
+      <Filter>BB\OBB\Estimation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -129,7 +147,7 @@
       <Filter>HeightMap\Generator</Filter>
     </ClCompile>
     <ClCompile Include="AABBEstimation.cpp">
-      <Filter>AABB\Estimation</Filter>
+      <Filter>BB\AABB\Estimation</Filter>
     </ClCompile>
     <ClCompile Include="GradientMap.cpp">
       <Filter>GradientMap\Struct</Filter>
@@ -160,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="PlaneFitting.cpp">
       <Filter>PCFeature\Fit</Filter>
+    </ClCompile>
+    <ClCompile Include="OBBPCA.cpp">
+      <Filter>BB\OBB\Estimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
