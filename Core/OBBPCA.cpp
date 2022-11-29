@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "OBBPCA.h"
-#include <Eigen/src/Eigenvalues/EigenSolver.h>
 #include <pcl/common/centroid.h>
 
 using namespace core;

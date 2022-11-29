@@ -14,9 +14,12 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <numeric>
+#include <cmath>
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdlib>
+#include <numbers>
 
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
@@ -29,7 +32,9 @@
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
+#include "common/CpuTimer.h"
 
-
+#include "PointCloudType.h"
+#include "OBB.h"
 
 #endif //PCH_H

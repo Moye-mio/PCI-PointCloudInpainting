@@ -4,18 +4,17 @@
 #include <pcl/sample_consensus/ransac.h>
 #include <pcl/sample_consensus/sac_model_plane.h>
 #include <pcl/kdtree/kdtree_flann.h>
+#include "Plane.h"
+
+#include <pcl/io/ply_io.h>
 
 using namespace core;
 
-CPlaneFitting::CPlaneFitting()
-	: m_Epsilon(0.00001f)
-{}
-
-Eigen::VectorXf CPlaneFitting::fitRansacPlane(const PC_t::Ptr& vCloud, float vDistThres)
+common::SPlane CPlaneFitting::fitRansacPlane(const PC_t::Ptr& vCloud, float vDistThres)
 {
 	_ASSERTE(vDistThres > 0);
 	_ASSERTE(vCloud != NULL);
-	_ASSERTE(vCloud->size());
+	_ASSERTE(vCloud->size() >= 3);
 
 	Eigen::VectorXf Coef;
 	pcl::SampleConsensusModelPlane<Point_t>::Ptr ModelPlane(new pcl::SampleConsensusModelPlane<Point_t>(vCloud));
@@ -25,27 +24,16 @@ Eigen::VectorXf CPlaneFitting::fitRansacPlane(const PC_t::Ptr& vCloud, float vDi
 	Ransac.getModelCoefficients(Coef);
 	//std::cout << "Function of plane£º\n" << Coef[0] << "x + " << Coef[1] << "y + " << Coef[2] << "z + " << Coef[3] << " = 0" << std::endl;
 
-	return __correct(Coef);
-}
-
-Eigen::VectorXf CPlaneFitting::__correct(const Eigen::VectorXf& vCoef)
-{
-	_ASSERTE(vCoef.size() == 4);
-
-	Eigen::VectorXf Coefs = vCoef;
-	for (int i = 0; i < vCoef.size(); i++)
+	if (Coef[0] == 0 && Coef[1] == 0 && Coef[2] == 0)
 	{
-		if (std::fabsf(vCoef[i]) < m_Epsilon)
-			Coefs[i] = 0.0f;
-
-		if (vCoef[i] > 0)
-			break;
-		else if (vCoef[i] < 0)
-		{
-			Coefs = vCoef * -1;
-			break;
-		}
+		std::cout << "Ransac failed...\tPoint Cloud Size: " << vCloud->size() << std::endl;
+		Coef[0] = 1;
 	}
-	return Coefs;
+
+	_ASSERTE(!(Coef[0] == 0 && Coef[1] == 0 && Coef[2] == 0));
+	common::SPlane Plane(Coef[0], Coef[1], Coef[2], Coef[3]);
+	Plane.normalize();
+
+	return Plane;
 }
 

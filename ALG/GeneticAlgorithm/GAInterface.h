@@ -2,5 +2,5 @@
 
 namespace GA
 {
-	void run(std::vector<std::vector<int>>& voClusters);
+	void run(const PC_t::Ptr& vCloud, std::vector<std::vector<int>>& voClusters);
 }

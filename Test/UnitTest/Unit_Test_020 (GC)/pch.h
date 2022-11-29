@@ -15,6 +15,8 @@
 #include <boost/format.hpp>
 
 #include <pcl/io/ply_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <vtkRenderWindow.h>
 
 #include "common/Product.h"
 #include "common/Factory.h"
@@ -28,5 +30,6 @@
 
 #include "PointCloudType.h"
 
-#include "PlaneFitting.h"
-#include "Plane.h"
+#include "GeneticClustering.h"
+#include "Cluster.h"
+#include "NormalEstimator.h"

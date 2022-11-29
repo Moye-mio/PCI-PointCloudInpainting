@@ -27,6 +27,4 @@
 #include "common/CpuTimer.h"
 
 #include "PointCloudType.h"
-
-#include "PlaneFitting.h"
-#include "Plane.h"
+#include "NormalEstimator.h"

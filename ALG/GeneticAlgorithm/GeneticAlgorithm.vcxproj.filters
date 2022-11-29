@@ -10,6 +10,9 @@
     <Filter Include="Interface">
       <UniqueIdentifier>{8d3684d3-bcc8-423c-966d-d8bc12c683b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Clustering">
+      <UniqueIdentifier>{443af680-2234-4004-a342-8d213a247e6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,6 +24,12 @@
     <ClInclude Include="GAInterface.h">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="GeneticClustering.h">
+      <Filter>Clustering</Filter>
+    </ClInclude>
+    <ClInclude Include="Cluster.h">
+      <Filter>Clustering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -28,6 +37,12 @@
     </ClCompile>
     <ClCompile Include="GAInterface.cpp">
       <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneticClustering.cpp">
+      <Filter>Clustering</Filter>
+    </ClCompile>
+    <ClCompile Include="Cluster.cpp">
+      <Filter>Clustering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

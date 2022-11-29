@@ -29,6 +29,9 @@
     <Filter Include="Math">
       <UniqueIdentifier>{0398ab61-67a5-46cd-9c46-3fa5c228dc38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{793800e4-881e-425a-9ba3-12d3d3c4929a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudType.h">
@@ -51,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="Interpolation.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

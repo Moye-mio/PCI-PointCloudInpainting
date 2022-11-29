@@ -13,8 +13,7 @@
 #include <numbers>
 
 #include <boost/format.hpp>
-
-#include <pcl/io/ply_io.h>
+#include <Eigen/Eigen>
 
 #include "common/Product.h"
 #include "common/Factory.h"
@@ -25,8 +24,3 @@
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
 #include "common/CpuTimer.h"
-
-#include "PointCloudType.h"
-
-#include "PlaneFitting.h"
-#include "Plane.h"

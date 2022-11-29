@@ -4,7 +4,7 @@
 
 using namespace GA;
 
-void GA::run(std::vector<std::vector<int>>& voClusters)
+void GA::run(const PC_t::Ptr& vCloud, std::vector<std::vector<int>>& voClusters)
 {
 
 }

@@ -73,6 +73,9 @@
     <Filter Include="BB\OBB\Estimation">
       <UniqueIdentifier>{59c89795-4ba8-42e7-82f3-1f52b2969bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PCFeature\Normal">
+      <UniqueIdentifier>{31baf9ad-6ac4-4f3f-bbf8-08041b614841}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="OBBPCA.h">
       <Filter>BB\OBB\Estimation</Filter>
     </ClInclude>
+    <ClInclude Include="NormalEstimator.h">
+      <Filter>PCFeature\Normal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -181,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="OBBPCA.cpp">
       <Filter>BB\OBB\Estimation</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalEstimator.cpp">
+      <Filter>PCFeature\Normal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

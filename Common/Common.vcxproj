@@ -24,6 +24,7 @@
     <ClInclude Include="JsonParser.h" />
     <ClInclude Include="magic_enum.hpp" />
     <ClInclude Include="Interpolation.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="PointCloudType.h" />
     <ClInclude Include="Registry.h" />
   </ItemGroup>

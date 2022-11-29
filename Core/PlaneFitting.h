@@ -1,19 +1,20 @@
 #pragma once
 
+namespace common
+{
+	struct SPlane;
+}
+
 namespace core
 {
 	class CPlaneFitting
 	{
 	public:
-		CPlaneFitting();
+		CPlaneFitting() {}
 		~CPlaneFitting() {}
 
-		Eigen::VectorXf fitRansacPlane(const PC_t::Ptr& vCloud, float vDistThres);
+		common::SPlane fitRansacPlane(const PC_t::Ptr& vCloud, float vDistThres);
 
 	private:
-		Eigen::VectorXf __correct(const Eigen::VectorXf& vCoef);
-
-	private:
-		float m_Epsilon;
 	};
 }
