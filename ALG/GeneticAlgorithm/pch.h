@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <numbers>
 
+#include <omp.h>
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
 

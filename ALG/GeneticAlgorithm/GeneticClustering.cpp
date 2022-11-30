@@ -61,7 +61,11 @@ bool CGeneticClustering::run()
 			Solutions = m_ClusterResult;
 
 		std::cout << "Loop " << i << ": " << std::endl;
-		__loop(Solutions);
+
+		if (i < m_LoopSize / 2)
+			__loop(Solutions, false);
+		else
+ 			__loop(Solutions, true);
 	}
 
 	return true;
@@ -100,7 +104,6 @@ void CGeneticClustering::__init(std::vector<std::vector<int>>& voSolutions)
 void CGeneticClustering::__calcSortedExpectedValues(const std::vector<std::vector<int>>& vSolutions, std::vector<std::pair<int, float>>& voExpectedValues)
 {
 	std::vector<float> Fitness;
-	// #pragma omp parallel for
 	for (int i = 0; i < m_SolutionSize; i++)
 	{
 		float Fit = __calcSolutionFitness(vSolutions[i]);
@@ -231,7 +234,7 @@ float CGeneticClustering::__calcMutatePR(const std::vector<float>& vFitness, int
 	return (1 - vFitness[vCate] / std::accumulate(vFitness.begin(), vFitness.end(), 0.0f));
 }
 
-void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions)
+void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions, bool vMutateAll)
 {
 	std::vector<std::pair<int, float>> ExpectedValue;	// Solution <index, fitness>
 	__calcSortedExpectedValues(vSolutions, ExpectedValue);
@@ -239,6 +242,7 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions)
 	std::vector<std::vector<int>> NextSolutions;
 	std::unordered_map<int, std::vector<float>> Points2Clusters;	// PCs < index, fc >
 
+#pragma omp parallel for
 	for (int i = 0; i < m_SolutionSize; i++)
 	{
 		std::vector<int> CurSolution = vSolutions[ExpectedValue[i].first];
@@ -258,7 +262,10 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions)
 			__calcPointFitness(CurSolution, PointFitnessInSolution);
 			Points2Clusters.insert(std::make_pair(i, PointFitnessInSolution));
 		}
-		else
+		
+		if (vMutateAll == false && i < m_SolutionSize * m_OperatorRate[1]) continue;
+
+		/* Mutate */
 		{
 			{
 				std::cout << "Mutate: " << ExpectedValue[i].first << std::endl;

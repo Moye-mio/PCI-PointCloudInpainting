@@ -72,5 +72,5 @@ TEST_F(TestGC, DT_InValidInput)
 
 	pcl::io::savePLYFileBinary("Output.ply", *pOutput);
 
-	std::cout << "Use Time: " << t << std::endl;
+	std::cout << "Use Time: " << t << "ms" << std::endl;
 }
