@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const std::string ModelPath = TESTMODEL_DIR + std::string("/CrossPlane.ply");
+const std::string ModelPath = TESTMODEL_DIR + std::string("/Concave.ply");
 
 class TestCluster : public testing::Test
 {

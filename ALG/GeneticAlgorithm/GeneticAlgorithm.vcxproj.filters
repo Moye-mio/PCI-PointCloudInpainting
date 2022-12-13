@@ -13,6 +13,9 @@
     <Filter Include="Clustering">
       <UniqueIdentifier>{443af680-2234-4004-a342-8d213a247e6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Operator">
+      <UniqueIdentifier>{fae044bf-5f88-4e25-9133-5e2950ea381b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -30,6 +33,12 @@
     <ClInclude Include="Cluster.h">
       <Filter>Clustering</Filter>
     </ClInclude>
+    <ClInclude Include="Selector.h">
+      <Filter>Operator</Filter>
+    </ClInclude>
+    <ClInclude Include="Crossor.h">
+      <Filter>Operator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -43,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="Cluster.cpp">
       <Filter>Clustering</Filter>
+    </ClCompile>
+    <ClCompile Include="Selector.cpp">
+      <Filter>Operator</Filter>
+    </ClCompile>
+    <ClCompile Include="Crossor.cpp">
+      <Filter>Operator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

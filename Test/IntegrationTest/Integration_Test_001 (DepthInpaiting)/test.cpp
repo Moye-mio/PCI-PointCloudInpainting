@@ -27,8 +27,15 @@ TEST_F(TestDepthInpainting, NT_)
 {
 	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(ModelPath5));
 	ASSERT_TRUE(pTileLoader);
-	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath2);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath5);
 	ASSERT_TRUE(pData);
+
+	for (int i = 0; i < pData->size(); i++)
+	{
+		float t = pData->at(i).y;
+		pData->at(i).y = pData->at(i).z;
+		pData->at(i).z = t;
+	}
 
 	core::CAABBEstimation Estimation(pData);
 	core::SAABB Box = Estimation.compute();
@@ -50,8 +57,8 @@ TEST_F(TestDepthInpainting, NT_)
 	PC_t::Ptr pOutput;
 	dataManagement::CDepthInpaiting DepthInpainting;
 	DepthInpainting.run(pData, pOutput);
-	pcl::io::savePLYFileBinary<Point_t>("Output.ply", *pOutput);
+	pcl::io::savePLYFileBinary<Point_t>("Output_Road_Seg_Sim.ply", *pOutput);
 	*pOutput += *pData;
-	pcl::io::savePLYFileBinary<Point_t>("Merge.ply", *pOutput);
+	pcl::io::savePLYFileBinary<Point_t>("Merge_Road_Seg_Sim.ply", *pOutput);
 
 }

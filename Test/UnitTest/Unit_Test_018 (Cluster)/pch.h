@@ -14,6 +14,8 @@
 
 #include <boost/format.hpp>
 
+#include <pcl/io/ply_io.h>
+
 #include "common/Product.h"
 #include "common/Factory.h"
 #include "common/Singleton.h"

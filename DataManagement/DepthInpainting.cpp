@@ -78,7 +78,7 @@ void dataManagement::CDepthInpaiting::run(const PC_t::Ptr& vCloud, PC_t::Ptr& vo
 	core::SAABB Box = Estimation.compute();
 	_ASSERTE(Box.isValid());
 	core::CHeightMap2PCMapper Mapper;
-	Mapper.map2PC(voResultCloud, std::make_pair(HeightMap, HeightMapInpainted), Box, 50);	/* Magic Number */
+	Mapper.map2PC(voResultCloud, std::make_pair(HeightMap, HeightMapInpainted), Box, 20);	/* Magic Number */
 }
 
 void CDepthInpaiting::__setValueInMap(core::CHeightMap& vioMap, const std::vector<Eigen::Vector2f>& vUnknowns, const Eigen::MatrixXf& vSolutions)

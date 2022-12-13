@@ -20,10 +20,13 @@
 #include <unordered_set>
 #include <cstdlib>
 #include <numbers>
+#include <array>
+#include <mutex>
 
 #include <omp.h>
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
+#include <tbb/concurrent_vector.h>
 
 #include "common/Product.h"
 #include "common/Factory.h"

@@ -100,6 +100,7 @@ void CCluster::__fitPlane()
 void CCluster::__calcDistGD()
 {
 	float Divisor = std::sqrt(m_Plane[0] * m_Plane[0] + m_Plane[1] * m_Plane[1] + m_Plane[2] * m_Plane[2]);
+	_ASSERTE(Divisor > 0);
 	std::vector<float> Dists;
 	for (auto& e : *m_pCloud)
 		Dists.push_back(__calcPointDist2Plane(e, Divisor));
@@ -110,9 +111,8 @@ void CCluster::__calcDistGD()
 void CCluster::__calcAngleGD()
 {
 	float Divisor = std::sqrt(m_Plane[0] * m_Plane[0] + m_Plane[1] * m_Plane[1] + m_Plane[2] * m_Plane[2]);
+	_ASSERTE(Divisor > 0);
 	std::vector<float> Angles;
-
-	//std::cout << "-------------SinValue-------------" << std::endl;
 
 	for (int i = 0; i < m_pCloud->size(); i++)
 		Angles.push_back(__calcNormalAngle(m_Normals->at(i), Divisor));
@@ -180,6 +180,7 @@ float CCluster::__calcPointDist2Plane(const Point_t& vPoint, float vDivisor /*= 
 {
 	if (vDivisor == 0.0f)
 		vDivisor = std::sqrt(m_Plane[0] * m_Plane[0] + m_Plane[1] * m_Plane[1] + m_Plane[2] * m_Plane[2]);
+	_ASSERTE(vDivisor > 0);
 	return std::fabsf(m_Plane[0] * vPoint.x + m_Plane[1] * vPoint.y + m_Plane[2] * vPoint.z + m_Plane[3]) / vDivisor;
 }
 
@@ -187,5 +188,6 @@ float CCluster::__calcNormalAngle(const Normal_t& vNormal, float vDivisor /*= 0.
 {
 	float InnerProduct = vNormal.normal_x * m_Plane[0] + vNormal.normal_y * m_Plane[1] + vNormal.normal_z * m_Plane[2];
 	float PointNormal = std::sqrt(vNormal.normal_x * vNormal.normal_x + vNormal.normal_y * vNormal.normal_y + vNormal.normal_z * vNormal.normal_z);
+	_ASSERTE(PointNormal > 0 && vDivisor > 0);
 	return std::fabsf(InnerProduct) / vDivisor * PointNormal;
 }

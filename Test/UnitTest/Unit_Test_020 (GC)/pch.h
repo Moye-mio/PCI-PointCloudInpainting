@@ -8,14 +8,20 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
+#include <map>
+#include <algorithm>
+#include <numeric>
 #include <cmath>
+#include <unordered_map>
+#include <unordered_set>
+#include <cstdlib>
 #include <numbers>
+#include <array>
+
 
 #include <boost/format.hpp>
 
 #include <pcl/io/ply_io.h>
-#include <pcl/visualization/pcl_visualizer.h>
 #include <vtkRenderWindow.h>
 
 #include "common/Product.h"

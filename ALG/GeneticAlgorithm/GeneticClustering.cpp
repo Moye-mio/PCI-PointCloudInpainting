@@ -66,6 +66,8 @@ bool CGeneticClustering::run()
 			__loop(Solutions, false);
 		else
  			__loop(Solutions, true);
+
+		__clearRedundantClusters(m_ClusterResult);
 	}
 
 	return true;
@@ -241,8 +243,9 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 
 	std::vector<std::vector<int>> NextSolutions;
 	std::unordered_map<int, std::vector<float>> Points2Clusters;	// PCs < index, fc >
+	std::mutex Mutex;
 
-#pragma omp parallel for
+#pragma omp parallel for num_threads(m_SolutionSize)
 	for (int i = 0; i < m_SolutionSize; i++)
 	{
 		std::vector<int> CurSolution = vSolutions[ExpectedValue[i].first];
@@ -251,7 +254,9 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 			{
 				std::cout << "Select: " << ExpectedValue[i].first << std::endl;
 			}
+			Mutex.lock();
 			NextSolutions.emplace_back(CurSolution);
+			Mutex.unlock();
 		}
 		if (i < m_SolutionSize * m_OperatorRate[1])
 		{
@@ -267,12 +272,12 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 
 		/* Mutate */
 		{
-			{
-				std::cout << "Mutate: " << ExpectedValue[i].first << std::endl;
-			}
 			std::vector<CCluster> Clusters;
 			__generateClusters(CurSolution, Clusters);
 			std::vector<int> MutationSolution = CurSolution;
+
+			int MutateNumber = 0;
+
 			for (int k = 0; k < m_DataSize; k++)
 			{
 				auto& Point = m_Cloud->at(k);
@@ -282,10 +287,20 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 					PointFitness.push_back(e.computePointFitness(Point, Normal));
 
 				float PR = __calcMutatePR(PointFitness, CurSolution[k]);
-				if (hiveMath::hiveGenerateRandomReal(0.0f, 1.0f) > PR)
+				if (hiveMath::hiveGenerateRandomReal(0.0f, 1.0f) < PR)
+				{
+					MutateNumber++;
 					MutationSolution[k] = std::distance(PointFitness.begin(), std::max_element(PointFitness.begin(), PointFitness.end()));
+				}
 			}
+
+			{
+				std::cout << "Mutate: " << ExpectedValue[i].first << "\t" << MutateNumber << std::endl;
+			}
+
+			Mutex.lock();
 			NextSolutions.emplace_back(MutationSolution);
+			Mutex.unlock();
 		}
 	}
 
@@ -324,4 +339,33 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 	}
 
 	m_ClusterResult = NextSolutions;
+}
+
+void CGeneticClustering::__clearRedundantClusters(std::vector<std::vector<int>>& vioSolutions)
+{
+	for (auto& e : vioSolutions)
+	{
+		std::vector<int> ClusterPointCount(m_ClusterSize, 0);
+		for (auto p : e)
+			ClusterPointCount[p]++;
+
+		std::vector<int> CateMapping;
+		for (int i = 0; i < m_ClusterSize; i++)
+			CateMapping.push_back(i);
+
+		for (int i = 0; i < ClusterPointCount.size(); i++)
+			if (ClusterPointCount[i] == 0)
+			{
+				CateMapping[i] = -1;
+				for (int k = i + 1; k < CateMapping.size(); k++)
+					CateMapping[k] -= 1;
+			}
+
+		for (int i = 0; i <m_DataSize; i++)
+		{
+			_ASSERTE(CateMapping[e[i]] >= 0);
+			if (e[i] != CateMapping[e[i]])
+				e[i] = CateMapping[e[i]];
+		}
+	}
 }

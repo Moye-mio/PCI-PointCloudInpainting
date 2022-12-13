@@ -37,7 +37,7 @@ bool CHeightMapGenerator::generate(int vWidth, int vHeight)
 		_ASSERTE(m_Box.isValid());
 	}
 
-	for (auto& e : *m_pCloud)
+	for (auto& e : *m_pCloud) 
 	{
 		Eigen::Vector2i Offset = __computeOffset(e);
 		if (e.z > m_Map.getValueAt(Offset[0], Offset[1]))

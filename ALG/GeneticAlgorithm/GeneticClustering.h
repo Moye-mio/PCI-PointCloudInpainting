@@ -20,6 +20,7 @@ namespace GA
 		void __loop(const std::vector<std::vector<int>>& vSolutions, bool vMutateAll);
 		void __calcSortedExpectedValues(const std::vector<std::vector<int>>& vSolutions, std::vector<std::pair<int, float>>& voExpectedValues);
 		void __calcPointFitness(const std::vector<int>& vSolution, std::vector<float>& vPointFitnessInSolution);
+		void __clearRedundantClusters(std::vector<std::vector<int>>& vioSolutions);
 		float __calcVolume(const PC_t::Ptr& vCloud);
 		float __calcSolutionFitness(const std::vector<int>& vSolution);
 		float __generateClusters(const std::vector<int>& vSolution, std::vector<CCluster>& voClusters);

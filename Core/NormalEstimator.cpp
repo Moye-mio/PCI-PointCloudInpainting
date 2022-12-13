@@ -32,4 +32,12 @@ void CNormalEstimator::compute(float vRadius)
 	PCLEstimator.setSearchMethod(KdTree);
 	PCLEstimator.setRadiusSearch(vRadius);
 	PCLEstimator.compute(*m_Normals);
+
+	for (auto& e : *m_Normals)
+	{
+		if (std::isnan(e.normal_x)) e.normal_x = 0.0f;
+		if (std::isnan(e.normal_y)) e.normal_y = 0.0f;
+		if (std::isnan(e.normal_z)) e.normal_z = 0.0f;
+		if (e.normal_x == 0 && e.normal_y == 0 && e.normal_z == 0) e.normal_x = 1.0f;
+	}
 }
