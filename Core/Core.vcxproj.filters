@@ -76,6 +76,15 @@
     <Filter Include="PCFeature\Normal">
       <UniqueIdentifier>{31baf9ad-6ac4-4f3f-bbf8-08041b614841}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{7f051c60-0fcd-4866-a044-ba3d26657b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Curve">
+      <UniqueIdentifier>{00d2a85d-e9a7-4206-b14b-d2ef5d56cf7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Surface">
+      <UniqueIdentifier>{6d1cef4b-f443-487f-914f-27ffc7d327e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -138,6 +147,12 @@
     <ClInclude Include="NormalEstimator.h">
       <Filter>PCFeature\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="BSplineCurve.h">
+      <Filter>Geometry\Curve</Filter>
+    </ClInclude>
+    <ClInclude Include="BSplineSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -190,6 +205,12 @@
     </ClCompile>
     <ClCompile Include="NormalEstimator.cpp">
       <Filter>PCFeature\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="BSplineCurve.cpp">
+      <Filter>Geometry\Curve</Filter>
+    </ClCompile>
+    <ClCompile Include="BSplineSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

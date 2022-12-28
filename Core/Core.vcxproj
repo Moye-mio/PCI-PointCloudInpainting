@@ -158,6 +158,8 @@
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AABBEstimation.h" />
     <ClInclude Include="BorderExtractor.h" />
+    <ClInclude Include="BSplineCurve.h" />
+    <ClInclude Include="BSplineSurface.h" />
     <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GaussianDistribution1D.h" />
@@ -179,6 +181,8 @@
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
     <ClCompile Include="BorderExtractor.cpp" />
+    <ClCompile Include="BSplineCurve.cpp" />
+    <ClCompile Include="BSplineSurface.cpp" />
     <ClCompile Include="ExtremePoint.cpp" />
     <ClCompile Include="GaussianDistribution1D.cpp" />
     <ClCompile Include="GaussianDistribution2D.cpp" />
