@@ -27,18 +27,23 @@ SPoint CBSplineSurface::sample(float vU, float vV)
 	_ASSERTE(m_ControlPoints.rows() >= m_Degree + 1 && m_ControlPoints.cols() >= m_Degree + 1);
 	_ASSERTE(m_Degree == 3);
 
+	return __sample(m_ControlPoints, vU, vV);
+}
+
+SPoint CBSplineSurface::__sample(const Eigen::Matrix<SPoint, -1, -1>& vPoints, float vU, float vV)
+{
 	std::vector<SPoint> CPInRow;
-	for (int i = 0; i < m_ControlPoints.cols(); i++)
+	for (int i = 0; i < vPoints.cols(); i++)
 	{
 		std::vector<SPoint> CPPerCol;
-		for (int k = 0; k < m_ControlPoints.rows(); k++)
-			CPPerCol.emplace_back(m_ControlPoints.coeff(k, i));
+		for (int k = 0; k < vPoints.rows(); k++)
+			CPPerCol.emplace_back(vPoints.coeff(k, i));
 		core::CBSplineCurve Curve(m_Degree);
 		Curve.setControlPoints(CPPerCol);
 		SPoint r = Curve.sample(vU);
 		CPInRow.emplace_back(r);
 	}
-	
+
 	core::CBSplineCurve Curve(m_Degree);
 	Curve.setControlPoints(CPInRow);
 	SPoint Result = Curve.sample(vV);

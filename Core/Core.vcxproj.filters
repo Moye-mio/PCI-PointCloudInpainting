@@ -153,6 +153,12 @@
     <ClInclude Include="BSplineSurface.h">
       <Filter>Geometry\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="MultiLayerBSplineSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -210,6 +216,9 @@
       <Filter>Geometry\Curve</Filter>
     </ClCompile>
     <ClCompile Include="BSplineSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiLayerBSplineSurface.cpp">
       <Filter>Geometry\Surface</Filter>
     </ClCompile>
   </ItemGroup>
