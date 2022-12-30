@@ -2,8 +2,11 @@
 
 namespace core
 {
-	using SPoint = Eigen::Vector3f;
+	struct SPoint;
+}
 
+namespace core
+{
 	class CBSplineCurve
 	{
 	public:

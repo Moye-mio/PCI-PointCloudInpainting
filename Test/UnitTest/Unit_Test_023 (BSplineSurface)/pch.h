@@ -32,5 +32,6 @@
 #include "common/MathInterface.h"
 #include "common/CpuTimer.h"
 
+#include "Point.h"
 #include "BSplineCurve.h"
 #include "BSplineSurface.h"

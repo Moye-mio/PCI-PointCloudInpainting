@@ -1,39 +1,26 @@
 #pragma once
-#include <Eigen/Eigen>
+#include "Plane.h"
 
 namespace core
 {
-	using SPoint = Eigen::Vector3f;
-
-	struct STriangle
+	class CTriangle
 	{
-		STriangle() = default;
-		STriangle(const SPoint& vPoint1, const SPoint& vPoint2, const SPoint& vPoint3)
-			: _Point1(vPoint1)
-			, _Point2(vPoint2)
-			, _Point3(vPoint3) {}
+	public:
+		CTriangle() = default;
+		CTriangle(const SPoint& vPoint1, const SPoint& vPoint2, const SPoint& vPoint3);
+		
+		SPoint& operator[](unsigned int i);
+		const unsigned int size() const;
 
-		SPoint _Point1;
-		SPoint _Point2;
-		SPoint _Point3;
+		void calcPlane(common::SPlane& voPlane);
+		[[nodiscard]] bool isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir);
+		
+	private:
+		bool __isValid();
 
-		SPoint& operator[](unsigned int i) {
-			_ASSERTE(i < size());
-			switch (i)
-			{
-			case 0:
-				return _Point1;
-			case 1:
-				return _Point2; 
-			case 2:
-				return _Point3;
-			}
-		}
-
-		int size()
-		{
-			return 3;
-		}
-
+	private:
+		SPoint m_P1;
+		SPoint m_P2;
+		SPoint m_P3;
 	};
 }

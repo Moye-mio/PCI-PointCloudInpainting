@@ -85,6 +85,9 @@
     <Filter Include="Geometry\Surface">
       <UniqueIdentifier>{6d1cef4b-f443-487f-914f-27ffc7d327e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry\Primitive">
+      <UniqueIdentifier>{4c8fb18d-62bc-40c5-9990-d0c82aa99931}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -157,7 +160,10 @@
       <Filter>Geometry\Surface</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
-      <Filter>Geometry</Filter>
+      <Filter>Geometry\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Geometry\Primitive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="MultiLayerBSplineSurface.cpp">
       <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Geometry\Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

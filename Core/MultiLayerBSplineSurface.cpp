@@ -18,13 +18,14 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint& vPoint, Eigen::Vector2f&
 			for (int i = 0; i < m_ControlPoints.rows() - 1; i++)
 				for (int k = 0; k < m_ControlPoints.cols() - 1; k++)
 				{
-					STriangle Tri1(m_ControlPoints(i, k), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
-					STriangle Tri2(m_ControlPoints(i + 1, k + 1), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
+					CTriangle Tri1(m_ControlPoints(i, k), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
+					CTriangle Tri2(m_ControlPoints(i + 1, k + 1), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
 					
 				}
 
 		}
 	}
+	return 1.0f;
 }
 
 void CMultiLayerBSplineSurface::__generateMultiLayerNodes()

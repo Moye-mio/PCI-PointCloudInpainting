@@ -2,8 +2,6 @@
 
 namespace core
 {
-	using SPoint = Eigen::Vector3f;
-
 	class CBSplineSurface
 	{
 	public:

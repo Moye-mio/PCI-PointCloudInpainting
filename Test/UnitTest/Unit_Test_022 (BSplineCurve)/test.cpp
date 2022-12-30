@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Shader.h"
 
-using SPoint = Eigen::Vector3f;
 using SColor = Eigen::Vector3f;
 
 class TestBSplineCurve : public testing::Test
@@ -26,14 +25,14 @@ protected:
 		glViewport(0, 0, vWidth, vHeight);
 	}
 
-	void generateControlPoints(std::vector<SPoint>& voVertices, int vRows /* x */, int vCols /* y */, int vDepths /* z */)
+	void generateControlPoints(std::vector<core::SPoint>& voVertices, int vRows /* x */, int vCols /* y */, int vDepths /* z */)
 	{
 		for (int i = 0; i < vRows; i++)
 			for (int k = vCols - 1; k >= 0; k--)
 				for (int m = 0; m < vDepths; m++)
 					if (i == 0 || k == 0)
 					{
-						SPoint Point;
+						core::SPoint Point;
 						Point.x() = i * 0.1;
 						Point.y() = k * 0.1;
 						Point.z() = m * 0.1;
@@ -84,14 +83,14 @@ TEST_F(TestBSplineCurve, DT_InvalidControlPoints)
 {
 	int Degree = 3;
 	core::CBSplineCurve Curve(Degree);
-	ASSERT_DEATH(Curve.setControlPoints(std::vector<Eigen::Vector3f>()), "");
+	ASSERT_DEATH(Curve.setControlPoints(std::vector<core::SPoint>()), "");
 }
 
 TEST_F(TestBSplineCurve, NT_Straight)
 {
-	std::vector<SPoint> ControlPoints;
+	std::vector<core::SPoint> ControlPoints;
 	for (int i = 0; i < 4; i++)
-		ControlPoints.emplace_back(SPoint(i, i, i));
+		ControlPoints.emplace_back(core::SPoint(Eigen::Vector3f(i, i, i)));
 
 	int Degree = 3;
 	core::CBSplineCurve Curve(Degree);
@@ -122,7 +121,7 @@ TEST_F(TestBSplineCurve, NT_DrawCurve)
 
 	Shader Shader1("shader.vs", "shader.fs");
 
-	std::vector<SPoint> ControlPoints, Nodes;
+	std::vector<core::SPoint> ControlPoints, Nodes;
 	SColor ControlPointColor(246.0f / 255.0f, 162.0f / 255.0f, 152.0f / 255.0f);
 	SColor NodeColor(168.0f / 255.0f, 160.0f / 255.0f, 207.0f / 255.0f);;
 	generateControlPoints(ControlPoints, Rows, Cols, Depths);
@@ -140,7 +139,7 @@ TEST_F(TestBSplineCurve, NT_DrawCurve)
 	std::vector<float> Paras;
 	for (int i = 0; i <= NodeNumber; i++)
 	{
-		SPoint r = Curve.sample((float)i / (float)NodeNumber);
+		core::SPoint r = Curve.sample((float)i / (float)NodeNumber);
 		Nodes.emplace_back(std::move(r));
 	}
 

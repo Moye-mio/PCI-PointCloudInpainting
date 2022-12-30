@@ -44,7 +44,7 @@ SPoint CBSplineCurve::sample(float vU)
 	Coef[2] = (-3 * Para * Para * Para + 3 * Para * Para + 3 * Para + 1.0f) / 6.0f;
 	Coef[3] = (Para * Para * Para) / 6.0f;
 
-	SPoint Result(0.0f, 0.0f, 0.0f);
+	SPoint Result(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
 	for (int i = 0; i < 3; i++)
 		for (int k = 0; k < m_Degree + 1; k++)
 			Result[i] += Coef[k] * m_ControlPoints[StartControlPoint + k][i];

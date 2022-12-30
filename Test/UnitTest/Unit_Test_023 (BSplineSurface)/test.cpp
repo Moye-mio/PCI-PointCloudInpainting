@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Shader.h"
 
-using SPoint = Eigen::Vector3f;
 using SColor = Eigen::Vector3f;
 
 class TestBSplineSurface : public testing::Test
@@ -26,7 +25,7 @@ protected:
 		glViewport(0, 0, vWidth, vHeight);
 	}
 
-	void generatePoints(Eigen::Matrix<SPoint, -1, -1>& voVertices, int vRows /* x */, int vCols /* y */, int vDepths /* z */)
+	void generatePoints(Eigen::Matrix<core::SPoint, -1, -1>& voVertices, int vRows /* x */, int vCols /* y */, int vDepths /* z */)
 	{
 		voVertices.resize(vRows + vCols - 1, vDepths);
 
@@ -37,7 +36,7 @@ protected:
 					if (i == 0 || k == 0)
 					{
 						Count++;
-						SPoint Point;
+						core::SPoint Point;
 						Point.x() = i * 0.2 - 0.5f;
 						Point.y() = k * 0.2 - 0.5f;
 						Point.z() = m * 0.2;
@@ -84,12 +83,12 @@ TEST_F(TestBSplineSurface, DT_InvalidDegree)
 TEST_F(TestBSplineSurface, DT_InvalidControlPoints)
 {
 	core::CBSplineSurface Surface(3);
-	ASSERT_DEATH(Surface.setControlPoints(Eigen::Matrix<SPoint, -1, -1>()), "");
+	ASSERT_DEATH(Surface.setControlPoints(Eigen::Matrix<core::SPoint, -1, -1>()), "");
 
-	Eigen::Matrix<SPoint, 3, 3> Points;
+	Eigen::Matrix<core::SPoint, 3, 3> Points;
 	for (int i = 0; i < 3; i++)
 		for (int k = 0; k < 3; k++)
-			Points.coeffRef(i, k) = SPoint(0, 0, 0);
+			Points.coeffRef(i, k) = core::SPoint(Eigen::Vector3f(0, 0, 0));
 	ASSERT_DEATH(Surface.setControlPoints(Points), "");
 }
 
@@ -105,7 +104,7 @@ TEST_F(TestBSplineSurface, NT_)
 	SColor ControlPointColor(246.0f / 255.0f, 162.0f / 255.0f, 152.0f / 255.0f);
 	SColor NodeColor(168.0f / 255.0f, 160.0f / 255.0f, 207.0f / 255.0f);
 
-	Eigen::Matrix<SPoint, -1, -1> ControlPoints;
+	Eigen::Matrix<core::SPoint, -1, -1> ControlPoints;
 	generatePoints(ControlPoints, Rows, Cols, Depths);
 
 	glfwInit();
@@ -119,7 +118,7 @@ TEST_F(TestBSplineSurface, NT_)
 
 	Shader Shader1("shader.vs", "shader.fs");
 
-	std::vector<SPoint> Nodes;
+	std::vector<core::SPoint> Nodes;
 	core::CBSplineSurface Surface(Degree);
 	Surface.setControlPoints(ControlPoints);
 	for (int i = 0; i <= ControlPoints.rows() * Scale; i++)

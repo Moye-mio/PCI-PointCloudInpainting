@@ -79,6 +79,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_022 (BSplineCurve
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_023 (BSplineSurface)", "Test\UnitTest\Unit_Test_023 (BSplineSurface)\Unit_Test_023 (BSplineSurface).vcxproj", "{939EF9A9-B138-4EFB-8E49-C58FD103672E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_024 (Triangle)", "Test\UnitTest\Unit_Test_024 (Triangle)\Unit_Test_024 (Triangle).vcxproj", "{17DBD436-82AE-40D8-94AA-8CFA73374790}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -347,6 +349,14 @@ Global
 		{939EF9A9-B138-4EFB-8E49-C58FD103672E}.Release|x64.Build.0 = Release|x64
 		{939EF9A9-B138-4EFB-8E49-C58FD103672E}.Release|x86.ActiveCfg = Release|Win32
 		{939EF9A9-B138-4EFB-8E49-C58FD103672E}.Release|x86.Build.0 = Release|Win32
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Debug|x64.ActiveCfg = Debug|x64
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Debug|x64.Build.0 = Debug|x64
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Debug|x86.ActiveCfg = Debug|Win32
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Debug|x86.Build.0 = Debug|Win32
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Release|x64.ActiveCfg = Release|x64
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Release|x64.Build.0 = Release|x64
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Release|x86.ActiveCfg = Release|Win32
+		{17DBD436-82AE-40D8-94AA-8CFA73374790}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -382,6 +392,7 @@ Global
 		{D1A30AA4-5A70-483B-88B0-F2DE293B3591} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
 		{15796BC9-92B5-4B0B-9D43-E63D6B1E0A42} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
 		{939EF9A9-B138-4EFB-8E49-C58FD103672E} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
+		{17DBD436-82AE-40D8-94AA-8CFA73374790} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22793FDD-3261-4421-BA02-ADEB847FB562}

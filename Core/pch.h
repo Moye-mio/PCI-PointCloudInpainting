@@ -22,6 +22,7 @@
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
+#include <optional>
 
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
@@ -37,5 +38,6 @@
 
 #include "PointCloudType.h"
 #include "Interpolation.h"
+#include "Point.h"
 
 #endif //PCH_H
