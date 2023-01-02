@@ -31,7 +31,7 @@ const unsigned int CTriangle::size() const
 	return 3;
 }
 
-void CTriangle::calcPlane(common::SPlane& voPlane)
+void CTriangle::calcPlane(common::SPlane& voPlane) const
 {
 	_ASSERTE(__isValid());
 
@@ -45,7 +45,7 @@ void CTriangle::calcPlane(common::SPlane& voPlane)
 	voPlane.normalize();
 }
 
-bool CTriangle::__isValid()
+bool CTriangle::__isValid() const
 {
 	if (!(m_P1.isValid() && m_P2.isValid() && m_P3.isValid()))
 		return false;
@@ -55,7 +55,7 @@ bool CTriangle::__isValid()
 }
 
 /* MT Method */
-bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir)
+bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir) const
 {
 	_ASSERTE(vPoint.isValid());
 	_ASSERTE(__isValid());

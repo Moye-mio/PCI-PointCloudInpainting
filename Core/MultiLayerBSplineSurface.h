@@ -12,6 +12,8 @@ namespace core
 	private:
 		void __generateMultiLayerNodes();
 		bool __isMultiLayerReady();
+		std::optional<float> __isHitNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const SPoint& vPoint, CTriangle& voTri);
+		std::optional<float> __isHitTriangle(const CTriangle& vTri, const SPoint& vPoint);
 
 	private:
 		int m_Sub = 5;

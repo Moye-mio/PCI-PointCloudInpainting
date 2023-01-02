@@ -69,8 +69,17 @@ protected:
 		return 1;
 	}
 
+	float calcError(const Eigen::Vector3f& vLhs, const Eigen::Vector3f& vRhs)
+	{
+		float e = 0.0f;
+		for (int i = 0; i < 3; i++)
+			e += std::powf(vLhs[i] - vRhs[i], 2);
+		return e;
+	}
+
 	const unsigned int G_SCRWIDTH = 800;
 	const unsigned int G_SCRHEIGHT = 600;
+	const float m_Epsilon = 0.00001;
 };
 
 TEST_F(TestBSplineSurface, DT_InvalidDegree)
@@ -92,7 +101,22 @@ TEST_F(TestBSplineSurface, DT_InvalidControlPoints)
 	ASSERT_DEATH(Surface.setControlPoints(Points), "");
 }
 
-TEST_F(TestBSplineSurface, NT_)
+TEST_F(TestBSplineSurface, NT_Plane)
+{
+	Eigen::Matrix<core::SPoint, 4, 4> ControlPoints;
+	for (int i = 0; i < 4; i++)
+		for (int k = 0; k < 4; k++)
+			ControlPoints.coeffRef(i, k) = core::SPoint(Eigen::Vector3f(i, k, 0));
+	
+	core::CBSplineSurface Surface(3);
+	Surface.setControlPoints(ControlPoints);
+
+	ASSERT_LT(calcError(Surface.sample(0, 0), Eigen::Vector3f(0, 0, 0)), m_Epsilon);
+	ASSERT_LT(calcError(Surface.sample(1, 1), Eigen::Vector3f(3, 3, 0)), m_Epsilon);
+	ASSERT_LT(calcError(Surface.sample(0.5, 0.5), Eigen::Vector3f(1.5, 1.5, 0)), m_Epsilon);
+}
+
+TEST_F(TestBSplineSurface, NT_DrawSurfaceByOpenGL)
 {
 	int Rows = 5;
 	int Cols = 5;

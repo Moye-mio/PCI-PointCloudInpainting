@@ -12,7 +12,6 @@
 
 #include <algorithm>
 #include <cmath>
-
 #include <cstdlib>
 #include <numbers>
 #include <numeric>
@@ -39,5 +38,6 @@
 #include "PointCloudType.h"
 #include "Interpolation.h"
 #include "Point.h"
+#include "Triangle.h"
 
 #endif //PCH_H

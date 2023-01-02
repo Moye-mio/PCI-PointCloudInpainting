@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MultiLayerBSplineSurface.h"
-#include "Triangle.h"
 
 using namespace core;
 
@@ -13,17 +12,14 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint& vPoint, Eigen::Vector2f&
 
 	for (int Layer = 0; Layer < m_Layers; Layer++)
 	{
+		CTriangle HitTri;
+		bool IsHit = false;
 		if (Layer == 0)
-		{
-			for (int i = 0; i < m_ControlPoints.rows() - 1; i++)
-				for (int k = 0; k < m_ControlPoints.cols() - 1; k++)
-				{
-					CTriangle Tri1(m_ControlPoints(i, k), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
-					CTriangle Tri2(m_ControlPoints(i + 1, k + 1), m_ControlPoints(i + 1, k), m_ControlPoints(i, k + 1));
-					
-				}
+			auto r = __isHitNodes(m_ControlPoints, vPoint, HitTri);
+		else
+			auto r = __isHitNodes(m_MultiLayerNodes[Layer - 1], vPoint, HitTri);
 
-		}
+
 	}
 	return 1.0f;
 }
@@ -37,7 +33,6 @@ void CMultiLayerBSplineSurface::__generateMultiLayerNodes()
 	{
 		if (Layer == 0) continue;
 
-		float Step = 1.0f / (float)m_Sub;
 		int LastRows = (Layer == 1) ? RowRaw : m_MultiLayerNodes[Layer - 1].rows();
 		int LastCols = (Layer == 1) ? ColRaw : m_MultiLayerNodes[Layer - 1].cols();
 		int CurRows = (LastRows - 1) * m_Sub + 1;
@@ -61,3 +56,46 @@ bool CMultiLayerBSplineSurface::__isMultiLayerReady()
 	if (m_MultiLayerNodes.size() != m_Layers - 1) return false;
 	else return true;
 }
+
+std::optional<float> CMultiLayerBSplineSurface::__isHitNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const SPoint& vPoint, CTriangle& voTri)
+{
+	std::unordered_map<float, CTriangle> Candidates;
+	for (int i = 0; i < vNodes.rows() - 1; i++)
+		for (int k = 0; k < vNodes.cols() - 1; k++)
+		{
+			CTriangle Tri1(vNodes(i, k), vNodes(i + 1, k), vNodes(i, k + 1));
+			if (auto r = __isHitTriangle(Tri1, vPoint); r.has_value())
+				Candidates.emplace(std::make_pair(r.value(), Tri1));
+
+			CTriangle Tri2(vNodes(i + 1, k + 1), vNodes(i + 1, k), vNodes(i, k + 1));
+			if (auto r = __isHitTriangle(Tri2, vPoint); r.has_value())
+				Candidates.emplace(std::make_pair(r.value(), Tri2));
+		}
+
+	if (Candidates.empty())
+		return std::nullopt;
+
+	std::sort(Candidates.begin(), Candidates.end(),
+		[&](const std::pair<float, CTriangle>& a, const std::pair<float, CTriangle>& b) -> bool
+		{
+			return a.first < b.first;
+		});
+
+	voTri = Candidates.begin()->second;
+	return Candidates.begin()->first;
+}
+
+std::optional<float> CMultiLayerBSplineSurface::__isHitTriangle(const CTriangle& vTri, const SPoint& vPoint)
+{
+	common::SPlane Plane;
+	vTri.calcPlane(Plane);
+	Eigen::Vector3f ProjRay;
+	float Dist = Plane.calcPointProject(vPoint, ProjRay);
+	_ASSERTE(!std::isnan(Dist));
+	bool r = vTri.isRayIntersection(vPoint, ProjRay);
+	if (r == false)
+		return std::nullopt;
+	else
+		return Dist;
+}
+
