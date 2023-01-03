@@ -2,11 +2,11 @@
 
 namespace core
 {
-	class CBSplineSurface
+	class IBSplineSurface
 	{
 	public:
-		CBSplineSurface(int vDegree, bool vIsClamped = true);
-		~CBSplineSurface() {}
+		IBSplineSurface(int vDegree, bool vIsClamped = true);
+		~IBSplineSurface() {}
 
 		bool setControlPoints(const Eigen::Matrix<SPoint, -1, -1>& vPoints);
 		SPoint sample(float vU, float vV);

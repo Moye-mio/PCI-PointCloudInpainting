@@ -26,6 +26,23 @@ core::SPoint& CTriangle::operator[](unsigned int i)
 	}
 }
 
+const core::SPoint& CTriangle::operator[](unsigned int i) const
+{
+	_ASSERTE(i < size());
+	switch (i)
+	{
+	case 0:
+		return m_P1;
+		break;
+	case 1:
+		return m_P2;
+		break;
+	case 2:
+		return m_P3;
+		break;
+	}
+}
+
 const unsigned int CTriangle::size() const
 {
 	return 3;
@@ -73,5 +90,27 @@ bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vecto
 		return true;
 	else
 		return false;
+}
+
+void CTriangle::calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const
+{
+	_ASSERTE(vPoint.isValid());
+	_ASSERTE(__isValid());
+
+	float A1 = 0.5f * (vPoint - m_P2).cross(vPoint - m_P3).norm();
+	float A2 = 0.5f * (vPoint - m_P1).cross(vPoint - m_P3).norm();
+	float A3 = 0.5f * (vPoint - m_P1).cross(vPoint - m_P2).norm();
+	float A = 0.5f * (m_P3 - m_P1).cross(m_P3 - m_P2).norm();
+	_ASSERTE(A > 0);
+
+	float Epsilon = 0.00001f;
+	_ASSERTE(A - (A1 + A2 + A3) < Epsilon);
+
+	vCoor = Eigen::Vector3f(A1 / A, A2 / A, A3 / A);
+}
+
+bool CTriangle::isValid() const
+{
+	return __isValid();
 }
 
