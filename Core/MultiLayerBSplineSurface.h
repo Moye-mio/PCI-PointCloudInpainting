@@ -8,22 +8,30 @@ namespace core
 	public:
 		CMultiLayerBSplineSurface(int vDegree, bool vIsClamped = true);
 		[[nodiscard]] bool setLayer(int vLayer);
+		[[nodiscard]] bool setMaxSub(int vMaxSub);
 		float calcProj(const SPoint& vPoint, Eigen::Vector2f& voUV);
 		std::optional<SPoint> getDetailedNode(int vRow, int vCol);
 
 	private:
-		void __generateMultiLayerNodes();
+		void __generatePreMultiLayerNodes();
 		bool __isMultiLayerReady();
-		bool __calcUV(const CTriangle& vTri, const SPoint& vPoint, Eigen::Vector2f& voUV);
-		std::optional<Eigen::Vector2f> __findUV(const SPoint& vPoint);
-		std::optional<float> __isHitNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const SPoint& vPoint, CTriangle& voTri);
-		std::optional<float> __isHitTriangle(const CTriangle& vTri, const SPoint& vPoint);
+		std::optional<Eigen::Vector3f> __calcBaryCoor(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const std::vector<Eigen::Vector2i>& vHit, const SPoint& vPoint);
+		Eigen::Vector2f __calcUV(const std::vector<Eigen::Vector2f>& vUV, const Eigen::Vector3f& vBary);
+		float __calcNodesDiff(const SPoint& vLhs, const SPoint& vRhs);
+		void __extractLocalNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const std::vector<Eigen::Vector2i>& vHit, Eigen::Matrix<SPoint, -1, -1>& vLocal);
+		void __subdivide(const Eigen::Matrix<SPoint, -1, -1>& vRough, Eigen::Matrix<SPoint, -1, -1>& voSub, Eigen::Matrix<Eigen::Vector2f, -1, -1>& voUV);
+		std::optional<Eigen::Vector2i> __findNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const SPoint& vPoint);
+		std::optional<float> __HitNodes(const Eigen::Matrix<SPoint, -1, -1>& vNodes, const SPoint& vPoint, std::vector<Eigen::Vector2i>& voHit);
+		std::optional<float> __HitTriangle(const CTriangle& vTri, const SPoint& vPoint);
 
 	private:
 		int m_Sub;
-		int m_Layers;
+		int m_PreLayers;
+		int m_MaxSub;
 
-		Eigen::Matrix<Eigen::Vector2f, -1, -1>		m_LatestLayerUV;
-		std::vector<Eigen::Matrix<SPoint, -1, -1>>	m_MultiLayerNodes;
+		Eigen::Matrix<Eigen::Vector2f, -1, -1>		m_PreComputeUV;
+		std::vector<Eigen::Matrix<SPoint, -1, -1>>	m_PreComputeNodes;
+
+		Eigen::Matrix<SPoint, -1, -1>				m_CurNodes;
 	};
 }

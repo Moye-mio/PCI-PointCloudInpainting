@@ -87,7 +87,7 @@ bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vecto
 	float B1 = S1.dot(S) / S1.dot(E1);
 	float B2 = S2.dot(vRayDir) / S1.dot(E1);
 
-	std::cout << "S1.dot(E1): " << S1.dot(E1) << std::endl;
+	//std::cout << "S1.dot(E1): " << S1.dot(E1) << std::endl;
 
 	if (B1 >= 0 && B2 >= 0 && B1 + B2 <= 1)
 		return true;
