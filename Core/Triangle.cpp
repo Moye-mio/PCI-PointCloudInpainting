@@ -48,7 +48,7 @@ const unsigned int CTriangle::size() const
 	return 3;
 }
 
-void CTriangle::calcPlane(common::SPlane& voPlane) const
+void CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) const
 {
 	_ASSERTE(__isValid());
 
@@ -59,7 +59,8 @@ void CTriangle::calcPlane(common::SPlane& voPlane) const
 
 	voPlane = common::SPlane(Normal[0], Normal[1], Normal[2], D);
 	_ASSERTE(voPlane.isValid());
-	voPlane.normalize();
+	if (vIsNorm)
+		voPlane.normalize();
 }
 
 bool CTriangle::__isValid() const
@@ -85,6 +86,8 @@ bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vecto
 
 	float B1 = S1.dot(S) / S1.dot(E1);
 	float B2 = S2.dot(vRayDir) / S1.dot(E1);
+
+	std::cout << "S1.dot(E1): " << S1.dot(E1) << std::endl;
 
 	if (B1 >= 0 && B2 >= 0 && B1 + B2 <= 1)
 		return true;

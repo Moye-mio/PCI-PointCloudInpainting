@@ -84,14 +84,14 @@ protected:
 
 TEST_F(TestBSplineSurface, DT_InvalidDegree)
 {
-	ASSERT_DEATH(core::CBSplineSurface Surface(-1), "");
-	ASSERT_DEATH(core::CBSplineSurface Surface(0), "");
-	ASSERT_NO_THROW(core::CBSplineSurface Surface(3), "");
+	ASSERT_DEATH(core::IBSplineSurface Surface(-1), "");
+	ASSERT_DEATH(core::IBSplineSurface Surface(0), "");
+	ASSERT_NO_THROW(core::IBSplineSurface Surface(3), "");
 }
 
 TEST_F(TestBSplineSurface, DT_InvalidControlPoints)
 {
-	core::CBSplineSurface Surface(3);
+	core::IBSplineSurface Surface(3);
 	ASSERT_DEATH(Surface.setControlPoints(Eigen::Matrix<core::SPoint, -1, -1>()), "");
 
 	Eigen::Matrix<core::SPoint, 3, 3> Points;
@@ -108,7 +108,7 @@ TEST_F(TestBSplineSurface, NT_Plane)
 		for (int k = 0; k < 4; k++)
 			ControlPoints.coeffRef(i, k) = core::SPoint(Eigen::Vector3f(i, k, 0));
 	
-	core::CBSplineSurface Surface(3);
+	core::IBSplineSurface Surface(3);
 	Surface.setControlPoints(ControlPoints);
 
 	ASSERT_LT(calcError(Surface.sample(0, 0), Eigen::Vector3f(0, 0, 0)), m_Epsilon);
@@ -143,7 +143,7 @@ TEST_F(TestBSplineSurface, NT_DrawSurfaceByOpenGL)
 	Shader Shader1("shader.vs", "shader.fs");
 
 	std::vector<core::SPoint> Nodes;
-	core::CBSplineSurface Surface(Degree);
+	core::IBSplineSurface Surface(Degree);
 	Surface.setControlPoints(ControlPoints);
 	for (int i = 0; i <= ControlPoints.rows() * Scale; i++)
 		for (int k = 0; k <= ControlPoints.cols() * Scale; k++)

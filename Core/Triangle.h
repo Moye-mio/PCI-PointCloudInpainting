@@ -13,7 +13,7 @@ namespace core
 		const SPoint& operator[](unsigned int i) const;
 		const unsigned int size() const;
 
-		void calcPlane(common::SPlane& voPlane) const;
+		void calcPlane(common::SPlane& voPlane, bool vIsNorm = true) const;
 		void calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const;
 		[[nodiscard]] bool isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir) const;
 		[[nodiscard]] bool isValid() const;

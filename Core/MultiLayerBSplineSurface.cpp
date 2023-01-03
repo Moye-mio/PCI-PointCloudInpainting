@@ -3,6 +3,12 @@
 
 using namespace core;
 
+CMultiLayerBSplineSurface::CMultiLayerBSplineSurface(int vDegree, bool vIsClamped /*= true*/)
+	: IBSplineSurface(vDegree)
+	, m_Layers(3)
+	, m_Sub(5)
+{}
+
 bool CMultiLayerBSplineSurface::setLayer(int vLayer)
 {
 	_ASSERTE(vLayer >= 1);
@@ -12,7 +18,8 @@ bool CMultiLayerBSplineSurface::setLayer(int vLayer)
 
 float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f& voUV)
 {
-	_ASSERTE(std::isnan(vPoint.x() + vPoint.y() + vPoint.z()));
+	_ASSERTE(!std::isnan(vPoint.x() + vPoint.y() + vPoint.z()));
+	_ASSERTE(m_Layers >= 1);
 	
 	if (!__isMultiLayerReady())
 		__generateMultiLayerNodes();
@@ -49,6 +56,8 @@ void CMultiLayerBSplineSurface::__generateMultiLayerNodes()
 		int CurCols = (LastCols - 1) * m_Sub + 1;
 		Eigen::Matrix<SPoint, -1, -1> CurLayer;
 		CurLayer.resize(CurRows, CurCols);
+		if (Layer == m_Layers - 1)
+			m_LatestLayerUV.resize(CurRows, CurCols);
 		for (int i = 0; i < CurRows; i++)
 			for (int k = 0; k < CurCols; k++)
 			{
@@ -100,7 +109,7 @@ std::optional<float> CMultiLayerBSplineSurface::__isHitNodes(const Eigen::Matrix
 std::optional<float> CMultiLayerBSplineSurface::__isHitTriangle(const CTriangle& vTri, const SPoint& vPoint)
 {
 	common::SPlane Plane;
-	vTri.calcPlane(Plane);
+	vTri.calcPlane(Plane, false);
 	Eigen::Vector3f ProjRay;
 	float Dist = Plane.calcPointProject(vPoint, ProjRay);
 	_ASSERTE(!std::isnan(Dist));
@@ -141,6 +150,15 @@ std::optional<Eigen::Vector2f> CMultiLayerBSplineSurface::__findUV(const SPoint&
 				return m_LatestLayerUV.coeff(i, k);
 
 	return std::nullopt;
+}
+
+std::optional<core::SPoint> CMultiLayerBSplineSurface::getDetailedNode(int vRow, int vCol)
+{
+	const auto& CurNodes = m_MultiLayerNodes[m_Layers - 1];
+	if (vRow >= 0 && vRow < CurNodes.rows() && vCol >= 0 && vCol <= CurNodes.cols())
+		return std::nullopt;
+	else
+		return CurNodes.coeffRef(vRow, vCol);
 }
 
 

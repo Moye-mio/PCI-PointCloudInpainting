@@ -58,12 +58,14 @@ TEST_F(TestTriangle, NT_RayIntersection)
 	core::SPoint Point(Eigen::Vector3f(0, 0, 1));
 	core::SPoint Point2(Eigen::Vector3f(-1, -1, 2));
 	core::SPoint Point3(Eigen::Vector3f(0.5, 1, -1));
+	core::SPoint Point4(Eigen::Vector3f(0.5, 1, 0));
 	Eigen::Vector3f RayDir(0, 0, 1);
 	core::CTriangle Tri(core::SPoint(Eigen::Vector3f(0, 0, 0)), core::SPoint(Eigen::Vector3f(2, 2, 0)), core::SPoint(Eigen::Vector3f(0, 1, 0)));
 	ASSERT_EQ(Tri.isRayIntersection(Point, RayDir), true);
 	ASSERT_EQ(Tri.isRayIntersection(Point2, RayDir), false);
 	ASSERT_EQ(Tri.isRayIntersection(Point3, RayDir), true);
 	ASSERT_EQ(Tri.isRayIntersection(Point3, -RayDir), true);
+	ASSERT_EQ(Tri.isRayIntersection(Point4, -RayDir), true);
 }
 
 TEST_F(TestTriangle, NT_CalcBaryCoor)

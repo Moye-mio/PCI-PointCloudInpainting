@@ -75,6 +75,8 @@ namespace common
 			vProj = Eigen::Vector3f(vPoint.x() - _A * t, vPoint.y() - _B * t, vPoint.z() - _C * t);
 			float Dist = std::fabsf(Eigen::Vector4f(vPoint[0], vPoint[1], vPoint[2], 1.0f).dot(Eigen::Vector4f(_A, _B, _C, _D))) / std::sqrtf(_A * _A + _B * _B + _C * _C);
 			_ASSERTE(!std::isnan(Dist));
+			if (Dist == 0.0f)
+				vProj = Eigen::Vector3f(_A, _B, _C);
 			return Dist;
 		}
 	};
