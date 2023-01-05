@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <windows.h>
 
 const std::string ModelPath = TESTMODEL_DIR + std::string("/UniformSeg.ply");
 const std::string ModelPath2 = TESTMODEL_DIR + std::string("/Road_Seg_Sim.ply");
@@ -119,11 +120,16 @@ protected:
 
 TEST_F(TestGC, NT_Concave)
 {
+	SYSTEM_INFO SysInfo;
+	GetSystemInfo(&SysInfo);
+	printf("now system cpu num is %d\n", SysInfo.dwNumberOfProcessors);
+
 	PC_t::Ptr pCloud = loadPC(ModelPath3);
 	std::vector<int> Result;
 
 	GA::CGeneticClustering GC(4, 20, 4, 250);
 	GC.setCloud(pCloud);
+	GC.setThreadSize(SysInfo.dwNumberOfProcessors);
 
 	hiveCommon::CCPUTimer Timer;
 	double t = Timer.getElapsedTime();

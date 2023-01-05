@@ -13,12 +13,20 @@ CGeneticClustering::CGeneticClustering(float vK, int vSolutionSize, int vCluster
 	, m_ClusterSize(vClusterSize)
 	, m_LoopSize(vLoopSize)
 	, m_DataSize(0)
+	, m_ThreadSize(4)
 	, m_Volume(0.0f)
 	, m_NormalDist(0.3f)
 	, m_OperatorRate({0.3f, 0.6f})
 	, m_Cloud(new PC_t)
 	, m_Normals(new NormalPC_t)
 {}
+
+bool CGeneticClustering::setThreadSize(int vSize)
+{
+	_ASSERTE(vSize >= 4);
+	m_ThreadSize = vSize;
+	return true;
+}
 
 bool CGeneticClustering::setCloud(const PC_t::Ptr& vCloud)
 {
@@ -245,7 +253,7 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 	std::unordered_map<int, std::vector<float>> Points2Clusters;	// PCs < index, fc >
 	std::mutex Mutex;
 
-#pragma omp parallel for num_threads(m_SolutionSize)
+#pragma omp parallel for num_threads(m_ThreadSize)
 	for (int i = 0; i < m_SolutionSize; i++)
 	{
 		std::vector<int> CurSolution = vSolutions[ExpectedValue[i].first];
