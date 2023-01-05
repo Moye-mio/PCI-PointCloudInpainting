@@ -33,7 +33,7 @@ TEST_F(TestMultiLayerBSS, DT_InValidPoint)
 	ASSERT_DEATH(Surface.calcProj(core::SPoint(), UV), "");
 }
 
-TEST_F(TestMultiLayerBSS, NT_)
+TEST_F(TestMultiLayerBSS, NT_SubdivideSurface)
 {
 	Eigen::Matrix<core::SPoint, 4, 4> ControlPoints;
 	for (int i = 0; i < 4; i++)
