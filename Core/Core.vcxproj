@@ -180,6 +180,7 @@
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Voxelization.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
@@ -208,6 +209,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Voxelization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

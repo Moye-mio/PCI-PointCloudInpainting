@@ -88,6 +88,9 @@
     <Filter Include="Geometry\Primitive">
       <UniqueIdentifier>{4c8fb18d-62bc-40c5-9990-d0c82aa99931}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Voxel">
+      <UniqueIdentifier>{a693068d-c7b5-4f58-9843-eb28be42ba34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -165,6 +168,9 @@
     <ClInclude Include="Point.h">
       <Filter>Geometry\Primitive</Filter>
     </ClInclude>
+    <ClInclude Include="Voxelization.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -229,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Geometry\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxelization.cpp">
+      <Filter>Voxel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
