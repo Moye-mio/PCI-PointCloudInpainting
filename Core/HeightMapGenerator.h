@@ -13,6 +13,7 @@ namespace core
 		[[nodiscard]] bool setCloud(const PC_t::Ptr& vCloud);
 		[[nodiscard]] bool setAABB(const SAABB& vBox);
 		[[nodiscard]] bool generate(int vWidth, int vHeight);
+		[[nodiscard]] bool generateBySurface(int vWidth, int vHeight);
 
 		void dumpHeightMap(CHeightMap& voMap) const { voMap = m_Map; }
 		
