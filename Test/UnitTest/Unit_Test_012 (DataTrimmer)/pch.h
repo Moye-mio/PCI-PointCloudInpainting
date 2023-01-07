@@ -15,10 +15,6 @@
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/surface/on_nurbs/fitting_surface_tdm.h>
-#include <pcl/surface/on_nurbs/fitting_curve_2d_asdm.h>
-#include <pcl/surface/on_nurbs/triangulation.h>
 
 #include "common/Product.h"
 #include "common/Factory.h"

@@ -24,7 +24,7 @@ void CDataTrimmer::__calcBB(const std::vector<Eigen::Vector3i>& vPos, std::pair<
 			voBB.second[i] = (voBB.second[i] > e[i]) ? voBB.second[i] : e[i];
 		}
 	
-	_ASSERTE(!std::isnan(voBB.first[0] + voBB.first[1] + voBB.first[2]) && !std::isnan(voBB.second[0] + voBB.second[1] + voBB.second[2]));
+	//_ASSERTE(!std::isnan(voBB.first[0] + voBB.first[1] + voBB.first[2]) && !std::isnan(voBB.second[0] + voBB.second[1] + voBB.second[2]));
 }
 
 void CDataTrimmer::__buildNeighbors(const std::vector<Eigen::Vector3i>& vPos, std::vector<std::vector<unsigned int>>& voNeighInfo)
@@ -69,13 +69,22 @@ void CDataTrimmer::__cullOutliers(const std::vector<std::vector<unsigned int>>& 
 	}
 }
 
-std::optional<unsigned int> CDataTrimmer::__chooseStartPoint(const std::vector<Eigen::Vector3i>& vPos, const std::vector<bool>& vIsUsed)
+std::optional<unsigned int> CDataTrimmer::__chooseStartPoint(const std::vector<Eigen::Vector3i>& vPos, const std::vector<std::vector<unsigned int>>& vNeighInfo, const std::vector<bool>& vIsUsed)
 {
-	_ASSERTE(vPos.size() && vPos.size() == vIsUsed.size());
+	_ASSERTE(vPos.size() && vPos.size() == vIsUsed.size() && vPos.size() == vNeighInfo.size());
+
+	
+	
+
+	for (int i = 0; i < vNeighInfo.size(); i++)
+	{
+		if (m_IsValid[i] == false || vIsUsed[i] == true) continue;
+
+
+	}
 
 	int MinSum = INT_MAX;
 	std::vector<unsigned int> MinIndices;
-
 	for (int i = 0; i < vPos.size(); i++)
 	{
 		if (m_IsValid[i] == false || vIsUsed[i] == true) continue;
@@ -114,6 +123,7 @@ void CDataTrimmer::__trimByLayer(const std::vector<Eigen::Vector3i>& vPos, const
 	
 	while (true)
 	{
+		std::vector<unsigned int> UpdateList;
 		unsigned int StartIndex;
 		if (auto r = __chooseStartPoint(vPos, IsTraversed); r.has_value())
 			StartIndex = r.value();
@@ -123,7 +133,7 @@ void CDataTrimmer::__trimByLayer(const std::vector<Eigen::Vector3i>& vPos, const
 		Series.push_back(StartIndex);
 
 		int CurIndex = StartIndex;
-		IsTraversed[CurIndex] = true;
+		UpdateList.push_back(CurIndex);
 		unsigned int CurNeighCount = 0;
 		unsigned int NextIndex = INT_MAX;
 		while (true)
@@ -131,25 +141,42 @@ void CDataTrimmer::__trimByLayer(const std::vector<Eigen::Vector3i>& vPos, const
 			_ASSERTE(CurIndex >= 0 && CurIndex <= vNeighInfo.size());
 			_ASSERTE(vNeighInfo[CurIndex].size() > 0);
 			
-			CurNeighCount = vNeighInfo[CurIndex].size();
+			CurNeighCount = __calcValidNeighCount(vNeighInfo, IsTraversed, CurIndex);
+			if (CurNeighCount == 0) 
+				break;
+			
 			int NextNeighCount = INT_MAX;
 			NextIndex = INT_MAX;
 			for (unsigned int e : vNeighInfo[CurIndex])
-				if (m_IsValid[e] == true && IsTraversed[e] == false && NextNeighCount > vNeighInfo[e].size())
+			{
+				int NeighCount = __calcValidNeighCount(vNeighInfo, IsTraversed, e);
+
+				auto Iter = std::find(UpdateList.begin(), UpdateList.end(), e);
+				if (Iter != UpdateList.end()) continue;
+
+				/* Trick */
+				{
+					if (UpdateList.size() == 1 && NeighCount == CurNeighCount) continue;
+					if (UpdateList.size() == 2 && NeighCount < CurNeighCount) continue;
+				}
+
+				if (m_IsValid[e] == true && IsTraversed[e] == false && NextNeighCount > NeighCount)
 				{
 					NextIndex = e;
-					NextNeighCount = vNeighInfo[e].size();
+					NextNeighCount = NeighCount;
 				}
+			}
 			
 			_ASSERTE(NextNeighCount > 0);
 			Series.push_back(NextIndex);
-			IsTraversed[NextIndex] = true;
+			UpdateList.push_back(NextIndex);
 			CurIndex = NextIndex;
 			
 			if (CurNeighCount > NextNeighCount)
 				break;
 		}
 		Sorted.emplace_back(Series);
+		__updateTraversed(IsTraversed, UpdateList);
 	}
 
 	__transVec2Mat(Sorted);
@@ -159,7 +186,7 @@ void CDataTrimmer::__transVec2Mat(const std::vector<std::vector<unsigned int>>& 
 {
 	_ASSERTE(vData.size());
 	int Rows = vData.size();
-	int Cols = -INT_MAX;
+	int Cols = 0;	/* Do not use any number < 0 here */
 
 	for (const auto& e : vData)
 		Cols = (Cols > e.size()) ? Cols : e.size();
@@ -171,3 +198,26 @@ void CDataTrimmer::__transVec2Mat(const std::vector<std::vector<unsigned int>>& 
 			m_Sorted.coeffRef(i, k) = vData[i][k];
 }
 
+unsigned int CDataTrimmer::__calcValidNeighCount(const std::vector<std::vector<unsigned int>>& vNeighInfo, const std::vector<bool>& vIsTraversed, unsigned int vIndex)
+{
+	_ASSERTE(vIndex <= vNeighInfo.size());
+
+	const auto& Neigh = vNeighInfo[vIndex];
+	unsigned int Count = 0;
+	for (unsigned int e : Neigh)
+		if (vIsTraversed[e] == false)
+			Count++;
+
+	return Count;
+}
+
+void CDataTrimmer::__updateTraversed(std::vector<bool>& vioIsTraversed, const std::vector<unsigned int>& vUpdateList)
+{
+	_ASSERTE(vioIsTraversed.size() >= vUpdateList.size());
+
+	for (const unsigned int e : vUpdateList)
+	{
+		_ASSERTE(vioIsTraversed[e] == false);
+		vioIsTraversed[e] = true;
+	}
+}
