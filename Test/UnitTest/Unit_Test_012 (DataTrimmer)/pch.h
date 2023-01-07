@@ -30,3 +30,4 @@
 
 #include "PointCloudType.h"
 #include "magic_enum.hpp"
+#include "DataTrimmer.h"

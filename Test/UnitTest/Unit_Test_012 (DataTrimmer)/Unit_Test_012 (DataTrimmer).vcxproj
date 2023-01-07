@@ -25,6 +25,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <ProjectName>Unit_Test_012 (DataTrimmer)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -53,9 +54,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core.vcxproj">
       <Project>{39c00d6d-7d00-4846-acd1-b0676b2a2993}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\pcl_visualizer\pcl_visualizer.vcxproj">
-      <Project>{3c1e7941-8ddf-4fae-b5c1-a8f8b11c6774}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemDefinitionGroup />
@@ -104,7 +102,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\pcl_visualizer\include;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

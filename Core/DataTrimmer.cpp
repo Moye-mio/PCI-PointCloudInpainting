@@ -11,7 +11,7 @@ void CDataTrimmer::sort(const std::vector<Eigen::Vector3i>& vPos)
 	std::vector<std::vector<unsigned int>> NeighInfo;
 	__buildNeighbors(vPos, NeighInfo);
 	__cullOutliers(NeighInfo);
-	__trimByLayer(NeighInfo, __chooseStartPoint(vPos));
+	__trimByLayer(vPos, NeighInfo);
 }
 
 void CDataTrimmer::__calcBB(const std::vector<Eigen::Vector3i>& vPos, std::pair<Eigen::Vector3i, Eigen::Vector3i>& voBB)
@@ -69,29 +69,32 @@ void CDataTrimmer::__cullOutliers(const std::vector<std::vector<unsigned int>>& 
 	}
 }
 
-unsigned int CDataTrimmer::__chooseStartPoint(const std::vector<Eigen::Vector3i>& vPos)
+std::optional<unsigned int> CDataTrimmer::__chooseStartPoint(const std::vector<Eigen::Vector3i>& vPos, const std::vector<bool>& vIsUsed)
 {
-	_ASSERTE(vPos.size());
+	_ASSERTE(vPos.size() && vPos.size() == vIsUsed.size());
 
-	int MinIndex = INT_MAX;
-	std::vector<unsigned int> MinPoints;
+	int MinSum = INT_MAX;
+	std::vector<unsigned int> MinIndices;
 
 	for (int i = 0; i < vPos.size(); i++)
 	{
-		if (m_IsValid[i] == false) continue;
+		if (m_IsValid[i] == false || vIsUsed[i] == true) continue;
 		int Index = vPos[i].x() + vPos[i].y() + vPos[i].z();
-		if (MinIndex > Index)
+		if (MinSum > Index)
 		{
-			MinIndex = Index;
-			MinPoints.clear();
-			MinPoints.shrink_to_fit();
-			MinPoints.push_back(i);
+			MinSum = Index;
+			MinIndices.clear();
+			MinIndices.shrink_to_fit();
+			MinIndices.push_back(i);
 		}
-		else if (MinIndex == Index)
-			MinPoints.push_back(i);
+		else if (MinSum == Index)
+			MinIndices.push_back(i);
 	}
 
-	std::sort(MinPoints.begin(), MinPoints.end(),
+	if (MinIndices.size() == 0)
+		return std::nullopt;
+
+	std::sort(MinIndices.begin(), MinIndices.end(),
 		[&](unsigned int a, unsigned int b) -> bool
 		{
 			if (vPos[a].x() != vPos[b].x())		return vPos[a].x() < vPos[b].x();
@@ -99,19 +102,72 @@ unsigned int CDataTrimmer::__chooseStartPoint(const std::vector<Eigen::Vector3i>
 			else								return vPos[a].z() < vPos[b].z();
 		});
 
-	return MinPoints[0];
+	return MinIndices[0];
 }
 
-void CDataTrimmer::__trimByLayer(const std::vector<std::vector<unsigned int>>& vNeighInfo, unsigned int vStart)
+void CDataTrimmer::__trimByLayer(const std::vector<Eigen::Vector3i>& vPos, const std::vector<std::vector<unsigned int>>& vNeighInfo)
 {
+	_ASSERTE(vPos.size() == vNeighInfo.size());
+
 	std::vector<bool> IsTraversed(vNeighInfo.size(), false);
 	std::vector<std::vector<unsigned int>> Sorted;
 	
 	while (true)
 	{
-		std::vector<unsigned int> Temp;
-		Temp.push_back(vStart);
+		unsigned int StartIndex;
+		if (auto r = __chooseStartPoint(vPos, IsTraversed); r.has_value())
+			StartIndex = r.value();
+		else
+			break;
+		std::vector<unsigned int> Series;
+		Series.push_back(StartIndex);
+
+		int CurIndex = StartIndex;
+		IsTraversed[CurIndex] = true;
+		unsigned int CurNeighCount = 0;
+		unsigned int NextIndex = INT_MAX;
+		while (true)
+		{
+			_ASSERTE(CurIndex >= 0 && CurIndex <= vNeighInfo.size());
+			_ASSERTE(vNeighInfo[CurIndex].size() > 0);
+			
+			CurNeighCount = vNeighInfo[CurIndex].size();
+			int NextNeighCount = INT_MAX;
+			NextIndex = INT_MAX;
+			for (unsigned int e : vNeighInfo[CurIndex])
+				if (m_IsValid[e] == true && IsTraversed[e] == false && NextNeighCount > vNeighInfo[e].size())
+				{
+					NextIndex = e;
+					NextNeighCount = vNeighInfo[e].size();
+				}
+			
+			_ASSERTE(NextNeighCount > 0);
+			Series.push_back(NextIndex);
+			IsTraversed[NextIndex] = true;
+			CurIndex = NextIndex;
+			
+			if (CurNeighCount > NextNeighCount)
+				break;
+		}
+		Sorted.emplace_back(Series);
 	}
 
+	__transVec2Mat(Sorted);
+}
+
+void CDataTrimmer::__transVec2Mat(const std::vector<std::vector<unsigned int>>& vData)
+{
+	_ASSERTE(vData.size());
+	int Rows = vData.size();
+	int Cols = -INT_MAX;
+
+	for (const auto& e : vData)
+		Cols = (Cols > e.size()) ? Cols : e.size();
+	_ASSERTE(Cols > 0);
+
+	m_Sorted.resize(Rows, Cols);
+	for (int i = 0; i < Rows; i++)
+		for (int k = 0; k < Cols; k++)
+			m_Sorted.coeffRef(i, k) = vData[i][k];
 }
 
