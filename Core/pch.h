@@ -34,6 +34,7 @@
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
+#include "common/CpuTimer.h"
 
 #include "PointCloudType.h"
 #include "Interpolation.h"

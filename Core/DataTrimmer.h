@@ -5,9 +5,10 @@ namespace core
 	class CDataTrimmer
 	{
 	public:
-		CDataTrimmer() {}
+		CDataTrimmer();
 		~CDataTrimmer() = default;
 
+		[[nodiscard]] bool setNeighLevel(int vLevel);
 		void sort(const std::vector<Eigen::Vector3i>& vPos);
 		void dumpSortedIndices(Eigen::Matrix<unsigned int, -1, -1>& voIndices) { voIndices = m_Sorted; }
 
@@ -24,5 +25,6 @@ namespace core
 	private:
 		Eigen::Matrix<unsigned int, -1, -1> m_Sorted;
 		std::vector<bool>					m_IsValid;
+		int									m_Level;
 	};
 }

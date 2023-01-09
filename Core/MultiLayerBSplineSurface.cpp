@@ -28,58 +28,23 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 {
 	_ASSERTE(!std::isnan(vPoint.x() + vPoint.y() + vPoint.z()));
 	_ASSERTE(m_PreLayers >= 1);
-	
+
+	hiveCommon::CCPUTimer Timer;
+	double t = Timer.getElapsedTime();
+	Timer.start();
+	/* Timer */
+
 	if (!__isMultiLayerReady())
 		__generatePreMultiLayerNodes();
 
-	/*for (int Layer = 0; Layer < m_PreLayers; Layer++)
-	{
-		CTriangle HitTri;
-		bool IsHit = false;
-		std::optional<float> r = __isHitNodes(m_PreComputeNodes[Layer], vPoint, HitTri);
-		if (r.has_value())
-			__calcUV(HitTri, vPoint, vUV);
-	}*/
+	/* Timer */
+	Timer.stop();
+	t = Timer.getElapsedTimeInMS();
+	std::cout << "generate Pre MultiLayer Nodes Use Time: " << t << "ms" << std::endl;
 
-	/*CTriangle HitTri;
-	if (auto r = __HitNodes(m_PreComputeNodes[m_PreLayers - 1], vPoint, HitTri); r.has_value())
-		__calcUV(m_PreComputeNodes[m_PreLayers - 1], m_PreComputeUV, HitTri, vPoint, voUV);
-	float Epsilon = 0.00001f;
-	if (__calcNodesDiff(vPoint, __sample(m_PreComputeNodes[m_PreLayers - 1], voUV[0], voUV[1])) >= Epsilon)
-	{
-		Eigen::Matrix<SPoint, -1, -1> Local, Sub;
-		Eigen::Matrix<Eigen::Vector2f, -1, -1> SubUV;
-		__extractLocalNodes(HitTri, m_PreComputeNodes[m_PreLayers - 1], Local);
-		__subdivide(Local, Sub, SubUV);
-		if (auto r = __HitNodes(Sub, vPoint, HitTri); r.has_value())
-			__calcUV(Sub, SubUV, HitTri, vPoint, voUV);
-	}*/
-
-	/*CTriangle HitTri;
-	float Epsilon = 0.00001f;
-	Eigen::Matrix<SPoint, -1, -1> CurNodes, LastNodes, TempNodes;
-	Eigen::Matrix<Eigen::Vector2f, -1, -1> CurUV;
-	std::vector<Eigen::Vector2f> EdgeUV;
-	for (int i = 0; i < m_MaxSub; i++)
-	{
-		LastNodes = CurNodes;
-		if (i == 0)
-		{
-			CurNodes = m_PreComputeNodes[m_PreLayers - 1];
-			CurUV = m_PreComputeUV;
-		}
-		else
-		{
-			__extractLocalNodes(HitTri, LastNodes, TempNodes);
-			__subdivide(TempNodes, CurNodes, CurUV);
-		}
-
-		if (auto r = __HitNodes(CurNodes, vPoint, HitTri); r.has_value())
-			__calcUV(CurNodes, CurUV, HitTri, vPoint, voUV);
-
-		if (__calcNodesDiff(vPoint, __sample(CurNodes, voUV[0], voUV[1])) < Epsilon)
-			break;
-	}*/
+	t = Timer.getElapsedTime();
+	Timer.start();
+	/* Timer */
 
 	std::vector<float> Error;
 
@@ -120,6 +85,10 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 
 	Eigen::Vector2f FinalUV(LocalUV.first.x() * voUV.x() + LocalUV.second.x() * (1 - voUV.x()), LocalUV.first.y() * voUV.y() + LocalUV.second.y() * (1 - voUV.y()));
 	
+	/* Timer */
+	Timer.stop();
+	t = Timer.getElapsedTimeInMS();
+	std::cout << "Calc UV Use Time: " << t << "ms" << std::endl;
 
 	for (int i = 0; i < Error.size(); i++)
 	{

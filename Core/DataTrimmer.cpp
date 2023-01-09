@@ -4,6 +4,18 @@
 
 using namespace core;
 
+CDataTrimmer::CDataTrimmer()
+	: m_Level(1)
+{}
+
+bool CDataTrimmer::setNeighLevel(int vLevel)
+{
+	if (vLevel > 1)vLevel = 1;
+	if (vLevel < 0)vLevel = 0;
+	m_Level = vLevel;
+	return true;
+}
+
 void CDataTrimmer::sort(const std::vector<Eigen::Vector3i>& vPos)
 {
 	_ASSERTE(vPos.size());
@@ -48,6 +60,10 @@ void CDataTrimmer::__buildNeighbors(const std::vector<Eigen::Vector3i>& vPos, st
 				for (int m = e.z() - 1; m <= e.z() + 1; m++)
 				{
 					if (m < Box.first.z() || m > Box.second.z()) continue;
+					if (i == e[0] && k == e[1] && m == e[2]) continue;
+					if (m_Level == 1)
+						if (std::fabs(i - e[0]) + std::fabs(k - e[1]) + std::fabs(m - e[2]) > 1) continue;
+
 					auto Iter = std::find(vPos.begin(), vPos.end(), Eigen::Vector3i(i, k, m));
 					if (Iter != vPos.end())
 						voNeighInfo[Count].emplace_back(std::distance(vPos.begin(), Iter));
@@ -73,31 +89,48 @@ std::optional<unsigned int> CDataTrimmer::__chooseStartPoint(const std::vector<E
 {
 	_ASSERTE(vPos.size() && vPos.size() == vIsUsed.size() && vPos.size() == vNeighInfo.size());
 
-	
-	
-
+	int MinNeighCount = INT_MAX;
+	std::vector<unsigned int> Candidates;
 	for (int i = 0; i < vNeighInfo.size(); i++)
 	{
 		if (m_IsValid[i] == false || vIsUsed[i] == true) continue;
-
-
+		int Count = 0;
+		for (int k = 0; k < vNeighInfo[i].size(); k++)
+		{
+			unsigned int NeighIndex = vNeighInfo[i][k];
+			if (m_IsValid[NeighIndex] == false || vIsUsed[NeighIndex] == true) continue;
+			Count++;
+		}
+		if (MinNeighCount > Count)
+		{
+			MinNeighCount = Count;
+			Candidates.clear();
+			Candidates.shrink_to_fit();
+			Candidates.push_back(i);
+		}
+		else if (MinNeighCount == Count)
+			Candidates.push_back(i);
 	}
+
+	if (Candidates.size() == 0)
+		return std::nullopt;
 
 	int MinSum = INT_MAX;
 	std::vector<unsigned int> MinIndices;
-	for (int i = 0; i < vPos.size(); i++)
+	for (int i = 0; i < Candidates.size(); i++)
 	{
-		if (m_IsValid[i] == false || vIsUsed[i] == true) continue;
-		int Index = vPos[i].x() + vPos[i].y() + vPos[i].z();
+		unsigned int CurIndex = Candidates[i];
+		if (m_IsValid[CurIndex] == false || vIsUsed[CurIndex] == true) continue;
+		int Index = vPos[CurIndex].x() + vPos[CurIndex].y() + vPos[CurIndex].z();
 		if (MinSum > Index)
 		{
 			MinSum = Index;
 			MinIndices.clear();
 			MinIndices.shrink_to_fit();
-			MinIndices.push_back(i);
+			MinIndices.push_back(CurIndex);
 		}
 		else if (MinSum == Index)
-			MinIndices.push_back(i);
+			MinIndices.push_back(CurIndex);
 	}
 
 	if (MinIndices.size() == 0)
@@ -123,9 +156,9 @@ void CDataTrimmer::__trimByLayer(const std::vector<Eigen::Vector3i>& vPos, const
 	
 	while (true)
 	{
-		std::vector<unsigned int> UpdateList;
+ 		std::vector<unsigned int> UpdateList;
 		unsigned int StartIndex;
-		if (auto r = __chooseStartPoint(vPos, IsTraversed); r.has_value())
+		if (auto r = __chooseStartPoint(vPos, vNeighInfo, IsTraversed); r.has_value())
 			StartIndex = r.value();
 		else
 			break;

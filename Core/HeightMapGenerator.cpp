@@ -3,6 +3,7 @@
 #include "HeightMapGenerator.h"
 #include "AABBEstimation.h"
 #include "BSplineSurface.h"
+#include "Voxelization.h"
 
 using namespace core;
 
@@ -50,34 +51,36 @@ bool CHeightMapGenerator::generate(int vWidth, int vHeight)
 
 bool CHeightMapGenerator::generateBySurface(int vWidth, int vHeight)
 {
-	//_ASSERTE(vWidth > 0 && vHeight > 0);
-	//m_Map.setSize(vWidth, vHeight);
+	_ASSERTE(vWidth > 0 && vHeight > 0);
+	m_Map.setSize(vWidth, vHeight);
 
-	//if (!m_Box.isValid())
-	//{
-	//	CAABBEstimation AABBEstimation(m_pCloud);
-	//	m_Box = AABBEstimation.compute();
-	//	_ASSERTE(m_Box.isValid());
-	//}
+	if (!m_Box.isValid())
+	{
+		CAABBEstimation AABBEstimation(m_pCloud);
+		m_Box = AABBEstimation.compute();
+		_ASSERTE(m_Box.isValid());
+	}
 
-	//Eigen::Matrix<SPoint, -1, -1> ControlPoints;
-	//float Rate = 0.4f;
-	//Eigen::Vector3i Scale((m_Box._Max[0] - m_Box._Min[0]) / Rate, (m_Box._Max[1] - m_Box._Min[1]) / Rate, (m_Box._Max[2] - m_Box._Min[2]) / Rate);
-	//_ASSERTE(Scale[0] > 0 && Scale[1] > 0 && Scale[2] > 0);
+	core::CVoxelization Voxelization;
+
+	Eigen::Matrix<SPoint, -1, -1> ControlPoints;
+	float Rate = 0.4f;
+	Eigen::Vector3i Scale((m_Box._Max[0] - m_Box._Min[0]) / Rate, (m_Box._Max[1] - m_Box._Min[1]) / Rate, (m_Box._Max[2] - m_Box._Min[2]) / Rate);
+	_ASSERTE(Scale[0] > 0 && Scale[1] > 0 && Scale[2] > 0);
 
 	//std::unordered_map<Eigen::Vector3i, std::vector<unsigned int>> Indices;
-	//std::vector<std::vector<std::vector<SPoint>>> Voxel;
-	///*for (int i = 0; i < Scale[0]; i++)
-	//	for (int k = 0; k < Scale[1]; k++)
-	//		for (int m = 0; m < Scale[2]; m++)
-	//		{
+	std::vector<std::vector<std::vector<SPoint>>> Voxel;
+	/*for (int i = 0; i < Scale[0]; i++)
+		for (int k = 0; k < Scale[1]; k++)
+			for (int m = 0; m < Scale[2]; m++)
+			{
 
-	//		}*/
+			}*/
 
-	//for (const auto& e : *m_pCloud)
-	//{
-	//	
-	//}
+	for (const auto& e : *m_pCloud)
+	{
+		
+	}
 
 	return true;
 }

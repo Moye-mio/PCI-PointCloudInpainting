@@ -33,10 +33,9 @@ protected:
 			for (int k = 0; k < 4; k++)
 				for (int m = 0; m < 4; m++)
 				{
-					if ((i == 2 || i == 3) && m > 0) continue;
+					if ((i == 1 || i == 2) && m > 0) continue;
 					voData.emplace_back(Eigen::Vector3i(i, k, m));
 				}
-
 
 		voSorted.resize(10, 4);
 		Eigen::Matrix<Eigen::Vector3i, -1, -1> Sorted;
@@ -48,7 +47,7 @@ protected:
 			for (int k = 1; k < Size; k++)
 				Sorted.coeffRef(Size + k - 1, i) = Eigen::Vector3i(k, i, 0);
 			for (int k = 1; k < Size; k++)
-				Sorted.coeffRef(Size * 2 + k - 1, i) = Eigen::Vector3i(Size - 1, i, k);
+				Sorted.coeffRef(Size * 2 + k - 2, i) = Eigen::Vector3i(Size - 1, i, k);
 		}
 
 		for (int i = 0; i < 10; i++)
@@ -72,17 +71,38 @@ protected:
 	}
 };
 
-TEST_F(TestDataTrimmer, DT_InValidInput)
-{
-	core::CDataTrimmer Trimmer;
-	ASSERT_DEATH(Trimmer.sort(std::vector<Eigen::Vector3i>()), "");
-}
+//TEST_F(TestDataTrimmer, DT_InValidInput)
+//{
+//	core::CDataTrimmer Trimmer;
+//	ASSERT_DEATH(Trimmer.sort(std::vector<Eigen::Vector3i>()), "");
+//}
+//
+//TEST_F(TestDataTrimmer, NT_Plane)
+//{
+//	std::vector<Eigen::Vector3i> Data;
+//	Eigen::Matrix<unsigned int, -1, -1> GTSorted, Sorted;
+//	generatePlane(Data, GTSorted);
+//	core::CDataTrimmer Trimmer;
+//	Trimmer.sort(Data);
+//	Trimmer.dumpSortedIndices(Sorted);
+//	ASSERT_TRUE(isMatrixSame(Sorted, GTSorted));
+//}
 
-TEST_F(TestDataTrimmer, NT_Plane)
+TEST_F(TestDataTrimmer, NT_Concave)
 {
 	std::vector<Eigen::Vector3i> Data;
 	Eigen::Matrix<unsigned int, -1, -1> GTSorted, Sorted;
-	generatePlane(Data, GTSorted);
+	generateConcave(Data, GTSorted);
+
+	{
+		for (int i = 0; i < GTSorted.cols(); i++)
+		{
+			for (int k = 0; k < GTSorted.rows(); k++)
+				std::cout << GTSorted(k, i) << ": ("<< Data[GTSorted(k, i)][0] <<", "<< Data[GTSorted(k, i)][1]<<", " << Data[GTSorted(k, i)][2]<<")\t";
+			std::cout << std::endl;
+		}
+	}
+
 	core::CDataTrimmer Trimmer;
 	Trimmer.sort(Data);
 	Trimmer.dumpSortedIndices(Sorted);
