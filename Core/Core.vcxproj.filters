@@ -173,6 +173,9 @@
     <ClInclude Include="DataTrimmer.h">
       <Filter>PCFeature\Trim</Filter>
     </ClInclude>
+    <ClInclude Include="Trimmer.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -242,6 +245,9 @@
       <Filter>PCFeature\Voxel</Filter>
     </ClCompile>
     <ClCompile Include="DataTrimmer.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimmer.cpp">
       <Filter>PCFeature\Trim</Filter>
     </ClCompile>
   </ItemGroup>

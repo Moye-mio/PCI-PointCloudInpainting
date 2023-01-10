@@ -181,6 +181,7 @@
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Trimmer.h" />
     <ClInclude Include="Voxelization.h" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +212,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Trimmer.cpp" />
     <ClCompile Include="Voxelization.cpp" />
   </ItemGroup>
   <ItemGroup>
