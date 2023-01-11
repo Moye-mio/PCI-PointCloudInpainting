@@ -9,15 +9,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <cmath>
-#include <numbers>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
@@ -32,10 +23,8 @@
 #include "common/EventLoggerInterface.h"
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
-#include "common/MathInterface.h"
-#include "common/CpuTimer.h"
 
 #include "PointCloudType.h"
-#include "Point.h"
-#include "BSplineCurve.h"
-#include "BSplineSurface.h"
+#include "magic_enum.hpp"
+#include "Trimmer.h"
+#include "Voxelization.h"

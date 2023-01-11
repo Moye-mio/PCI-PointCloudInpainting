@@ -6,12 +6,14 @@ using namespace core;
 CTrimmer::CTrimmer()
 	: m_BaseWidth(5)
 	, m_BaseHeight(5)
+	, m_Scale(1.0f)
 {}
 
-bool CTrimmer::setData(const std::vector<std::pair<Eigen::Vector3i, Point_t>>& vData)
+bool CTrimmer::setData(const std::vector<std::pair<Eigen::Vector3i, Point_t>>& vData, float vScale)
 {
-	_ASSERTE(vData.size());
+	_ASSERTE(vData.size() && vScale > 0);
 	m_Data = vData;
+	m_Scale = vScale;
 	return true;
 }
 
@@ -23,7 +25,7 @@ void CTrimmer::fillAndTrim(enum class EProj vProj /*= ProjZ*/)
 	Eigen::Matrix<std::vector<unsigned int>, -1, -1> Map;
 	__proj2Base(Map);
 	__fillEmpty(Map);
-	//__trim(Map);
+	__trim(Map);
 }
 
 void CTrimmer::__calcBaseSize()
@@ -42,8 +44,8 @@ void CTrimmer::__calcBaseSize()
 	}
 
 	_ASSERTE(X[0] == 0 && Y[0] == 0);
-	m_BaseWidth = X[1];
-	m_BaseHeight = Y[1];
+	m_BaseWidth = X[1] + 1;
+	m_BaseHeight = Y[1] + 1;
 }
 
 void CTrimmer::__proj2Base(Eigen::Matrix<std::vector<unsigned int>, -1, -1>& voMap)
@@ -84,6 +86,7 @@ void CTrimmer::__ExtractNeighInfo(const Eigen::Matrix<std::vector<unsigned int>,
 		{
 			if (i == vRow && k == vCol) continue;
 			if (vMap(i, k).size() == 0) continue;
+			if (std::abs(i - vRow) + std::abs(k - vCol) > 1) continue;
 
 			for (const auto& e : vMap(i, k))
 				voNeighInfo.push_back(e);
@@ -118,10 +121,20 @@ unsigned int CTrimmer::__fillEmptyElement(const std::vector<unsigned int>& vNeig
 	{
 		const auto& Point = m_Data[e].second;
 		if (m_Data[e].first.z() == Depth)
-			Points.emplace_back(Point);
+		{
+			Eigen::Vector2f Pos(Point.x, Point.y);
+			Eigen::Vector2i Offset(vRow - m_Data[e].first.x(), vCol - m_Data[e].first.y());
+			Pos += Offset.cast<float>() * m_Scale;
+
+			{
+				std::cout << "Offset: (" << Offset[0] << ", " << Offset[1] << ")\tPos: (" << Point.x << ", " << Point.y << ") -> (" << Pos.x() << ", " << Pos.y() << ")" << std::endl;
+			}
+
+			Points.emplace_back(Point_t(Pos[0], Pos[1], Point.z, Point.r, Point.g, Point.b, Point.a));
+		}
 	}
 	m_Data.emplace_back(std::make_pair(Eigen::Vector3i(vRow, vCol, Depth), __calcAveragePoint(Points)));
-	return m_Data.size();
+	return m_Data.size() - 1;
 }
 
 Point_t CTrimmer::__calcAveragePoint(const std::vector<Point_t>& vPoints)
@@ -164,7 +177,7 @@ void CTrimmer::__trim(const Eigen::Matrix<std::vector<unsigned int>, -1, -1>& vM
 		for (int k = 0; k < vMap.cols(); k++)
 		{
 			unsigned int PointNum = vMap(i, k).size();
-			_ASSERTE(PointNum == 0);
+			_ASSERTE(PointNum != 0);
 			if (PointNum == 1)
 				m_Sorted.coeffRef(i, k) = m_Data[vMap(i, k)[0]].second;
 			else

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Shader.h"
 
+const std::string ModelPath("Voxel.ply");
+
 using SColor = Eigen::Vector3f;
 
 class TestBSplineSurface : public testing::Test
@@ -18,6 +20,19 @@ protected:
 	{
 		if (glfwGetKey(vWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(vWindow, true);
+	}
+
+	PC_t::Ptr loadPC(const std::string& vPath)
+	{
+		std::string FileName = hiveUtility::hiveLocateFile(vPath);
+		_ASSERTE(!FileName.empty());
+
+		PC_t::Ptr pCloud(new PC_t);
+		int r = pcl::io::loadPLYFile<Point_t>(FileName, *pCloud);
+		_ASSERTE(r != -1);
+		_ASSERTE(pCloud->size());
+		std::cout << "Model Point Size: " << pCloud->size() << std::endl;
+		return pCloud;
 	}
 
 	static void FrameBufferSizeCallback(GLFWwindow* vWindow, int vWidth, int vHeight)
@@ -45,6 +60,36 @@ protected:
 						Point.b = 152.0f / 255.0f;*/
 						voVertices.coeffRef(Count / vDepths, m) = Point;
 					}
+
+		std::cout << "Control Points: " << voVertices.size() << std::endl;
+	}
+
+	void generateCrossPlane(Eigen::Matrix<core::SPoint, -1, -1>& voVertices, int vRows /* x */, int vCols /* y */, int vDepths /* z */)
+	{
+		voVertices.resize(vRows * 2 - 1, vCols);
+
+		int Count = 0;
+		for (int i = 0; i < vRows; i++)
+			for (int k = 0; k < vCols; k++)
+			{
+				core::SPoint Point;
+				Point.x() = i * 0.2 - 0.5f;
+				Point.y() = k * 0.2 - 0.5f;
+				Point.z() = i * 0.2 - 0.5f;
+				voVertices.coeffRef(i, k) = Point;
+				Count++;
+			}
+
+		for (int i = 0; i < vRows - 1; i++)
+			for (int k = 0; k < vCols; k++)
+			{
+				core::SPoint Point;
+				Point.x() = (i + vRows) * 0.2 - 0.5f;
+				Point.y() = k * 0.2 - 0.5f;
+				Point.z() = (vRows - i - 2) * 0.2 - 0.5f;
+				voVertices.coeffRef(i + vRows, k) = Point;
+				Count++;
+			}
 
 		std::cout << "Control Points: " << voVertices.size() << std::endl;
 	}
@@ -129,7 +174,8 @@ TEST_F(TestBSplineSurface, NT_DrawSurfaceByOpenGL)
 	SColor NodeColor(168.0f / 255.0f, 160.0f / 255.0f, 207.0f / 255.0f);
 
 	Eigen::Matrix<core::SPoint, -1, -1> ControlPoints;
-	generatePoints(ControlPoints, Rows, Cols, Depths);
+	//generatePoints(ControlPoints, Rows, Cols, Depths);
+	generateCrossPlane(ControlPoints, Rows, Cols, Depths);
 
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
