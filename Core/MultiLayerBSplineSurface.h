@@ -9,8 +9,10 @@ namespace core
 		CMultiLayerBSplineSurface(int vDegree, bool vIsClamped = true);
 		[[nodiscard]] bool setLayer(int vLayer);
 		[[nodiscard]] bool setMaxSub(int vMaxSub);
+		[[nodiscard]] bool setIsCalcError(bool vIsCalcError);
 		float calcProj(const SPoint& vPoint, Eigen::Vector2f& voUV);
 		std::optional<SPoint> getDetailedNode(int vRow, int vCol);
+		void dumpError(std::vector<float>& voError) { voError = m_Error; }
 
 	private:
 		void __generatePreMultiLayerNodes();
@@ -27,11 +29,13 @@ namespace core
 		std::optional<float> __HitTriangle(const CTriangle& vTri, const SPoint& vPoint);
 
 	private:
+		bool m_IsCalcError;
 		int m_Sub;
 		int m_PreLayers;
 		int m_MaxSub;
 
 		Eigen::Matrix<Eigen::Vector2f, -1, -1>		m_PreComputeUV;
 		std::vector<Eigen::Matrix<SPoint, -1, -1>>	m_PreComputeNodes;
+		std::vector<float>							m_Error;
 	};
 }

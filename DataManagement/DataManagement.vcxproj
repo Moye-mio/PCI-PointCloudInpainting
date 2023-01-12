@@ -162,6 +162,7 @@
     <ClInclude Include="PCPLYSaver.h" />
     <ClInclude Include="PCSaver.h" />
     <ClInclude Include="SolverBuilder.h" />
+    <ClInclude Include="SurfaceConstruction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DepthInpainting.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="PCPLYSaver.cpp" />
     <ClCompile Include="PCSaver.cpp" />
     <ClCompile Include="SolverBuilder.cpp" />
+    <ClCompile Include="SurfaceConstruction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ALG\PM\PM.vcxproj">

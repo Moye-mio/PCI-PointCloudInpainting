@@ -41,5 +41,8 @@
 #include "GradientMap.h"
 #include "AABB.h"
 #include "AABBEstimation.h"
+#include "Point.h"
+#include "Triangle.h"
+#include "Plane.h"
 
 #endif //PCH_H

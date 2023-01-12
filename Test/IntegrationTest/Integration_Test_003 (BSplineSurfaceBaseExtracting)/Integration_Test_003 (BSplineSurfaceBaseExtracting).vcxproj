@@ -47,6 +47,17 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.vcxproj">
+      <Project>{f3fc1ad4-fae1-4ccd-9687-b5d63a97fb07}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\Core.vcxproj">
+      <Project>{39c00d6d-7d00-4846-acd1-b0676b2a2993}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DataManagement\DataManagement.vcxproj">
+      <Project>{ac5b2935-ab28-4ed2-b6b6-f886228b3238}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
@@ -68,6 +79,9 @@
     <Import Project="D:\vc_packages\PCL.1.11.1\build\native\PCL.targets" Condition="Exists('D:\vc_packages\PCL.1.11.1\build\native\PCL.targets')" />
     <Import Project="D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
     <Import Project="D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
+    <Import Project="..\..\..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets" Condition="Exists('..\..\..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" />
+    <Import Project="..\..\..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets" Condition="Exists('..\..\..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" />
+    <Import Project="..\..\..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets" Condition="Exists('..\..\..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,11 +108,12 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\dataManagement;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalOptions>/WHOLEARCHIVE:DataManagement.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -155,5 +170,8 @@
     <Error Condition="!Exists('D:\vc_packages\PCL.1.11.1\build\native\PCL.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\PCL.1.11.1\build\native\PCL.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets'))" />
+    <Error Condition="!Exists('..\..\..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets'))" />
   </Target>
 </Project>

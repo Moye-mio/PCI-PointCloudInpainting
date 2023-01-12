@@ -1,6 +1,7 @@
 #include "pch.h"
 
 const std::string ModelPath = TESTMODEL_DIR + std::string("/CrossPlane.ply");
+const std::string ModelPath2 = TESTMODEL_DIR + std::string("/GT/GT_CrossPlane.ply");
 
 class TestVoxelization : public testing::Test
 {
@@ -76,6 +77,28 @@ TEST_F(TestVoxelization, NT_CrossPlane)
 	for (const auto& e : Voxels)
 		pData->emplace_back(e.second);
 	pcl::io::savePLYFileBinary("Voxel.ply", *pData);
+
+	std::cout << "Voxel Size: " << Voxels.size() << std::endl;
+	for (const auto& e : Voxels)
+		std::cout << "(" << e.first.x() << ", " << e.first.y() << ", " << e.first.z() << "), " << e.second << std::endl;
+}
+
+TEST_F(TestVoxelization, NT_GT_CrossPlane)
+{
+	PC_t::Ptr pCloud = loadPC(ModelPath2);
+
+	float Dist = 1.0f;
+	std::vector<std::pair<Eigen::Vector3i, Point_t>> Voxels;
+	core::CVoxelization Voxelization;
+	Voxelization.setCloud(pCloud);
+	Voxelization.generate(Dist);
+	Voxelization.dumpVoxel(Voxels);
+	EXPECT_EQ(Voxels.size(), 240);
+
+	PC_t::Ptr pData(new PC_t);
+	for (const auto& e : Voxels)
+		pData->emplace_back(e.second);
+	pcl::io::savePLYFileBinary("Voxel2.ply", *pData);
 
 	std::cout << "Voxel Size: " << Voxels.size() << std::endl;
 	for (const auto& e : Voxels)

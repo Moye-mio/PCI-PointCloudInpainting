@@ -19,6 +19,9 @@
     <Filter Include="Transaction\DepthInpainting">
       <UniqueIdentifier>{753daa01-87e7-4a44-a4f4-4fbff90ad271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transaction\SurfaceConstruction">
+      <UniqueIdentifier>{db261ad8-50e9-4729-a56a-1c365d7628fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -60,6 +63,9 @@
     <ClInclude Include="PCLASLoader.h">
       <Filter>IO</Filter>
     </ClInclude>
+    <ClInclude Include="SurfaceConstruction.h">
+      <Filter>Transaction\SurfaceConstruction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -91,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="PCLASLoader.cpp">
       <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceConstruction.cpp">
+      <Filter>Transaction\SurfaceConstruction</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

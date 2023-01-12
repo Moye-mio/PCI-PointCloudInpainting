@@ -32,16 +32,22 @@
 #include "common/MathInterface.h"
 
 #include "magic_enum.hpp"
-#include "Voxelization.h"
+#include "PointCloudType.h"
+#include "AABB.h"
+#include "HeightMap.h"
+#include "Point.h"
+#include "Triangle.h"
+#include "Plane.h"
+
 #include "BSplineSurface.h"
 #include "BSplineCurve.h"
-
-#include "PointCloudType.h"
-#include "HeightMap.h"
+#include "PCLoader.h"
+#include "Voxelization.h"
 #include "GradientMap.h"
-#include "AABB.h"
 #include "AABBEstimation.h"
 #include "HeightMapGenerator.h"
 #include "GradientMapGenerator.h"
 #include "SparseLinearSolver.h"
 #include "HeightMap2PCMapper.h"
+#include "SurfaceConstruction.h"
+

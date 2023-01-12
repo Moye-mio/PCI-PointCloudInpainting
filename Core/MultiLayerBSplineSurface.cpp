@@ -8,6 +8,7 @@ CMultiLayerBSplineSurface::CMultiLayerBSplineSurface(int vDegree, bool vIsClampe
 	, m_PreLayers(2)
 	, m_Sub(5)
 	, m_MaxSub(5)
+	, m_IsCalcError(false)
 {}
 
 bool CMultiLayerBSplineSurface::setLayer(int vLayer)
@@ -21,6 +22,12 @@ bool CMultiLayerBSplineSurface::setMaxSub(int vMaxSub)
 {
 	_ASSERTE(vMaxSub >= 5);
 	m_MaxSub = vMaxSub;
+	return true;
+}
+
+bool CMultiLayerBSplineSurface::setIsCalcError(bool vIsCalcError)
+{
+	m_IsCalcError = vIsCalcError;
 	return true;
 }
 
@@ -47,8 +54,8 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 	/* Timer */
 
 	std::vector<float> Error;
-
 	std::vector<Eigen::Vector2i> Hit;
+	float Dist = 0.0f;
 	float Epsilon = 0.00001f;
 	Eigen::Matrix<SPoint, -1, -1> CurNodes, LastNodes, TempNodes;
 	Eigen::Matrix<Eigen::Vector2f, -1, -1> CurUV;
@@ -77,25 +84,24 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 				TriUV.emplace_back(CurUV.coeff(Hit[1][0], Hit[1][1]));
 				TriUV.emplace_back(CurUV.coeff(Hit[2][0], Hit[2][1]));
 				voUV = __calcUV(TriUV, Bary);
-				{
+				Dist = r.value();
+				if (m_IsCalcError)
 					Error.emplace_back(__calcNodesDiff(vPoint, __sample(CurNodes, voUV[0], voUV[1])));
-				}
 			}
 	}
 
 	Eigen::Vector2f FinalUV(LocalUV.first.x() * voUV.x() + LocalUV.second.x() * (1 - voUV.x()), LocalUV.first.y() * voUV.y() + LocalUV.second.y() * (1 - voUV.y()));
-	
+	voUV = FinalUV;
+
 	/* Timer */
 	Timer.stop();
 	t = Timer.getElapsedTimeInMS();
 	std::cout << "Calc UV Use Time: " << t << "ms" << std::endl;
 
-	for (int i = 0; i < Error.size(); i++)
-	{
-		std::cout << i << ": " << Error[i] << std::endl;
-	}
+	if (m_IsCalcError)
+		m_Error = Error;
 
-	return Error.back();
+	return Dist;
 }
 
 std::optional<core::SPoint> CMultiLayerBSplineSurface::getDetailedNode(int vRow, int vCol)
