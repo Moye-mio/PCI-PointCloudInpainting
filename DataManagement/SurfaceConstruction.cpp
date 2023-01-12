@@ -52,7 +52,7 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	/* B-Spline Surface Construction */
 	auto pSurface = std::make_shared<core::CMultiLayerBSplineSurface>(3);
 	pSurface->setLayer(2);
-	pSurface->setMaxSub(8);
+	pSurface->setMaxSub(5);
 	pSurface->setControlPoints(ControlPoints);
 	
 	/* Create HeightMap */
