@@ -164,17 +164,17 @@ std::optional<float> CMultiLayerBSplineSurface::__HitNodes(const Eigen::Matrix<S
 				Candidates.emplace_back(std::make_pair(r.value(), Indices));
 
 				{
-					std::cout << "Hit: \t";
+					//std::cout << "Hit: \t";
 				}
 			}
 			else
 			{
-				std::cout << "Miss: \t";
+				//std::cout << "Miss: \t";
 			}
 
 			{
-				std::cout << "(" << i << ", " << k << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
-				std::cout << "Triangle: (" << vNodes(i, k).x() << ", " << vNodes(i, k).y() << ", " << vNodes(i, k).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;
+				/*std::cout << "(" << i << ", " << k << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
+				std::cout << "Triangle: (" << vNodes(i, k).x() << ", " << vNodes(i, k).y() << ", " << vNodes(i, k).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;*/
 			}
 
 			CTriangle Tri2(vNodes(i + 1, k + 1), vNodes(i + 1, k), vNodes(i, k + 1));
@@ -187,17 +187,17 @@ std::optional<float> CMultiLayerBSplineSurface::__HitNodes(const Eigen::Matrix<S
 				Candidates.emplace_back(std::make_pair(r.value(), Indices));
 
 				{
-					std::cout << "Hit: \t";
+					//std::cout << "Hit: \t";
 				}
 			}
 			else
 			{
-				std::cout << "Miss: \t";
+				//std::cout << "Miss: \t";
 			}
 
 			{
-				std::cout << "(" << i + 1 << ", " << k + 1 << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
-				std::cout << "Triangle: (" << vNodes(i + 1, k + 1).x() << ", " << vNodes(i + 1, k + 1).y() << ", " << vNodes(i + 1, k + 1).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;
+				/*std::cout << "(" << i + 1 << ", " << k + 1 << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
+				std::cout << "Triangle: (" << vNodes(i + 1, k + 1).x() << ", " << vNodes(i + 1, k + 1).y() << ", " << vNodes(i + 1, k + 1).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;*/
 			}
 		}
 

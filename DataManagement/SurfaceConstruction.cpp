@@ -4,6 +4,7 @@
 #include "Trimmer.h"
 #include "MultiLayerBSplineSurface.h"
 #include "HeightMapGenerator.h"
+#include "Image.h"
 
 using namespace dataManagement;
 
@@ -12,9 +13,9 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	_ASSERTE(vCloud != nullptr);
 	_ASSERTE(vCloud->size());
 
-	float Dist = 0.9f;
-	int Width = 128;
-	int Height = 128;
+	float Dist = 1.0f;
+	int Width = 8;
+	int Height = 8;
 	float ScaleInWidth = 1.0f / Width;
 	float ScaleInHeight = 1.0f / Height;
 
@@ -49,20 +50,22 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	__transPCLPoints2SPoints(SortedVoxels, ControlPoints);
 
 	/* B-Spline Surface Construction */
-	core::CMultiLayerBSplineSurface Surface(3);
-	Surface.setLayer(2);
-	Surface.setMaxSub(8);
-	Surface.setControlPoints(ControlPoints);
+	auto pSurface = std::make_shared<core::CMultiLayerBSplineSurface>(3);
+	pSurface->setLayer(2);
+	pSurface->setMaxSub(8);
+	pSurface->setControlPoints(ControlPoints);
 	
 	/* Create HeightMap */
-	core::CHeightMap HeightMap, HeightMapInpainted;
+	core::CHeightMap HeightMap;
 	core::CHeightMapGenerator HGenerator;
 	HGenerator.setCloud(vCloud);
-	HGenerator.generate(128, 128);			/* Magic Number */
+	HGenerator.generateBySurface(pSurface, Width, Height);
 	HGenerator.dumpHeightMap(HeightMap);
 	_ASSERTE(HeightMap.isValid());
 
-
+	{
+		__saveHeightMap(HeightMap);
+	}
 
 }
 
@@ -79,4 +82,15 @@ void CSurfaceConstruction::__transPCLPoints2SPoints(const Eigen::Matrix<Point_t,
 core::SPoint CSurfaceConstruction::__transPCLPoint2SPoint(const Point_t& vP)
 {
 	return core::SPoint(Eigen::Vector3f(vP.x, vP.y, vP.z));
+}
+
+void CSurfaceConstruction::__saveHeightMap(const core::CHeightMap& vMap)
+{
+	Eigen::Matrix<float, -1, -1> Data;
+	Data.resize(vMap.getWidth(), vMap.getHeight());
+	for (int i = 0; i < vMap.getWidth(); i++)
+		for (int k = 0; k < vMap.getHeight(); k++)
+			Data.coeffRef(i, k) = vMap.getValueAt(i, k);
+
+	common::saveImage(Data.cast<int>(), "HeightMap.png");
 }
