@@ -176,6 +176,9 @@
     <ClInclude Include="Trimmer.h">
       <Filter>PCFeature\Trim</Filter>
     </ClInclude>
+    <ClInclude Include="MultilayerSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -249,6 +252,9 @@
     </ClCompile>
     <ClCompile Include="Trimmer.cpp">
       <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="MultilayerSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

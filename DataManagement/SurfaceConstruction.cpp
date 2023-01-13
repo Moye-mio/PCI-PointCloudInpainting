@@ -19,6 +19,10 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	float ScaleInWidth = 1.0f / Width;
 	float ScaleInHeight = 1.0f / Height;
 
+	hiveCommon::CCPUTimer Timer;
+	double t = Timer.getElapsedTime();
+	Timer.start();
+
 	/* Voxelization */
 	std::vector<std::pair<Eigen::Vector3i, Point_t>> Voxels;
 	core::CVoxelization Voxelization;
@@ -35,6 +39,15 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 			pData->push_back(Point_t(p.x, p.y, p.z, 255, 255, 255, 255));
 		}
 		pcl::io::savePLYFileBinary("Voxel.ply", *pData);
+
+		Timer.stop();
+		t = Timer.getElapsedTimeInMS();
+		std::cout << "Voxel Complete...\nUse time: " << t << "ms" << std::endl;
+	}
+
+	{
+		t = Timer.getElapsedTime();
+		Timer.start();
 	}
 
 	/* Trim & Sort */
@@ -45,9 +58,31 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	Trimmer.dumpSorted(SortedVoxels);
 	_ASSERTE(SortedVoxels.size());
 
+	{
+		Timer.stop();
+		t = Timer.getElapsedTimeInMS();
+		std::cout << "Trim and Sort Complete...\nUse time: " << t << "ms" << std::endl;
+	}
+
+	{
+		t = Timer.getElapsedTime();
+		Timer.start();
+	}
+
 	/* Transfer Type */
 	Eigen::Matrix<core::SPoint, -1, -1> ControlPoints;
 	__transPCLPoints2SPoints(SortedVoxels, ControlPoints);
+
+	{
+		Timer.stop();
+		t = Timer.getElapsedTimeInMS();
+		std::cout << "Transfer Type Complete...\nUse time: " << t << "ms" << std::endl;
+	}
+
+	{
+		t = Timer.getElapsedTime();
+		Timer.start();
+	}
 
 	/* B-Spline Surface Construction */
 	auto pSurface = std::make_shared<core::CMultiLayerBSplineSurface>(3);
@@ -62,6 +97,12 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	HGenerator.generateBySurface(pSurface, Width, Height);
 	HGenerator.dumpHeightMap(HeightMap);
 	_ASSERTE(HeightMap.isValid());
+
+	{
+		Timer.stop();
+		t = Timer.getElapsedTimeInMS();
+		std::cout << "B-Spline Surface Construction and Create HeightMap Complete...\nUse time: " << t << "ms" << std::endl;
+	}
 
 	{
 		__saveHeightMap(HeightMap);

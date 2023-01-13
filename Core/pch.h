@@ -23,6 +23,7 @@
 #include <unordered_set>
 #include <optional>
 
+#include <omp.h>
 #include <boost/format.hpp>
 #include <Eigen/Eigen>
 

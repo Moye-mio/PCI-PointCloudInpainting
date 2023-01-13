@@ -66,11 +66,23 @@ bool CHeightMapGenerator::generateBySurface(const std::shared_ptr<core::CMultiLa
 	{
 		const core::SPoint p = __transPCLPoint2SPoint(e);
 		Eigen::Vector2f UV;
-		float Dist = vSurface->calcProj(p, UV);
-		Eigen::Vector2i Offset = __computeOffset(UV);
+		auto r = vSurface->calcProj(p, UV);
+		if (r.has_value())
+		{
+			float Dist = r.value();
+			Eigen::Vector2i Offset = __computeOffset(UV);
 
-		if (Dist > m_Map.getValueAt(Offset[0], Offset[1]))
-			m_Map.setValueAt(Dist, Offset[0], Offset[1]);
+#ifdef NDEBUG
+			{
+				std::cout << "Offset: (" << Offset[0] << ", " << Offset[1] << ")\tDist: " << Dist << std::endl;
+			}
+#endif
+
+			if (Dist > m_Map.getValueAt(Offset[0], Offset[1]))
+				m_Map.setValueAt(Dist, Offset[0], Offset[1]);
+		}
+		else
+			continue;
 	}
 
 	return true;

@@ -6,7 +6,7 @@ using namespace core;
 CMultiLayerBSplineSurface::CMultiLayerBSplineSurface(int vDegree, bool vIsClamped /*= true*/)
 	: IBSplineSurface(vDegree)
 	, m_PreLayers(2)
-	, m_Sub(5)
+	, m_Sub(2)
 	, m_MaxSub(5)
 	, m_IsCalcError(false)
 {}
@@ -31,7 +31,7 @@ bool CMultiLayerBSplineSurface::setIsCalcError(bool vIsCalcError)
 	return true;
 }
 
-float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f& voUV)
+std::optional<float> CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f& voUV)
 {
 	_ASSERTE(!std::isnan(vPoint.x() + vPoint.y() + vPoint.z()));
 	_ASSERTE(m_PreLayers >= 1);
@@ -76,6 +76,7 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 			__subdivide(TempNodes, CurNodes, CurUV);
 		}
 		if (auto r = __HitNodes(CurNodes, vPoint, Hit); r.has_value())
+		{
 			if (auto b = __calcBaryCoor(CurNodes, Hit, vPoint); b.has_value())
 			{
 				Eigen::Vector3f Bary = b.value();
@@ -88,9 +89,17 @@ float CMultiLayerBSplineSurface::calcProj(const SPoint & vPoint, Eigen::Vector2f
 				if (m_IsCalcError)
 					Error.emplace_back(__calcNodesDiff(vPoint, __sample(CurNodes, voUV[0], voUV[1])));
 			}
+		}
+		else
+			return std::nullopt;
+			
+
 	}
 
 	Eigen::Vector2f FinalUV(LocalUV.first.x() * voUV.x() + LocalUV.second.x() * (1 - voUV.x()), LocalUV.first.y() * voUV.y() + LocalUV.second.y() * (1 - voUV.y()));
+	if (!__isUVValid(FinalUV))
+		return std::nullopt;
+	__UVClamped(FinalUV);
 	voUV = FinalUV;
 
 	/* Timer */
@@ -164,17 +173,18 @@ std::optional<float> CMultiLayerBSplineSurface::__HitNodes(const Eigen::Matrix<S
 				Candidates.emplace_back(std::make_pair(r.value(), Indices));
 
 				{
-					//std::cout << "Hit: \t";
+#ifdef _LOG
+					std::cout << "Hit: \t";
+#endif
 				}
 			}
 			else
 			{
-				//std::cout << "Miss: \t";
-			}
-
-			{
-				/*std::cout << "(" << i << ", " << k << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
-				std::cout << "Triangle: (" << vNodes(i, k).x() << ", " << vNodes(i, k).y() << ", " << vNodes(i, k).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;*/
+#ifdef _LOG
+				std::cout << "Miss: \t";
+				std::cout << "(" << i << ", " << k << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
+				std::cout << "Triangle: (" << vNodes(i, k).x() << ", " << vNodes(i, k).y() << ", " << vNodes(i, k).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;
+#endif
 			}
 
 			CTriangle Tri2(vNodes(i + 1, k + 1), vNodes(i + 1, k), vNodes(i, k + 1));
@@ -187,17 +197,18 @@ std::optional<float> CMultiLayerBSplineSurface::__HitNodes(const Eigen::Matrix<S
 				Candidates.emplace_back(std::make_pair(r.value(), Indices));
 
 				{
-					//std::cout << "Hit: \t";
+#ifdef _LOG
+					std::cout << "Hit: \t";
+#endif
 				}
 			}
 			else
 			{
-				//std::cout << "Miss: \t";
-			}
-
-			{
-				/*std::cout << "(" << i + 1 << ", " << k + 1 << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
-				std::cout << "Triangle: (" << vNodes(i + 1, k + 1).x() << ", " << vNodes(i + 1, k + 1).y() << ", " << vNodes(i + 1, k + 1).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;*/
+#ifdef _LOG
+				std::cout << "Miss: \t";
+				std::cout << "(" << i + 1 << ", " << k + 1 << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\t";
+				std::cout << "Triangle: (" << vNodes(i + 1, k + 1).x() << ", " << vNodes(i + 1, k + 1).y() << ", " << vNodes(i + 1, k + 1).z() << "), (" << vNodes(i + 1, k).x() << ", " << vNodes(i + 1, k).y() << ", " << vNodes(i + 1, k).z() << "), (" << vNodes(i, k + 1).x() << ", " << vNodes(i, k + 1).y() << ", " << vNodes(i, k + 1).z() << ")" << std::endl;
+#endif
 			}
 		}
 
@@ -287,7 +298,7 @@ Eigen::Vector2i CMultiLayerBSplineSurface::__calcStartIndices(const std::vector<
 	}
 
 	Eigen::Vector2i Start = { Min.x() - 1, Min.y() - 1 };
-	_ASSERTE(Start.x() >= 0 && Start.y() >= 0 && Start.x() < vRow && Start.y() < vCol);
+	_ASSERTE(Start.x() < vRow && Start.y() < vCol);
 	if (Start.x() < 0) Start.x()++;
 	if (Start.y() < 0) Start.y()++;
 	if (Start.x() > vRow - 4) Start.x()--;
@@ -356,6 +367,18 @@ std::optional<Eigen::Vector3f> CMultiLayerBSplineSurface::__calcBaryCoor(const E
 		return Bary;
 }
 
+void CMultiLayerBSplineSurface::__UVClamped(Eigen::Vector2f& vioUV)
+{
+	vioUV[0] = (vioUV[0] > 1) ? 1 : vioUV[0];
+	vioUV[0] = (vioUV[0] < 0) ? 0 : vioUV[0];
+	vioUV[1] = (vioUV[1] > 1) ? 1 : vioUV[1];
+	vioUV[1] = (vioUV[1] < 0) ? 0 : vioUV[1];
+}
 
-
-
+bool CMultiLayerBSplineSurface::__isUVValid(const Eigen::Vector2f& vUV)
+{
+	if (vUV[0] > 1 || vUV[0] < 0 || vUV[1]>1 || vUV[0] < 0)
+		return false;
+	else
+		return true;
+}

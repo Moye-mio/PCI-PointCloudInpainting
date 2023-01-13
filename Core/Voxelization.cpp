@@ -5,7 +5,6 @@
 
 using namespace core;
 
-
 CVoxelization::CVoxelization()
 	: m_pCloud(new PC_t)
 {}
