@@ -55,10 +55,10 @@ bool CBiasedVoxelization::generate(float vDist)
 
 		if (IsFind == false)
 		{
-#ifdef _DEBUG
+#ifdef _LOG
 			std::cout << "Can not find matching Voxel..." << std::endl;
 			std::cout << "Point: " << m_pCloud->at(i) << "\t, Index: " << i << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 			return false;
 		}
 	}
@@ -93,17 +93,17 @@ bool CBiasedVoxelization::generate(float vDist)
 
 	if (DiscardCount + ValidCount != m_pCloud->size())
 	{
-#ifdef _DEBUG
+#ifdef _LOG
 		std::cout << "ERROR: Discard + Valid Can not match Total Point Size..." << m_Voxel.size() << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 		return false;
 	}
 
-#ifdef _DEBUG
+#ifdef _LOG
 	std::cout << "Valid Voxel Size: " << m_Voxel.size() << std::endl;
 	std::cout << "Discard: " << DiscardCount << std::endl;
 	std::cout << "Valid: " << ValidCount << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 
 	return true;
 }
@@ -121,9 +121,9 @@ bool CBiasedVoxelization::__init(std::vector<std::pair<Eigen::Vector3i, std::vec
 		m_Box = Estimation.compute();
 		if (!m_Box.isValid())
 		{
-#ifdef _DEBUG
+#ifdef _LOG
 			std::cout << "AABB Estimation Failed..." << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 			return false;
 		}
 	}
@@ -143,17 +143,17 @@ bool CBiasedVoxelization::__init(std::vector<std::pair<Eigen::Vector3i, std::vec
 
 	if (voVoxelList.size() == 0)
 	{
-#ifdef _DEBUG
+#ifdef _LOG
 		std::cout << "VoxelList Init Failed..." << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 
 		return false;
 	}
 
-#ifdef _DEBUG
+#ifdef _LOG
 	std::cout << "VoxelList Init Succeed..." << std::endl;
 	std::cout << "VoxelList Size: (" << m_Scale[0] << ", " << m_Scale[1] << ", " << m_Scale[2] << ")" << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 
 	return true;
 }
@@ -191,14 +191,14 @@ bool CBiasedVoxelization::__biasAABB(float vDist)
 
 	if (!m_Box.isValid())
 	{
-#ifdef _DEBUG
+#ifdef _LOG
 		std::cout << "AABB Bias Failed..." << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 		return false;
 	}
 
-#ifdef _DEBUG
+#ifdef _LOG
 	std::cout << "AABB Bias Succeed..." << std::endl;
-#endif // _DEBUG
+#endif // _LOG
 	return true;
 }

@@ -8,10 +8,10 @@
 
 using namespace dataManagement;
 
-void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud)
+bool CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud)
 {
-	_ASSERTE(vCloud != nullptr);
-	_ASSERTE(vCloud->size());
+	_HIVE_EARLY_RETURN(vCloud == nullptr, "Input Cloud is Nullptr...", false);
+	_HIVE_EARLY_RETURN(vCloud->size() == 0, "Input Cloud is Empty...", false);
 
 	float Dist = 1.0f;
 	int Width = 8;
@@ -26,10 +26,9 @@ void CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	/* Voxelization */
 	std::vector<std::pair<Eigen::Vector3i, Point_t>> Voxels;
 	core::CVoxelization Voxelization;
-	Voxelization.setCloud(vCloud);
-	Voxelization.generate(Dist);
+	_HIVE_EARLY_RETURN(!Voxelization.setCloud(vCloud), "Voxelization Set Cloud Error...", false);
+	_HIVE_EARLY_RETURN(!Voxelization.generate(Dist), "Voxelization Generate Error...", false);
 	Voxelization.dumpVoxel(Voxels);
-	_ASSERTE(Voxels.size());
 
 	{
 		PC_t::Ptr pData(new PC_t);
