@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AABBEstimation.h" />
+    <ClInclude Include="BiasedVoxelization.h" />
     <ClInclude Include="BorderExtractor.h" />
     <ClInclude Include="BSplineCurve.h" />
     <ClInclude Include="BSplineSurface.h" />
@@ -189,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
+    <ClCompile Include="BiasedVoxelization.cpp" />
     <ClCompile Include="BorderExtractor.cpp" />
     <ClCompile Include="BSplineCurve.cpp" />
     <ClCompile Include="BSplineSurface.cpp" />

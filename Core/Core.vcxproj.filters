@@ -179,6 +179,9 @@
     <ClInclude Include="MultilayerSurface.h">
       <Filter>Geometry\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="BiasedVoxelization.h">
+      <Filter>PCFeature\Voxel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -255,6 +258,9 @@
     </ClCompile>
     <ClCompile Include="MultilayerSurface.cpp">
       <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="BiasedVoxelization.cpp">
+      <Filter>PCFeature\Voxel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

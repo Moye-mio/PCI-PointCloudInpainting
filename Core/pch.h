@@ -39,7 +39,9 @@
 
 #include "PointCloudType.h"
 #include "Interpolation.h"
+#include "Plane.h"
 #include "Point.h"
 #include "Triangle.h"
+#include "AABB.h"
 
 #endif //PCH_H
