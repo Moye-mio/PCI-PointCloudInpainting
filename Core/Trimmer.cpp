@@ -11,7 +11,9 @@ CTrimmer::CTrimmer()
 
 bool CTrimmer::setData(const std::vector<std::pair<Eigen::Vector3i, Point_t>>& vData, float vScale)
 {
-	_ASSERTE(vData.size() && vScale > 0);
+	if (vData.size() == 0 && vScale <= 0)
+		return false;
+
 	m_Data = vData;
 	m_Scale = vScale;
 	return true;
