@@ -82,7 +82,7 @@ bool CSurfaceConstruction::run(const PC_t::Ptr& vCloud, PC_t::Ptr& voResultCloud
 	pSurface->setLayer(2);
 	pSurface->setMaxSub(5);
 	pSurface->setControlPoints(ControlPoints);
-	
+
 	/* Create HeightMap */
 	core::CHeightMap HeightMap;
 	core::CHeightMapGenerator HGenerator;
