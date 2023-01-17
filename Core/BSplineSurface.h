@@ -6,7 +6,7 @@ namespace core
 	{
 	public:
 		IBSplineSurface(int vDegree, bool vIsClamped = true);
-		~IBSplineSurface() {}
+		~IBSplineSurface() = default;
 
 		bool setControlPoints(const Eigen::Matrix<SPoint, -1, -1>& vPoints);
 		SPoint sample(float vU, float vV);

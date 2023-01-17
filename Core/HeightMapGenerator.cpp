@@ -53,7 +53,7 @@ bool CHeightMapGenerator::generate(int vWidth, int vHeight)
 
 core::SPoint __transPCLPoint2SPoint(const Point_t& vP)
 {
-	return core::SPoint(Eigen::Vector3f(vP.x, vP.y, vP.z));
+	return core::SPoint(vP.x, vP.y, vP.z);
 }
 
 bool CHeightMapGenerator::generateBySurface(const std::shared_ptr<core::CMultiLayerBSplineSurface>& vSurface, int vWidth, int vHeight)
