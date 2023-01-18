@@ -82,7 +82,13 @@ TEST_F(TestMultiLayerSurface, NT_LSurface)
 	Surface.setControlPoints(ControlPoints);
 	Surface.setIsCalcError(true);
 
-	std::vector<float> Dists;
+	const auto& Point = ControlPoints(4, 0);
+	std::cout << "Point: (" << Point.x() << ", " << Point.y() << ", " << Point.z() << std::endl;
+	if (auto r = Surface.calcProj(Point); r.has_value())
+		std::cout << r->_Dist << ", " << r->_UV << std::endl;
+
+
+	/*std::vector<core::SProjInfo> Infos;
 	for (int i = 0; i < ControlPoints.rows(); i++)
 		for (int k = 0; k < ControlPoints.cols(); k++)
 		{
@@ -90,11 +96,10 @@ TEST_F(TestMultiLayerSurface, NT_LSurface)
 			auto r = Surface.calcProj(ControlPoints(i, k));
 			if (r.has_value())
 			{
-				float Dist = r.value()._Dist;
-				Dists.push_back(Dist);
+				Infos.emplace_back(r.value());
 			}
 			else
-				Dists.push_back(-FLT_MAX);
+				Infos.push_back(core::SProjInfo());
 		}
 
 	std::cout << "Dist: " << std::endl;
@@ -102,11 +107,11 @@ TEST_F(TestMultiLayerSurface, NT_LSurface)
 	for (int i = 0; i < ControlPoints.rows(); i++)
 		for (int k = 0; k < ControlPoints.cols(); k++)
 		{
-			if (Dists[N] == -FLT_MAX)
+			if (Infos[N]._Dist == -FLT_MAX)
 				std::cout << "Point: (" << i << ", " << k << ")\tDist: NULL" << std::endl;
 			else
-				std::cout << "Point: (" << i << ", " << k << ")\tDist: " << Dists[N] << std::endl;
+				std::cout << "Point: (" << i << ", " << k << ")\tDist: " << Infos[N]._Dist << "\tUV: (" << Infos[N]._UV[0] << ", " << Infos[N]._UV[1] << ")" << std::endl;
 			N++;
-		}
+		}*/
 
 }

@@ -52,33 +52,43 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 	
 	SProjInfo Info;
 	std::vector<Eigen::Vector2i> Hit;
-	for (int i = 0; i < m_SubLayer; i++)
+	for (int i = m_SubLayer - 1; i >= 0; i--)
 	{
 		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Layer [%1%]", i));
 
 		const auto& CurLayer = m_Vertices[i];
 		std::pair<Eigen::Vector2i, Eigen::Vector2i> Range;
-		if (i == 0)
-			Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
-		else
-			__calcRange(Hit, i, Range);
-
-		Hit.clear();
-		Hit.shrink_to_fit();
-
+		//if (i == 0)
+		//	Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
+		//else
+		//	__calcRange(Hit, i, Range);
 		{
 			Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
 		}
 
-		auto r = __calcHitNodes(i, vPoint, Range, Hit);
-		if (r.has_value() == false)
+		std::optional<SProjInfo> r;
+		for (int Step = 1; Step <= 2; Step++)
 		{
-			_HIVE_EARLY_RETURN(Info._Dist == -FLT_MAX, "ERROR: No Hit...", std::nullopt);
-			hiveEventLogger::hiveOutputEvent("WARNING: No Hit... return Last Layer Value...");
+			hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Step %1%", Step));
+			Hit.clear();
+			Hit.shrink_to_fit();
+
+			r = __calcHitNodes(i, Step, vPoint, Range, Hit);
+			if (r.has_value() == false)
+			{
+				continue;
+				_HIVE_EARLY_RETURN(Info._Dist == -FLT_MAX, "ERROR: No Hit...", std::nullopt);
+				hiveEventLogger::hiveOutputEvent("WARNING: No Hit... return Last Layer Value...");
+			}
+			else
+				break;
+		}
+
+		if (r.has_value())
+		{
+			Info = r.value();
 			break;
 		}
-
-		Info = r.value();
 	}
 
 	return Info;
@@ -177,9 +187,10 @@ std::optional<SProjInfo> CMultilayerSurface::__HitTriangle(const CTriangle& vTri
 	return Info;
 }
 
-std::optional<float> CMultilayerSurface::__calcPointDist(const SPoint& vLhs, const SPoint& vRhs)
+std::optional<float> CMultilayerSurface::__calcPointDist(const Eigen::Vector3f& vLhs, const Eigen::Vector3f& vRhs)
 {
-	if (!vLhs.isValid() || !vRhs.isValid())	return std::nullopt;
+	SVertex Lhs(vLhs[0], vLhs[1], vLhs[2]), Rhs(vRhs[0], vRhs[1], vRhs[2]);
+	if (!Lhs.isValid() || !Rhs.isValid())	return std::nullopt;
 	else									return (vLhs - vRhs).norm();
 }
 
@@ -229,7 +240,7 @@ std::optional<core::SVertex> CMultilayerSurface::__sample(const Eigen::Matrix<SV
 		return std::nullopt;
 }
 
-std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint& vPoint, const std::pair<Eigen::Vector2i, Eigen::Vector2i>& vRange, std::vector<Eigen::Vector2i>& voHit)
+std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vStep, const SPoint& vPoint, const std::pair<Eigen::Vector2i, Eigen::Vector2i>& vRange, std::vector<Eigen::Vector2i>& voHit)
 {
 	if (vLayer < 0 || vLayer >= m_SubLayer)	return std::nullopt;
 	if (!vPoint.isValid())					return std::nullopt;
@@ -239,8 +250,8 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, const SP
 	auto End = vRange.second;
 	Start.x() = std::max(0, Start.x());
 	Start.y() = std::max(0, Start.y());
-	End.x() = std::min((int)(CurNodes.rows() - 2), End.x());
-	End.y() = std::min((int)(CurNodes.cols() - 2), End.y());
+	End.x() = std::min((int)(CurNodes.rows() - vStep - 1), End.x());
+	End.y() = std::min((int)(CurNodes.cols() - vStep - 1), End.y());
 	if (Start.x() > End.x() || Start.y() > End.y())							return std::nullopt;
 	
 	std::vector<std::pair<SProjInfo, std::vector<Eigen::Vector2i>>> Candidates;
@@ -251,16 +262,16 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, const SP
 			std::vector<Eigen::Vector2i> Indices;
 			{
 				Indices.emplace_back(Eigen::Vector2i(i, k));
-				Indices.emplace_back(Eigen::Vector2i(i + 1, k));
-				Indices.emplace_back(Eigen::Vector2i(i, k + 1));
-				Indices.emplace_back(Eigen::Vector2i(i + 1, k + 1));
+				Indices.emplace_back(Eigen::Vector2i(i + vStep, k));
+				Indices.emplace_back(Eigen::Vector2i(i, k + vStep));
+				Indices.emplace_back(Eigen::Vector2i(i + vStep, k + vStep));
 			}
 
 			std::vector<std::pair<CTriangle, int>> Tris;
 			CTriangle Tri1, Tri2;
 
-			if (auto r = __geneTriangle(CurNodes(i, k), CurNodes(i + 1, k), CurNodes(i, k + 1)); r.has_value())	Tri1 = r.value(); else return std::nullopt;
-			if (auto r = __geneTriangle(CurNodes(i + 1, k + 1), CurNodes(i + 1, k), CurNodes(i, k + 1)); r.has_value())	Tri2 = r.value(); else return std::nullopt;
+			if (auto r = __geneTriangle(CurNodes(i, k), CurNodes(i + vStep, k), CurNodes(i, k + vStep)); r.has_value())	Tri1 = r.value(); else return std::nullopt;
+			if (auto r = __geneTriangle(CurNodes(i + vStep, k + vStep), CurNodes(i + vStep, k), CurNodes(i, k + vStep)); r.has_value())	Tri2 = r.value(); else return std::nullopt;
 			Tris.emplace_back(std::make_pair(Tri1, 0));
 			Tris.emplace_back(std::make_pair(Tri2, 1));
 
@@ -314,6 +325,16 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, const SP
 	_HIVE_EARLY_RETURN(R.has_value() == false, "ERROR: Failed to calc UV...", std::nullopt);
 	Eigen::Vector3f Weight = R.value();
 	Info._UV = UVs[0] * Weight[0] + UVs[1] * Weight[1] + UVs[2] * Weight[2];
+
+	if (vStep == 2)
+	{
+		auto r = __sample(CurNodes, Info._UV[0], Info._UV[1]);
+		_HIVE_EARLY_RETURN(r.has_value() == false, "ERROR: Step 2 Resample Failed...", std::nullopt);
+		Info._Point = Eigen::Vector3f(r->x, r->y, r->z);
+		auto r2 = __calcPointDist(Info._Point, Eigen::Vector3f(vPoint[0], vPoint[1], vPoint[2]));
+		_HIVE_EARLY_RETURN(r2.has_value() == false, "ERROR: Step 2 calc Point Dist Failed...", std::nullopt);
+		Info._Dist = r2.value();
+	}
 
 	voHit = Indices;
 	return Info;
