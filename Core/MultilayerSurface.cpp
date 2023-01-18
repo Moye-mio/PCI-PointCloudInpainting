@@ -400,8 +400,26 @@ std::optional<Eigen::Vector3f> CMultilayerSurface::__calcBaryWeight(const CTrian
 	
 	Eigen::Vector3f Bary;
 	float Epsilon = 0.00001f;
+	float Epsilon2 = 0.01f;
 	vTriangle.calcBaryCoor(vPoint, Bary);
-	_HIVE_EARLY_RETURN(Bary[0] + Bary[1] + Bary[2] > 1.0f + Epsilon, "ERROR: calc UV, UV is Out of scope...", std::nullopt);
+	float Sum = Bary[0] + Bary[1] + Bary[2];
+
+	_HIVE_EARLY_RETURN(Sum >= 1.0f + Epsilon2, "ERROR: calc UV, UV is Out of scope...", std::nullopt);
+
+	if (Sum > 1.0f + Epsilon && Sum < 1.0f + Epsilon2)
+	{
+		int MaxId = -1;
+		float Max = Bary.maxCoeff(&MaxId);
+		float Remain = 0.0f;
+		for (int i = 0; i < Bary.size(); i++)
+		{
+			if (i == MaxId) continue;
+			Remain += Bary[i];
+		}
+		Max = 1.0f - Remain;
+		Bary[MaxId] = Max;
+	}
+
 
 	return Bary;
 }
