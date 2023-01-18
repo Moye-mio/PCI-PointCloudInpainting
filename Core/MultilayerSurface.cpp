@@ -78,7 +78,7 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 			break;
 		}
 
-		Info._Dist = r.value();
+		Info = r.value();
 	}
 
 	return Info;
@@ -154,18 +154,27 @@ bool CMultilayerSurface::__IsComputed()
 	else								return true;
 }
 
-std::optional<float> CMultilayerSurface::__HitTriangle(const CTriangle& vTri, const SPoint& vPoint)
+std::optional<SProjInfo> CMultilayerSurface::__HitTriangle(const CTriangle& vTri, const SPoint& vPoint)
 {
 	common::SPlane Plane;
 	vTri.calcPlane(Plane, false);
-	Eigen::Vector3f ProjRay;
-	float Dist = Plane.calcPointProject(vPoint, ProjRay);
+	Eigen::Vector3f ProjPoint, Ray;
+	float Dist = Plane.calcPointProject(vPoint, ProjPoint);
 	_ASSERTE(!std::isnan(Dist));
-	bool r = vTri.isRayIntersection(vPoint, ProjRay);
-	if (r == false)
-		return std::nullopt;
+
+	if (Dist == 0.0f)
+		Ray = Eigen::Vector3f(Plane._A, Plane._B, Plane._C);
 	else
-		return Dist;
+		Ray = ProjPoint - vPoint;
+	bool r = vTri.isRayIntersection(vPoint, Ray);
+	if (r == false) 
+		return std::nullopt;
+
+	SProjInfo Info;
+	Info._Point = ProjPoint;
+	Info._Dist = Dist;
+
+	return Info;
 }
 
 std::optional<float> CMultilayerSurface::__calcPointDist(const SPoint& vLhs, const SPoint& vRhs)
@@ -220,7 +229,7 @@ std::optional<core::SVertex> CMultilayerSurface::__sample(const Eigen::Matrix<SV
 		return std::nullopt;
 }
 
-std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint& vPoint, const std::pair<Eigen::Vector2i, Eigen::Vector2i>& vRange, std::vector<Eigen::Vector2i>& voHit)
+std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint& vPoint, const std::pair<Eigen::Vector2i, Eigen::Vector2i>& vRange, std::vector<Eigen::Vector2i>& voHit)
 {
 	if (vLayer < 0 || vLayer >= m_SubLayer)	return std::nullopt;
 	if (!vPoint.isValid())					return std::nullopt;
@@ -234,16 +243,18 @@ std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint
 	End.y() = std::min((int)(CurNodes.cols() - 2), End.y());
 	if (Start.x() > End.x() || Start.y() > End.y())							return std::nullopt;
 	
-	std::vector<std::pair<float, std::vector<Eigen::Vector2i>>> Candidates;
+	std::vector<std::pair<SProjInfo, std::vector<Eigen::Vector2i>>> Candidates;
 
 	for (int i = Start.x(); i <= End.x(); i++)
 		for (int k = Start.y(); k <= End.y(); k++)
 		{
 			std::vector<Eigen::Vector2i> Indices;
-			Indices.emplace_back(Eigen::Vector2i(i, k));
-			Indices.emplace_back(Eigen::Vector2i(i + 1, k));
-			Indices.emplace_back(Eigen::Vector2i(i, k + 1));
-			Indices.emplace_back(Eigen::Vector2i(i + 1, k + 1));
+			{
+				Indices.emplace_back(Eigen::Vector2i(i, k));
+				Indices.emplace_back(Eigen::Vector2i(i + 1, k));
+				Indices.emplace_back(Eigen::Vector2i(i, k + 1));
+				Indices.emplace_back(Eigen::Vector2i(i + 1, k + 1));
+			}
 
 			std::vector<std::pair<CTriangle, int>> Tris;
 			CTriangle Tri1, Tri2;
@@ -262,9 +273,8 @@ std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint
 					CandIndices.emplace_back(Indices[e.second + 1]);
 					CandIndices.emplace_back(Indices[e.second + 2]);
 					Candidates.emplace_back(std::make_pair(r.value(), CandIndices));
-
 #ifdef _LOG
-					std::cout << "Hit: Triangle (" << CandIndices[0][0] << ", " << CandIndices[0][1] << "), (" << CandIndices[1][0] << ", " << CandIndices[1][1] << "), (" << CandIndices[2][0] << ", " << CandIndices[2][1] << ")\tDist: " << r.value() << std::endl;
+					std::cout << "Hit: Triangle (" << CandIndices[0][0] << ", " << CandIndices[0][1] << "), (" << CandIndices[1][0] << ", " << CandIndices[1][1] << "), (" << CandIndices[2][0] << ", " << CandIndices[2][1] << ")\tDist: " << r.value()._Dist << std::endl;
 #endif // _LOG
 				}
 				else
@@ -281,15 +291,32 @@ std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint
 	_HIVE_EARLY_RETURN(Candidates.empty(), "ERROR: Candidates Empty...", std::nullopt);
 	
 	std::sort(Candidates.begin(), Candidates.end(),
-		[&](const std::pair<float, std::vector<Eigen::Vector2i>>& a, const std::pair<float, std::vector<Eigen::Vector2i>>& b) -> bool
+		[&](const std::pair<SProjInfo, std::vector<Eigen::Vector2i>>& a, const std::pair<SProjInfo, std::vector<Eigen::Vector2i>>& b) -> bool
 		{
-			return a.first < b.first;
+			return a.first._Dist < b.first._Dist;
 		});
 
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Hit Number: [%1%]", Candidates.size()));
 
-	voHit = Candidates.begin()->second;
-	return Candidates.begin()->first;
+	auto Candidate = Candidates[0];
+	auto Info = Candidate.first;
+	auto Indices = Candidate.second;
+	std::vector<Eigen::Vector2f> UVs;
+	for (const auto& e : Indices)
+		UVs.emplace_back(CurNodes.coeff(e.x(), e.y()).u, CurNodes.coeff(e.x(), e.y()).v);
+
+	SPoint Point;
+	Point.x() = Info._Point[0];
+	Point.y() = Info._Point[1];
+	Point.z() = Info._Point[2];
+
+	auto R = __calcBaryWeight(__geneTriangle(CurNodes(Indices[0].x(), Indices[0].y()), CurNodes(Indices[1].x(), Indices[1].y()), CurNodes(Indices[2].x(), Indices[2].y())).value(), Point);
+	_HIVE_EARLY_RETURN(R.has_value() == false, "ERROR: Failed to calc UV...", std::nullopt);
+	Eigen::Vector3f Weight = R.value();
+	Info._UV = UVs[0] * Weight[0] + UVs[1] * Weight[1] + UVs[2] * Weight[2];
+
+	voHit = Indices;
+	return Info;
 }
 
 std::optional<core::CTriangle> CMultilayerSurface::__geneTriangle(const SVertex& vP1, const SVertex& vP2, const SVertex& vP3)
@@ -364,5 +391,18 @@ bool CMultilayerSurface::__saveMesh2Obj()
 	Stream.close();
 	hiveEventLogger::hiveOutputEvent("Mesh Save Succeed...");
 	return true;
+}
+
+std::optional<Eigen::Vector3f> CMultilayerSurface::__calcBaryWeight(const CTriangle& vTriangle, const SPoint& vPoint)
+{
+	_HIVE_EARLY_RETURN(vTriangle.isValid() == false, "ERROR: calc UV, Triangle is InValid...", std::nullopt);
+	_HIVE_EARLY_RETURN(vPoint.isValid() == false, "ERROR: calc UV, Point is InValid...", std::nullopt);
+	
+	Eigen::Vector3f Bary;
+	float Epsilon = 0.00001f;
+	vTriangle.calcBaryCoor(vPoint, Bary);
+	_HIVE_EARLY_RETURN(Bary[0] + Bary[1] + Bary[2] > 1.0f + Epsilon, "ERROR: calc UV, UV is Out of scope...", std::nullopt);
+
+	return Bary;
 }
 

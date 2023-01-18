@@ -66,17 +66,17 @@ namespace common
 				this->operator[](i) /= Divisor;
 		}
 
-		float calcPointProject(const Eigen::Vector3f& vPoint, Eigen::Vector3f& vProj)
+		float calcPointProject(const Eigen::Vector3f& vPoint, Eigen::Vector3f& voProj)
 		{
 			_ASSERTE(this->isValid());
 			_ASSERTE(!std::isnan(vPoint.x()) && !std::isnan(vPoint.y()) && !std::isnan(vPoint.z()));
 			float t = Eigen::Vector4f(vPoint[0], vPoint[1], vPoint[2], 1.0f).dot(Eigen::Vector4f(_A, _B, _C, _D)) / (_A * _A + _B * _B + _C * _C);
 			_ASSERTE(!std::isnan(t));
-			vProj = Eigen::Vector3f(vPoint.x() - _A * t, vPoint.y() - _B * t, vPoint.z() - _C * t);
+			voProj = Eigen::Vector3f(vPoint.x() - _A * t, vPoint.y() - _B * t, vPoint.z() - _C * t);
 			float Dist = std::fabsf(Eigen::Vector4f(vPoint[0], vPoint[1], vPoint[2], 1.0f).dot(Eigen::Vector4f(_A, _B, _C, _D))) / std::sqrtf(_A * _A + _B * _B + _C * _C);
 			_ASSERTE(!std::isnan(Dist));
 			if (Dist == 0.0f)
-				vProj = Eigen::Vector3f(_A, _B, _C);
+				voProj = vPoint;
 			return Dist;
 		}
 	};
