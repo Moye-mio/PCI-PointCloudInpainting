@@ -8,6 +8,9 @@ namespace core
 		SPoint			_Point;
 		Eigen::Vector2f _UV;
 		float			_Dist;
+
+		SProjInfo()
+			: _UV(Eigen::Vector2f(0, 0)), _Dist(-FLT_MAX) {}
 	};
 
 	struct SVertex
@@ -38,6 +41,7 @@ namespace core
 
 		[[nodiscard]] bool setSubNumber(int vSubNum);
 		[[nodiscard]] bool setSubLayer(int vSubLayer);
+		[[nodiscard]] bool setIsSaveMesh(bool vIsSaveMesh);
 		[[nodiscard]] bool setIsCalcError(bool vIsCalcError);
 
 		std::optional<SProjInfo> calcProj(const SPoint& vPoint);
@@ -45,7 +49,8 @@ namespace core
 	private:
 		bool __preCompute();
 		bool __IsComputed();
-		void __calcRange(const std::vector<Eigen::Vector2i>& vHit, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange);
+		void __calcRange(const std::vector<Eigen::Vector2i>& vHit, int vLayer, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange);
+		bool __saveMesh2Obj();
 		std::optional<SVertex>		__transPoint2Vertex(const SPoint& vPoint, const Eigen::Vector2f vUV = Eigen::Vector2f(0, 0));
 		std::optional<SVertex>		__sample(const Eigen::Matrix<SVertex, -1, -1>& vNodes, float vU, float vV);
 		std::optional<SPoint>		__transVertex2Point(const SVertex& vVertex);
@@ -61,5 +66,6 @@ namespace core
 		int		m_SubNum;
 		int		m_SubLayer;
 		bool	m_IsCalcError;
+		bool	m_IsSaveMesh;
 	};
 }

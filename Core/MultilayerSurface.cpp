@@ -10,6 +10,7 @@ CMultilayerSurface::CMultilayerSurface(int vDegree, bool vIsClamped /*= true*/)
 	, m_SubNum(2)
 	, m_SubLayer(5)
 	, m_IsCalcError(true)
+	, m_IsSaveMesh(false)
 {}
 
 bool CMultilayerSurface::setSubNumber(int vSubNum)
@@ -25,6 +26,12 @@ bool CMultilayerSurface::setSubLayer(int vSubLayer)
 	if (vSubLayer <= 0)
 		return false;
 	m_SubLayer = vSubLayer;
+	return true;
+}
+
+bool CMultilayerSurface::setIsSaveMesh(bool vIsSaveMesh)
+{
+	m_IsSaveMesh = vIsSaveMesh;
 	return true;
 }
 
@@ -54,13 +61,22 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 		if (i == 0)
 			Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
 		else
-			__calcRange(Hit, Range);
+			__calcRange(Hit, i, Range);
 
 		Hit.clear();
 		Hit.shrink_to_fit();
 
+		{
+			Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
+		}
+
 		auto r = __calcHitNodes(i, vPoint, Range, Hit);
-		_HIVE_EARLY_RETURN(r.has_value() == false, "ERROR: No Hit...", std::nullopt);
+		if (r.has_value() == false)
+		{
+			_HIVE_EARLY_RETURN(Info._Dist == -FLT_MAX, "ERROR: No Hit...", std::nullopt);
+			hiveEventLogger::hiveOutputEvent("WARNING: No Hit... return Last Layer Value...");
+			break;
+		}
 
 		Info._Dist = r.value();
 	}
@@ -104,8 +120,8 @@ bool CMultilayerSurface::__preCompute()
 		int CurCols = (LastCols - 1) * m_SubNum + 1;
 
 		CurLayer.resize(CurRows, CurCols);
-		for (int Row = 0; Row < LastLayer.rows(); Row++)
-			for (int Col = 0; Col < LastLayer.cols(); Col++)
+		for (int Row = 0; Row < CurLayer.rows(); Row++)
+			for (int Col = 0; Col < CurLayer.cols(); Col++)
 			{
 				if (auto r = __sample(LastLayer, (float)Row / (float)(CurRows - 1), (float)Col / (float)(CurCols - 1)); r.has_value())
 					CurLayer.coeffRef(Row, Col) = r.value();
@@ -125,6 +141,9 @@ bool CMultilayerSurface::__preCompute()
 	for (int i = 0; i < m_Vertices.size(); i++)
 		std::cout << "Layer " << i << " Size: " << m_Vertices[i].size() << std::endl;
 #endif // _LOG
+
+	if (m_IsSaveMesh == true)
+		_HIVE_EARLY_RETURN(__saveMesh2Obj() == false, "ERROR: Failed to save mesh...", false);
 
 	return true;
 }
@@ -207,16 +226,18 @@ std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint
 	if (!vPoint.isValid())					return std::nullopt;
 
 	const auto& CurNodes = m_Vertices[vLayer];
-	const auto& Start = vRange.first;
-	const auto& End = vRange.second;
-	if (Start.x() < 0 || Start.y() < 0)										return std::nullopt;
+	auto Start = vRange.first;
+	auto End = vRange.second;
+	Start.x() = std::max(0, Start.x());
+	Start.y() = std::max(0, Start.y());
+	End.x() = std::min((int)(CurNodes.rows() - 2), End.x());
+	End.y() = std::min((int)(CurNodes.cols() - 2), End.y());
 	if (Start.x() > End.x() || Start.y() > End.y())							return std::nullopt;
-	if (End.x() >= CurNodes.rows() - 1 || End.y() >= CurNodes.cols() - 1)	return std::nullopt;
 	
 	std::vector<std::pair<float, std::vector<Eigen::Vector2i>>> Candidates;
 
-	for (int i = Start.x(); i < End.x(); i++)
-		for (int k = Start.y(); k < End.y(); k++)
+	for (int i = Start.x(); i <= End.x(); i++)
+		for (int k = Start.y(); k <= End.y(); k++)
 		{
 			std::vector<Eigen::Vector2i> Indices;
 			Indices.emplace_back(Eigen::Vector2i(i, k));
@@ -236,14 +257,15 @@ std::optional<float> CMultilayerSurface::__calcHitNodes(int vLayer, const SPoint
 			{
 				if (auto r = __HitTriangle(e.first, vPoint); r.has_value())
 				{
-#ifdef _LOG
-					std::cout << "Hit: Triangle (" << i << ", " << k << "), (" << i + 1 << ", " << k << "), (" << i << ", " << k + 1 << ")\tDist: " << r.value() << std::endl;
-#endif // _LOG
 					std::vector<Eigen::Vector2i> CandIndices;
 					CandIndices.emplace_back(Indices[e.second]);
 					CandIndices.emplace_back(Indices[e.second + 1]);
 					CandIndices.emplace_back(Indices[e.second + 2]);
 					Candidates.emplace_back(std::make_pair(r.value(), CandIndices));
+
+#ifdef _LOG
+					std::cout << "Hit: Triangle (" << CandIndices[0][0] << ", " << CandIndices[0][1] << "), (" << CandIndices[1][0] << ", " << CandIndices[1][1] << "), (" << CandIndices[2][0] << ", " << CandIndices[2][1] << ")\tDist: " << r.value() << std::endl;
+#endif // _LOG
 				}
 				else
 				{
@@ -283,17 +305,64 @@ std::optional<core::CTriangle> CMultilayerSurface::__geneTriangle(const SVertex&
 	return Tri;
 }
 
-void CMultilayerSurface::__calcRange(const std::vector<Eigen::Vector2i>& vHit, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange)
+void CMultilayerSurface::__calcRange(const std::vector<Eigen::Vector2i>& vHit, int vLayer, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange)
 {
+	int Coef = 2;
+
 	Eigen::Vector2i Min(INT_MAX, INT_MAX);
+	Eigen::Vector2i Max(-INT_MAX, -INT_MAX);
 	for (const auto& e : vHit)
 	{
 		Min.x() = (Min.x() < e.x()) ? Min.x() : e.x();
 		Min.y() = (Min.y() < e.y()) ? Min.y() : e.y();
+		Max.x() = (Max.x() > e.x()) ? Max.x() : e.x();
+		Max.y() = (Max.y() > e.y()) ? Max.y() : e.y();
 	}
 
-	Min = Min * m_SubNum;
-	voRange = std::make_pair(Min, Eigen::Vector2i(Min.x() + m_SubNum - 1, Min.y() + m_SubNum - 1));
+	int Rows = m_Vertices[vLayer].rows();
+	int Cols = m_Vertices[vLayer].cols();
+	Eigen::Vector2i NewMin = Min * m_SubNum;
+	Eigen::Vector2i NewMax = Max * m_SubNum;
+
+	if (Min.x() <= Rows / 2) NewMax.x() += m_SubNum * Coef;
+	if (Min.y() <= Cols / 2) NewMax.y() += m_SubNum * Coef;
+	if (Max.x() >= Rows / 2) NewMin.x() -= m_SubNum * Coef;
+	if (Max.y() >= Cols / 2) NewMin.y() -= m_SubNum * Coef;
+
+	voRange = std::make_pair(NewMin, NewMax);
 }
 
+bool CMultilayerSurface::__saveMesh2Obj()
+{
+	if (m_Vertices.size() == 0) return false;
+
+	const auto& Nodes = m_Vertices[m_SubLayer - 1];
+	Eigen::Matrix<int, -1, -1> Index;
+	Index.resize(Nodes.rows(), Nodes.cols());
+
+	std::ofstream Stream;
+	Stream.open("Surface.obj");
+
+	int Count = 0;
+	for (int i = 0; i < Nodes.rows(); i++)
+		for (int k = 0; k < Nodes.cols(); k++)
+		{
+			Stream << "v " << Nodes.coeff(i, k).x << " " << Nodes.coeff(i, k).y << " " << Nodes.coeff(i, k).z << std::endl;
+			Count++;
+			Index.coeffRef(i, k) = Count;
+		}
+
+	Stream << std::endl;
+
+	for (int i = 0; i < Index.rows() - 1; i++)
+		for (int k = 0; k < Index.cols() - 1; k++)
+		{
+			Stream << "f " << Index.coeff(i, k) << " " << Index.coeff(i + 1, k) << " " << Index.coeff(i, k + 1) << std::endl;
+			Stream << "f " << Index.coeff(i, k + 1) << " " << Index.coeff(i + 1, k) << " " << Index.coeff(i + 1, k + 1) << std::endl;
+		}
+
+	Stream.close();
+	hiveEventLogger::hiveOutputEvent("Mesh Save Succeed...");
+	return true;
+}
 
