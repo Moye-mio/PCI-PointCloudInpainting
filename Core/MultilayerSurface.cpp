@@ -167,10 +167,10 @@ bool CMultilayerSurface::__IsComputed()
 std::optional<SProjInfo> CMultilayerSurface::__HitTriangle(const CTriangle& vTri, const SPoint& vPoint)
 {
 	common::SPlane Plane;
-	vTri.calcPlane(Plane, false);
+	_HIVE_EARLY_RETURN(vTri.calcPlane(Plane, false) == false, "ERROR: Triangle is not Valid...", std::nullopt);
 	Eigen::Vector3f ProjPoint, Ray;
 	float Dist = Plane.calcPointProject(vPoint, ProjPoint);
-	_ASSERTE(!std::isnan(Dist));
+	_HIVE_EARLY_RETURN(std::isnan(Dist), "ERROR: Proj Dist is nan...", std::nullopt);
 
 	if (Dist == 0.0f)
 		Ray = Eigen::Vector3f(Plane._A, Plane._B, Plane._C);
@@ -422,7 +422,7 @@ std::optional<Eigen::Vector3f> CMultilayerSurface::__calcBaryWeight(const CTrian
 	Eigen::Vector3f Bary;
 	float Epsilon = 0.00001f;
 	float Epsilon2 = 0.01f;
-	vTriangle.calcBaryCoor(vPoint, Bary);
+	_HIVE_EARLY_RETURN(vTriangle.calcBaryCoor(vPoint, Bary) == false, "ERROR: Triangle BaryCoor calc failed...", std::nullopt);
 	float Sum = Bary[0] + Bary[1] + Bary[2];
 
 	_HIVE_EARLY_RETURN(Sum >= 1.0f + Epsilon2, "ERROR: calc UV, UV is Out of scope...", std::nullopt);
@@ -443,5 +443,13 @@ std::optional<Eigen::Vector3f> CMultilayerSurface::__calcBaryWeight(const CTrian
 
 
 	return Bary;
+}
+
+bool CMultilayerSurface::preCompute()
+{
+	if (__IsComputed() == false)
+		return __preCompute();
+	else
+		return true;
 }
 

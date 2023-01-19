@@ -48,9 +48,9 @@ const unsigned int CTriangle::size() const
 	return 3;
 }
 
-void CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) const
+bool CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) const
 {
-	_ASSERTE(__isValid());
+	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle is not Valid...", false);
 
 	Eigen::Vector3f Edge1 = m_P1 - m_P2;
 	Eigen::Vector3f Edge2 = m_P1 - m_P3;
@@ -58,9 +58,10 @@ void CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) co
 	float D = -Normal.dot(m_P1);
 
 	voPlane = common::SPlane(Normal[0], Normal[1], Normal[2], D);
-	_ASSERTE(voPlane.isValid());
+	_HIVE_EARLY_RETURN(voPlane.isValid() == false, "ERROR: Plane is not Valid...", false);
 	if (vIsNorm)
 		voPlane.normalize();
+	return true;
 }
 
 bool CTriangle::__isValid() const
@@ -75,8 +76,8 @@ bool CTriangle::__isValid() const
 /* MT Method */
 bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir) const
 {
-	_ASSERTE(vPoint.isValid());
-	_ASSERTE(__isValid());
+	_HIVE_EARLY_RETURN(vPoint.isValid() == false, "ERROR: Point in Ray Intersection is not Valid...", false);
+	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle in Ray Intersection is not Valid...", false);
 
 	Eigen::Vector3f E1 = m_P2 - m_P1;
 	Eigen::Vector3f E2 = m_P3 - m_P1;
@@ -95,21 +96,22 @@ bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vecto
 		return false;
 }
 
-void CTriangle::calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const
+bool CTriangle::calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const
 {
-	_ASSERTE(vPoint.isValid());
-	_ASSERTE(__isValid());
+	_HIVE_EARLY_RETURN(vPoint.isValid() == false, "ERROR: Point in Calc BaryCoor is not Valid...", false);
+	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle in Calc BaryCoor is not Valid...", false);
 
 	float A1 = 0.5f * (vPoint - m_P2).cross(vPoint - m_P3).norm();
 	float A2 = 0.5f * (vPoint - m_P1).cross(vPoint - m_P3).norm();
 	float A3 = 0.5f * (vPoint - m_P1).cross(vPoint - m_P2).norm();
 	float A = 0.5f * (m_P3 - m_P1).cross(m_P3 - m_P2).norm();
-	_ASSERTE(A > 0);
+	_HIVE_EARLY_RETURN(A <= 0, "ERROR: Triangle Area in Calc BaryCoor is not Valid...", false);
 
 	float Epsilon = 0.00001f;
-	_ASSERTE(A - (A1 + A2 + A3) < Epsilon);
+	_HIVE_EARLY_RETURN(A - (A1 + A2 + A3) >= Epsilon, "ERROR: Area Rate in Calc BaryCoor is not Valid...", false);
 
 	vCoor = Eigen::Vector3f(A1 / A, A2 / A, A3 / A);
+	return true;
 }
 
 bool CTriangle::isValid() const

@@ -34,8 +34,8 @@ protected:
 					{
 						Count++;
 						core::SPoint Point;
-						Point.x() = i * 0.2 - 0.5f;
-						Point.y() = k * 0.2 - 0.5f;
+						Point.x() = i * 0.2;
+						Point.y() = k * 0.2;
 						Point.z() = m * 0.2;
 						voVertices.coeffRef(Count / vDepths, m) = Point;
 					}
@@ -82,13 +82,7 @@ TEST_F(TestMultiLayerSurface, NT_LSurface)
 	Surface.setControlPoints(ControlPoints);
 	Surface.setIsCalcError(true);
 
-	const auto& Point = ControlPoints(4, 0);
-	std::cout << "Point: (" << Point.x() << ", " << Point.y() << ", " << Point.z() << std::endl;
-	if (auto r = Surface.calcProj(Point); r.has_value())
-		std::cout << r->_Dist << ", " << r->_UV << std::endl;
-
-
-	/*std::vector<core::SProjInfo> Infos;
+	std::vector<core::SProjInfo> Infos;
 	for (int i = 0; i < ControlPoints.rows(); i++)
 		for (int k = 0; k < ControlPoints.cols(); k++)
 		{
@@ -112,6 +106,8 @@ TEST_F(TestMultiLayerSurface, NT_LSurface)
 			else
 				std::cout << "Point: (" << i << ", " << k << ")\tDist: " << Infos[N]._Dist << "\tUV: (" << Infos[N]._UV[0] << ", " << Infos[N]._UV[1] << ")" << std::endl;
 			N++;
-		}*/
+		}
+
+
 
 }

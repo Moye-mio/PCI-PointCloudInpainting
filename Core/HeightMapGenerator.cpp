@@ -2,9 +2,7 @@
 
 #include "HeightMapGenerator.h"
 #include "AABBEstimation.h"
-#include "BSplineSurface.h"
 #include "Voxelization.h"
-
 
 using namespace core;
 
@@ -56,38 +54,25 @@ core::SPoint __transPCLPoint2SPoint(const Point_t& vP)
 	return core::SPoint(vP.x, vP.y, vP.z);
 }
 
-bool CHeightMapGenerator::generateBySurface(const std::shared_ptr<core::CMultiLayerBSplineSurface>& vSurface, int vWidth, int vHeight)
+bool CHeightMapGenerator::generateBySurface(const std::vector<std::pair<float, Eigen::Vector2f>>& vData, int vWidth, int vHeight)
 {
-	_ASSERTE(vWidth > 0 && vHeight > 0);
-	_ASSERTE(m_pCloud->size());
+	_HIVE_EARLY_RETURN(vWidth <= 0 || vHeight <= 0, "ERROR: HeightMap Generator Size == 0...", false);
+	_HIVE_EARLY_RETURN(vData.size() == 0, "ERROR: Data Size == 0...", false);
+
 	m_Map.setSize(vWidth, vHeight);
 
-	for (const auto& e : *m_pCloud)
+	float CellInRow = 1.0f / vWidth;
+	float CellInCol = 1.0f / vHeight;
+
+	for (const auto& e : vData)
 	{
-		const core::SPoint p = __transPCLPoint2SPoint(e);
-		Eigen::Vector2f UV;
-		auto r = vSurface->calcProj(p, UV);
-		if (r.has_value())
-		{
-			float Dist = r.value();
-			Eigen::Vector2i Offset = __computeOffset(UV);
-
-#ifdef NDEBUG
-			{
-				std::cout << "Offset: (" << Offset[0] << ", " << Offset[1] << ")\tDist: " << Dist << std::endl;
-			}
-#endif
-
-			if (Dist > m_Map.getValueAt(Offset[0], Offset[1]))
-				m_Map.setValueAt(Dist, Offset[0], Offset[1]);
-		}
-		else
-			continue;
+		Eigen::Vector2i Offset = __computeOffset(e.second);
+		if (e.first > m_Map.getValueAt(Offset[0], Offset[1]))
+			m_Map.setValueAt(e.first, Offset[0], Offset[1]);
 	}
 
 	return true;
 }
-
 
 Eigen::Vector2i CHeightMapGenerator::__computeOffset(const Point_t& vPoint)
 {

@@ -43,7 +43,8 @@ namespace core
 		[[nodiscard]] bool setSubLayer(int vSubLayer);
 		[[nodiscard]] bool setIsSaveMesh(bool vIsSaveMesh);
 		[[nodiscard]] bool setIsCalcError(bool vIsCalcError);
-
+		
+		bool preCompute();
 		std::optional<SProjInfo> calcProj(const SPoint& vPoint);
 
 	private:

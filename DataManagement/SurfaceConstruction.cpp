@@ -2,7 +2,7 @@
 #include "SurfaceConstruction.h"
 #include "Voxelization.h"
 #include "Trimmer.h"
-#include "MultiLayerBSplineSurface.h"
+#include "MultilayerSurface.h"
 #include "HeightMapGenerator.h"
 #include "Image.h"
 
