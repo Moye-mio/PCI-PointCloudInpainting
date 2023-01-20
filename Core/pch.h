@@ -40,6 +40,7 @@
 #include "PointCloudType.h"
 #include "Interpolation.h"
 #include "Plane.h"
+#include "Vertex.h"
 #include "Point.h"
 #include "Triangle.h"
 #include "AABB.h"

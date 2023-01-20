@@ -184,8 +184,11 @@
     <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="NormalSampler.h" />
+    <ClInclude Include="Surface2PCMapper.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Trimmer.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="Voxelization.h" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +220,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NormalSampler.cpp" />
+    <ClCompile Include="Surface2PCMapper.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Trimmer.cpp" />
     <ClCompile Include="Voxelization.cpp" />

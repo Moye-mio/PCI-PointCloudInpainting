@@ -7,23 +7,24 @@ namespace core
 	{
 	public:
 		CTriangle() = default;
-		CTriangle(const SPoint& vPoint1, const SPoint& vPoint2, const SPoint& vPoint3);
+		CTriangle(const Eigen::Vector3f& vPoint1, const Eigen::Vector3f& vPoint2, const Eigen::Vector3f& vPoint3);
 		
-		SPoint& operator[](unsigned int i);
-		const SPoint& operator[](unsigned int i) const;
+		Eigen::Vector3f& operator[](unsigned int i);
+		const Eigen::Vector3f& operator[](unsigned int i) const;
 		const unsigned int size() const;
 
 		bool calcPlane(common::SPlane& voPlane, bool vIsNorm = true) const;
-		bool calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const;
-		[[nodiscard]] bool isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir) const;
+		bool calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& vCoor) const;
+		[[nodiscard]] bool isRayIntersection(const Eigen::Vector3f& vPoint, const Eigen::Vector3f& vRayDir) const;
 		[[nodiscard]] bool isValid() const;
 		
 	private:
 		bool __isValid() const;
+		bool __isPointValid() const;
 
 	private:
-		SPoint m_P1;
-		SPoint m_P2;
-		SPoint m_P3;
+		Eigen::Vector3f m_P1;
+		Eigen::Vector3f m_P2;
+		Eigen::Vector3f m_P3;
 	};
 }

@@ -22,6 +22,19 @@ protected:
 				voData.emplace_back(std::make_pair((float)i, Eigen::Vector2f(i / 256.0f, k / 256.0f)));
 	}
 
+	PC_t::Ptr generatePlanePC()
+	{
+		PC_t::Ptr pCloud(new PC_t);
+		for (float i = 0; i <= 10; i += 0.1f)
+			for (float k = 0; k <= 10; k += 0.1f)
+			{
+				if (i >= 4 && i <= 6 && k >= 4 && k <= 6)
+					continue;
+				pCloud->push_back(Point_t(i, k, 1));
+			}
+		return pCloud;
+	}
+
 	core::SPoint transPoints(const Point_t& vPoint)
 	{
 		core::SPoint Point(vPoint.x, vPoint.y, vPoint.z);
@@ -72,12 +85,14 @@ protected:
 
 TEST_F(TestHeightMapBySurface, NT_CrossPlane)
 {
+	int Coef = 200;
+	//PC_t::Ptr pCloud = generatePlanePC();
 	PC_t::Ptr pCloud = loadPC(Path1);
 	for (auto& e : *pCloud)
 	{
-		e.x *= 50;
-		e.y *= 50;
-		e.z *= 50;
+		e.x *= Coef;
+		e.y *= Coef;
+		e.z *= Coef;
 	}
 
 	Eigen::Matrix<core::SPoint, -1, -1> CPs;
@@ -86,9 +101,10 @@ TEST_F(TestHeightMapBySurface, NT_CrossPlane)
 		for (int k = 0; k < CPs.cols(); k++)
 		{
 			if (i <= 5)
-				CPs.coeffRef(i, k) = core::SPoint(i * 50, k * 50, i * 50);
+				CPs.coeffRef(i, k) = core::SPoint(i * Coef, k * Coef, i * Coef);
 			if (i > 5)
-				CPs.coeffRef(i, k) = core::SPoint(i * 50, k * 50, (10 - i) * 50);
+				CPs.coeffRef(i, k) = core::SPoint(i * Coef, k * Coef, (10 - i) * Coef);
+			//CPs.coeffRef(i, k) = core::SPoint(i * Coef, k * Coef, 0);
 		}
 
 	core::CMultilayerSurface Surface(3);
@@ -98,7 +114,7 @@ TEST_F(TestHeightMapBySurface, NT_CrossPlane)
 	
 	std::vector<std::pair<float, Eigen::Vector2f>> Data;
 
-	int ThreadSize = 4;
+	int ThreadSize = 6;
 	std::mutex Mutex;
 
 #pragma omp parallel for num_threads(ThreadSize)
@@ -112,16 +128,29 @@ TEST_F(TestHeightMapBySurface, NT_CrossPlane)
 		Mutex.unlock();
 	}
 
-	core::CHeightMap Map;
+	core::CHeightMap Map, Mask;
 	core::CHeightMapGenerator Generator;
-	Generator.generateBySurface(Data, 64, 64);
+	Generator.generateBySurface(Data, 32, 32);
 	Generator.dumpHeightMap(Map);
 
-	Eigen::Matrix<float, -1, -1> Image;
-	Image.resize(Map.getWidth(), Map.getHeight());
-	for (int i = 0; i < Map.getWidth(); i++)
-		for (int k = 0; k < Map.getHeight(); k++)
-			Image.coeffRef(i, k) = Map.getValueAt(i, k);
+	/* Save HeightMap and Mask */
+	{
+		Eigen::Matrix<float, -1, -1> Image;
+		Image.resize(Map.getWidth(), Map.getHeight());
+		for (int i = 0; i < Map.getWidth(); i++)
+			for (int k = 0; k < Map.getHeight(); k++)
+				Image.coeffRef(i, k) = Map.getValueAt(i, k);
 
-	common::saveImage(Image.cast<int>(), "HeightMap.png");
+		common::saveImage(Image.cast<int>(), "HeightMap.png");
+
+		Map.generateMask(Mask);
+		Eigen::Matrix<float, -1, -1> MaskImage;
+		MaskImage.resize(Mask.getWidth(), Mask.getHeight());
+		for (int i = 0; i < Mask.getWidth(); i++)
+			for (int k = 0; k < Mask.getHeight(); k++)
+				MaskImage.coeffRef(i, k) = Mask.getValueAt(i, k) * 255;
+
+		common::saveImage(MaskImage.cast<int>(), "Mask.png");
+	}
+
 }

@@ -3,13 +3,13 @@
 
 using namespace core;
 
-CTriangle::CTriangle(const SPoint& vPoint1, const SPoint& vPoint2, const SPoint& vPoint3)
+CTriangle::CTriangle(const Eigen::Vector3f& vPoint1, const Eigen::Vector3f& vPoint2, const Eigen::Vector3f& vPoint3)
 	: m_P1(vPoint1)
 	, m_P2(vPoint2)
 	, m_P3(vPoint3)
 {}
 
-core::SPoint& CTriangle::operator[](unsigned int i)
+Eigen::Vector3f& CTriangle::operator[](unsigned int i)
 {
 	_ASSERTE(i < size());
 	switch (i)
@@ -26,7 +26,7 @@ core::SPoint& CTriangle::operator[](unsigned int i)
 	}
 }
 
-const core::SPoint& CTriangle::operator[](unsigned int i) const
+const Eigen::Vector3f& CTriangle::operator[](unsigned int i) const
 {
 	_ASSERTE(i < size());
 	switch (i)
@@ -66,7 +66,7 @@ bool CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) co
 
 bool CTriangle::__isValid() const
 {
-	if (!(m_P1.isValid() && m_P2.isValid() && m_P3.isValid()))
+	if (__isPointValid() == false)
 		return false;
 	if (m_P1 == m_P2 || m_P2 == m_P3 || m_P1 == m_P3 || m_P1 - m_P2 == m_P1 - m_P3)
 		return false;
@@ -74,9 +74,9 @@ bool CTriangle::__isValid() const
 }
 
 /* MT Method */
-bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vector3f& vRayDir) const
+bool CTriangle::isRayIntersection(const Eigen::Vector3f& vPoint, const Eigen::Vector3f& vRayDir) const
 {
-	_HIVE_EARLY_RETURN(vPoint.isValid() == false, "ERROR: Point in Ray Intersection is not Valid...", false);
+	_HIVE_EARLY_RETURN(__isPointValid() == false, "ERROR: Point in Ray Intersection is not Valid...", false);
 	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle in Ray Intersection is not Valid...", false);
 
 	Eigen::Vector3f E1 = m_P2 - m_P1;
@@ -96,9 +96,9 @@ bool CTriangle::isRayIntersection(const core::SPoint& vPoint, const Eigen::Vecto
 		return false;
 }
 
-bool CTriangle::calcBaryCoor(const core::SPoint& vPoint, Eigen::Vector3f& vCoor) const
+bool CTriangle::calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& vCoor) const
 {
-	_HIVE_EARLY_RETURN(vPoint.isValid() == false, "ERROR: Point in Calc BaryCoor is not Valid...", false);
+	_HIVE_EARLY_RETURN(__isPointValid() == false, "ERROR: Point in Calc BaryCoor is not Valid...", false);
 	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle in Calc BaryCoor is not Valid...", false);
 
 	float A1 = 0.5f * (vPoint - m_P2).cross(vPoint - m_P3).norm();
@@ -119,3 +119,11 @@ bool CTriangle::isValid() const
 	return __isValid();
 }
 
+bool CTriangle::__isPointValid() const
+{
+	std::vector<Eigen::Vector3f> Points;
+	for (const auto& e : Points)
+		if (std::isnan(e.x()) || std::isnan(e.y()) || std::isnan(e.z()))
+			return false;
+	return true;
+}
