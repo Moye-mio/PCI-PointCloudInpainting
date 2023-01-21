@@ -41,6 +41,19 @@ bool CMultilayerSurface::setIsCalcError(bool vIsCalcError)
 	return true;
 }
 
+bool CMultilayerSurface::IsPreComputed()
+{
+	return __IsComputed();
+}
+
+bool CMultilayerSurface::preCompute()
+{
+	if (__IsComputed() == false)
+		return __preCompute();
+	else
+		return true;
+}
+
 std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint)
 {
 	if (!vPoint.isValid())
@@ -92,6 +105,16 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 	}
 
 	return Info;
+}
+
+std::optional<core::SVertex> CMultilayerSurface::sample(const Eigen::Vector2f& vUV)
+{
+	_HIVE_EARLY_RETURN(__IsUVValid(vUV) == false, "ERROR: Surface Sample by UV, UV is not Valid", std::nullopt);
+
+	auto r = __sample(m_Vertices[m_SubLayer - 1], vUV[0], vUV[1]);
+	_HIVE_EARLY_RETURN(r.has_value() == false, "ERROR: Surface Sample by UV, Sample Failed", std::nullopt);
+
+	return r.value();
 }
 
 bool CMultilayerSurface::__preCompute()
@@ -459,11 +482,11 @@ std::optional<Eigen::Vector3f> CMultilayerSurface::__calcBaryWeight(const CTrian
 	return Bary;
 }
 
-bool CMultilayerSurface::preCompute()
+bool CMultilayerSurface::__IsUVValid(const Eigen::Vector2f& vUV)
 {
-	if (__IsComputed() == false)
-		return __preCompute();
-	else
+	if (vUV[0] >= 0 && vUV[1] >= 0 && vUV[0] <= 1 && vUV[1] <= 1)
 		return true;
+	else
+		return false;
 }
 

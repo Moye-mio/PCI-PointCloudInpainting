@@ -164,6 +164,7 @@
     <ClInclude Include="BSplineCurve.h" />
     <ClInclude Include="BSplineSurface.h" />
     <ClInclude Include="DataTrimmer.h" />
+    <ClInclude Include="DistSampler.h" />
     <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GaussianDistribution1D.h" />
@@ -186,9 +187,11 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="NormalSampler.h" />
     <ClInclude Include="Surface2PCMapper.h" />
+    <ClInclude Include="SurfaceUVGenerator.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Trimmer.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexSampler.h" />
     <ClInclude Include="Voxelization.h" />
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +201,7 @@
     <ClCompile Include="BSplineCurve.cpp" />
     <ClCompile Include="BSplineSurface.cpp" />
     <ClCompile Include="DataTrimmer.cpp" />
+    <ClCompile Include="DistSampler.cpp" />
     <ClCompile Include="ExtremePoint.cpp" />
     <ClCompile Include="GaussianDistribution1D.cpp" />
     <ClCompile Include="GaussianDistribution2D.cpp" />
@@ -222,8 +226,10 @@
     </ClCompile>
     <ClCompile Include="NormalSampler.cpp" />
     <ClCompile Include="Surface2PCMapper.cpp" />
+    <ClCompile Include="SurfaceUVGenerator.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Trimmer.cpp" />
+    <ClCompile Include="VertexSampler.cpp" />
     <ClCompile Include="Voxelization.cpp" />
   </ItemGroup>
   <ItemGroup>

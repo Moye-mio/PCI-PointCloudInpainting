@@ -23,13 +23,17 @@ namespace core
 		[[nodiscard]] bool setSubLayer(int vSubLayer);
 		[[nodiscard]] bool setIsSaveMesh(bool vIsSaveMesh);
 		[[nodiscard]] bool setIsCalcError(bool vIsCalcError);
+		[[nodiscard]] bool IsPreComputed();
 		
 		bool preCompute();
+		void dumpLatestLayer(Eigen::Matrix<SVertex, -1, -1>& voVertices) { voVertices = m_Vertices[m_SubLayer - 1]; }
 		std::optional<SProjInfo> calcProj(const SPoint& vPoint);
+		std::optional<SVertex> sample(const Eigen::Vector2f& vUV);
 
 	private:
 		bool __preCompute();
 		bool __IsComputed();
+		bool __IsUVValid(const Eigen::Vector2f& vUV);
 		void __calcRange(const std::vector<Eigen::Vector2i>& vHit, int vLayer, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange);
 		bool __saveMesh2Obj();
 		std::optional<Eigen::Vector3f>	__calcBaryWeight(const CTriangle& vTriangle, const SPoint& vPoint);

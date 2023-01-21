@@ -191,6 +191,15 @@
     <ClInclude Include="Surface2PCMapper.h">
       <Filter>PCMap</Filter>
     </ClInclude>
+    <ClInclude Include="VertexSampler.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceUVGenerator.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="DistSampler.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -276,6 +285,15 @@
     </ClCompile>
     <ClCompile Include="Surface2PCMapper.cpp">
       <Filter>PCMap</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexSampler.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceUVGenerator.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="DistSampler.cpp">
+      <Filter>Geometry\Surface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
