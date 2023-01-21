@@ -25,7 +25,7 @@ TEST(TESTSuface2PCMapper, Plane)
 
 	int Coef = 10;
 	Eigen::Matrix<core::SPoint, -1, -1> CPs;
-	CPs.resize(10, 10);
+	CPs.resize(11, 11);
 	for (int i = 0; i < CPs.rows(); i++)
 		for (int k = 0; k < CPs.cols(); k++)
 		{
@@ -38,6 +38,7 @@ TEST(TESTSuface2PCMapper, Plane)
 
 	core::CMultilayerSurface Surface(3);
 	Surface.setControlPoints(CPs);
+	Surface.setSubLayer(3);
 	Surface.setIsSaveMesh(true);
 	Surface.preCompute();
 
