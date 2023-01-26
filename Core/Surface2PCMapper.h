@@ -12,5 +12,6 @@ namespace core
 
 	private:
 		bool __isNormalValid(const Eigen::Vector3f& vNormal);
+		bool __normalizeNormal(Eigen::Vector3f& vioNormal);
 	};
 }

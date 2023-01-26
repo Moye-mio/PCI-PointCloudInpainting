@@ -50,7 +50,12 @@ const unsigned int CTriangle::size() const
 
 bool CTriangle::calcPlane(common::SPlane& voPlane, bool vIsNorm /* = true */) const
 {
-	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle is not Valid...", false);
+	if (__isValid() == false)
+	{
+		std::cout << "ERROR: Triangle is not Valid..." << std::endl;
+		return false;
+	}
+	//_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle is not Valid...", false);
 
 	Eigen::Vector3f Edge1 = m_P1 - m_P2;
 	Eigen::Vector3f Edge2 = m_P1 - m_P3;

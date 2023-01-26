@@ -12,6 +12,8 @@ bool CSurfaceUVGenerator::generateUVSamples(const core::CHeightMap& vMask, int v
 	__generateRandomPoints(vMask.getWidth() * vMask.getHeight() * vSPP, Samples);
 	__shiftPoints(Samples, SpanPP, vMask);
 	m_Samples = Samples;
+
+	return true;
 }
 
 bool CSurfaceUVGenerator::__ValidCheck(const core::CHeightMap& vMask, int vSPP)

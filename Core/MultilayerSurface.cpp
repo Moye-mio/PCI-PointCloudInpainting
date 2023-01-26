@@ -281,8 +281,6 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 
 	for (int i = Start.x(); i <= End.x(); i++)
 	{
-		bool IsFind = false;
-
 		for (int k = Start.y(); k <= End.y(); k++)
 		{
 			std::vector<Eigen::Vector2i> Indices;
@@ -312,8 +310,6 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 					CandIndices.emplace_back(Indices[e.second + 2]);
 					Candidates.emplace_back(std::make_pair(r.value(), CandIndices));
 
-					IsFind = true;
-					break;
 #ifdef _LOG
 					std::cout << "Hit: Triangle (" << CandIndices[0][0] << ", " << CandIndices[0][1] << "), (" << CandIndices[1][0] << ", " << CandIndices[1][1] << "), (" << CandIndices[2][0] << ", " << CandIndices[2][1] << ")\tDist: " << r.value()._Dist << std::endl;
 #endif // _LOG
@@ -327,13 +323,7 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 #endif // _LOG
 				}
 			}
-
-			if (IsFind)
-				break;
 		}
-
-		if (IsFind)
-			break;
 	}
 
 	_HIVE_EARLY_RETURN(Candidates.empty(), "ERROR: Candidates Empty...", std::nullopt);

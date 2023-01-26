@@ -12,7 +12,7 @@ namespace dataManagement
 		~CSurface2CloudMapper() = default;
 
 		bool setSurface(const std::shared_ptr<core::CMultilayerSurface>& vSurface);
-		bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vInpainted, int vSPP);
+		bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, const core::CHeightMap& vInpainted, int vSPP);
 		void dumpCloud(PC_t::Ptr& voCloud) { voCloud = m_NewCloud; }
 
 	private:

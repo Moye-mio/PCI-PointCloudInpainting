@@ -20,12 +20,12 @@ bool CSurface2CloudMapper::setSurface(const std::shared_ptr<core::CMultilayerSur
 	return true;
 }
 
-bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vInpainted, int vSPP)
+bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, const core::CHeightMap& vInpainted, int vSPP)
 {
-	if (__ValidCheck(vRaw, vInpainted, vSPP)) return false;
-	
-	core::CHeightMap Mask;
-	vRaw.generateMask(Mask);
+	core::CHeightMap Mask = vMask;
+	if (!__ValidCheck(vRaw, vInpainted, vSPP)) return false;
+	if (!vMask.isValid()) vRaw.generateMask(Mask);
+
 	_HIVE_EARLY_RETURN(Mask.isValid() == false, "ERROR: Surface 2 Cloud Mapper: Mask Image is not Valid", false);
 
 	std::vector<Eigen::Vector2f> UVs;
@@ -45,7 +45,7 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 	/* Sample Vertex */
 	core::CVertexSampler VertexSampler;
 	if (VertexSampler.setSurface(m_pSurface) == false) return false;
-	if (VertexSampler.sample(UVs, Samples)) return false;
+	if (VertexSampler.sample(UVs, Samples) == false) return false;
 
 	/* Sample Normal */
 	core::CNormalSampler NormalSampler;
@@ -74,6 +74,8 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 	}
 
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("New Cloud Size [%1%]", m_NewCloud->size()));
+
+	return true;
 }
 
 bool CSurface2CloudMapper::__ValidCheck(const core::CHeightMap& vRaw, const core::CHeightMap& vInpainted, int vSPP)
