@@ -32,14 +32,15 @@ void generatePlaneCP(Eigen::Matrix<core::SPoint, -1, -1>& vCPs, int vCoef = 1)
 
 void generateCrossPlaneCP(Eigen::Matrix<core::SPoint, -1, -1>& vCPs, int vCoef = 1)
 {
-	vCPs.resize(11, 11);
-	for (int i = 0; i < vCPs.rows(); i++)
-		for (int k = 0; k < vCPs.cols(); k++)
+	vCPs.resize(13, 13);
+	int Start = -1;
+	for (int i = Start; i < vCPs.rows() + Start; i++)
+		for (int k = Start; k < vCPs.cols() + Start; k++)
 		{
 			if (i <= 5)
-				vCPs.coeffRef(i, k) = core::SPoint(i * vCoef, k * vCoef, i * vCoef);
+				vCPs.coeffRef(i - Start, k - Start) = core::SPoint(i * vCoef, k * vCoef, i * vCoef);
 			if (i > 5)
-				vCPs.coeffRef(i, k) = core::SPoint(i * vCoef, k * vCoef, (10 - i) * vCoef);
+				vCPs.coeffRef(i - Start, k - Start) = core::SPoint(i * vCoef, k * vCoef, (10 - i) * vCoef);
 		}
 }
 
@@ -88,9 +89,11 @@ void tuneMask(core::CHeightMap& vioMask)
 	int Rows = vioMask.getWidth();
 	int Cols = vioMask.getHeight();
 
+	int Tune = 5;
+
 	for (int i = 0; i < Rows; i++)
 		for (int k = 0; k < Cols; k++)
-			if (i < 2 || i > Rows - 3 || k < 2 || k > Cols - 3)
+			if (i < Tune || i > Rows - Tune - 1 || k < Tune || k > Cols - Tune - 1)
 				vioMask.setValueAt(0, i, k);
 }
 
@@ -185,19 +188,10 @@ TEST(TESTSuface2PCMapper, CrossPlane)
 	std::vector<std::pair<float, Eigen::Vector2f>> Data;
 	extractProjData(pSurface, pCloud, Data);
 
-	core::CHeightMap Map, Mask, Inpainted;
+	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
 	core::CHeightMapGenerator Generator;
 	Generator.generateBySurface(Data, 32, 32);
 	Generator.dumpHeightMap(Map);
-
-
-	{
-		for (const auto& e : Data)
-		{
-			if (e.first > 50)
-				std::cout << "(" << e.second.x() << ", " << e.second.y() << "): " << e.first << std::endl;
-		}
-	}
 
 	/* Save HeightMap and Mask */
 	{
@@ -224,6 +218,14 @@ TEST(TESTSuface2PCMapper, CrossPlane)
 		Generator2.dumpHeightMap(Inpainted);
 
 		saveMap2Image(Inpainted, "Inpainted.png");
+		Inpainted.generateMask(InpaintedMask);
+		saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
+
+		/* Output Inpainted Info */
+		hiveEventLogger::hiveOutputEvent("Inpainted Info: ");
+		for (int i = 0; i < Inpainted.getWidth(); i++)
+			for (int k = 0; k < Inpainted.getHeight(); k++)
+				hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pixel [%1%, %2%]: %3%", i, k, Inpainted.getValueAt(i, k)));
 	}
 
 	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);

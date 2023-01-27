@@ -8,7 +8,6 @@
 
 using namespace dataManagement;
 
-
 CSurface2CloudMapper::CSurface2CloudMapper()
 	: m_NewCloud(new PC_t)
 {}
@@ -63,11 +62,19 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 	if (DistSampler.samplebyUV(UVs, Dists) == false) return false;
 
 	_HIVE_EARLY_RETURN(Normals.size() != Dists.size() || Dists.size() != Samples.size(), "ERROR: Surface 2 Cloud Mapper: Normals, Dists, UVs Size is not Same", false);
+	hiveEventLogger::hiveOutputEvent("Start Mapping: ");
 
 	/* Map */
 	core::CSurface2PCMapper Mapper;
 	for (int i = 0; i < Normals.size(); i++)
 	{
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("Point [%1%]: Start Point(%2%, %3%, %4%), Normal(%5%, %6%, %7%), Dist %8%", i, Samples[i].x, Samples[i].y, Samples[i].z, Normals[i][0], Normals[i][1], Normals[i][2], Dists[i]));
+
+		{
+			if (Samples[i].u < 0.5f)
+				Normals[i] *= -1;
+		}
+
 		auto r = Mapper.generatePoint(Samples[i], Normals[i], Dists[i]);
 		_HIVE_EARLY_RETURN(r.has_value() == false, "ERROR: Surface 2 Cloud Mapper: Mapper generate Point Failed", false);
 		m_NewCloud->push_back(r.value());
