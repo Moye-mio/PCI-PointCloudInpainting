@@ -40,14 +40,29 @@ std::optional<Eigen::Vector3f> CNormalSampler::sample(const Eigen::Vector2f& vUV
 					bool r = e.calcBaryCoor(Eigen::Vector3f(vUV[0], vUV[1], 0), Coor);
 					if (r == true)
 					{
-						CTriangle Actual;
+						/*CTriangle Actual;
 						if (Flag == 0)
 							Actual = CTriangle(m_Vertices(i, k).getXYZ(), m_Vertices(i + 1, k).getXYZ(), m_Vertices(i, k + 1).getXYZ());
 						else
 							Actual = CTriangle(m_Vertices(i + 1, k + 1).getXYZ(), m_Vertices(i + 1, k).getXYZ(), m_Vertices(i, k + 1).getXYZ());
 
 						_HIVE_EARLY_RETURN(Actual.calcPlane(Plane) == false, "ERROR: Normal Calc Failed...", std::nullopt);
-						return Eigen::Vector3f(Plane._A, Plane._B, Plane._C);
+						return Eigen::Vector3f(Plane._A, Plane._B, Plane._C);*/
+
+						float Epsilon = 0.00001f;
+						_HIVE_EARLY_RETURN(std::fabsf(std::fabsf(Coor[0]) + std::fabsf(Coor[1]) + std::fabsf(Coor[2]) - 1.0f) > Epsilon || std::fabsf(Coor[0] + Coor[1] + Coor[2] - 1.0f) > Epsilon, _FORMAT_STR3("Normal Sampler: BaryCoor error, %1%, %2%, %3%", Coor[0], Coor[1], Coor[2]), std::nullopt);
+
+						Eigen::Vector3f Normal(0, 0, 0);
+						if (Flag == 0)
+							Normal = m_Vertices(i, k).getNormal3f() * Coor[0] + m_Vertices(i + 1, k).getNormal3f() * Coor[1] + m_Vertices(i, k + 1).getNormal3f() * Coor[2];
+						else
+							Normal = m_Vertices(i + 1, k + 1).getNormal3f() * Coor[0] + m_Vertices(i + 1, k).getNormal3f() * Coor[1] + m_Vertices(i, k + 1).getNormal3f() * Coor[2];
+
+						hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Vertex Normal: %1%, %2%, %3%", Normal[0], Normal[1], Normal[2]));
+
+						_HIVE_EARLY_RETURN(std::isnan(Normal[0]) || std::isnan(Normal[1]) || std::isnan(Normal[2]), "Noraml Sampler: normal calc nan", std::nullopt);
+
+						return Normal;
 					}
 					Flag++;
 				}

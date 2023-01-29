@@ -2,6 +2,8 @@
 
 const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/CrossPlane/WH_CrossPlane.ply");
 const std::string ModelPath2 = TESTMODEL_DIR + std::string("/Trimmed/CrossPlane/GT_CrossPlane.ply");
+const std::string ModelPath3 = TESTMODEL_DIR + std::string("/Trimmed/Concave/WH_Concave.ply");
+const std::string ModelPath4 = TESTMODEL_DIR + std::string("/Trimmed/Concave/GT_Concave.ply");
 
 PC_t::Ptr generatePlanePC()
 {
@@ -44,6 +46,29 @@ void generateCrossPlaneCP(Eigen::Matrix<core::SPoint, -1, -1>& vCPs, int vCoef =
 		}
 }
 
+void generateConcaveCP(Eigen::Matrix<core::SPoint, -1, -1>& voCPs, int vCoef = 1)
+{
+	voCPs.resize(18, 8);
+
+	std::vector<core::SPoint> Points;
+	for (int i = -1; i <= 6; i++)
+	{
+		for (int k = 6; k >= 0; k--)
+			Points.emplace_back(core::SPoint(0.0f, i * vCoef, k * vCoef));
+
+		for (int k = 1; k <= 5; k++)
+			Points.emplace_back(core::SPoint(k * vCoef, i * vCoef, 0.0f));
+
+		for (int k = 1; k <= 6; k++)
+			Points.emplace_back(core::SPoint(5 * vCoef, i * vCoef, k * vCoef));
+	}
+
+	int Number = 0;
+	for (int k = 0; k < voCPs.cols(); k++)
+		for (int i = 0; i < voCPs.rows(); i++)
+			voCPs.coeffRef(i, k) = Points[Number++];
+}
+
 core::SPoint transPoints(const Point_t& vPoint)
 {
 	core::SPoint Point(vPoint.x, vPoint.y, vPoint.z);
@@ -84,12 +109,16 @@ void resizePC(PC_t::Ptr& vCloud, int vCoef = 1)
 	}
 }
 
-void tuneMask(core::CHeightMap& vioMask)
+void tuneMask(core::CHeightMap& vioMask, int vRes)
 {
 	int Rows = vioMask.getWidth();
 	int Cols = vioMask.getHeight();
 
-	int Tune = 5;
+	int Tune = 25;
+	if (vRes == 32)			Tune = 5;
+	else if (vRes == 125)	Tune = 25;
+	else if (vRes == 36)	Tune = 4;
+	else if (vRes == 164)	Tune = 17;
 
 	for (int i = 0; i < Rows; i++)
 		for (int k = 0; k < Cols; k++)
@@ -172,12 +201,82 @@ void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud
 //	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
 //}
 
-TEST(TESTSuface2PCMapper, CrossPlane)
+//TEST(TESTSuface2PCMapper, CrossPlane)
+//{
+//	int Res = 32;
+//	PC_t::Ptr pCloud = loadPC(ModelPath);
+//	resizePC(pCloud, 10);
+//	Eigen::Matrix<core::SPoint, -1, -1> CPs;
+//	generateCrossPlaneCP(CPs, 10);
+//
+//	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
+//	pSurface->setControlPoints(CPs);
+//	pSurface->setSubLayer(3);
+//	pSurface->setIsSaveMesh(true);
+//	pSurface->preCompute();
+//
+//	std::vector<std::pair<float, Eigen::Vector2f>> Data;
+//	extractProjData(pSurface, pCloud, Data);
+//
+//	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
+//	core::CHeightMapGenerator Generator;
+//	Generator.generateBySurface(Data, Res, Res);
+//	Generator.dumpHeightMap(Map);
+//
+//	/* Save HeightMap and Mask */
+//	{
+//		saveMap2Image(Map, "HeightMap.png");
+//		Map.generateMask(Mask);
+//		tuneMask(Mask, Res);
+//		saveMap2Image(Mask, "Mask.png", 255);
+//
+//		for (int i = 0; i < Map.getWidth(); i++)
+//			for (int k = 0; k < Map.getHeight(); k++)
+//				std::cout << "(" << i << ", " << k << "): " << Map.getValueAt(i, k) << std::endl;
+//	}
+//
+//	/* generate Inpainted */
+//	{
+//		PC_t::Ptr pGTCloud = loadPC(ModelPath2);
+//		resizePC(pGTCloud, 10);
+//
+//		std::vector<std::pair<float, Eigen::Vector2f>> Data2;
+//		extractProjData(pSurface, pGTCloud, Data2);
+//
+//		core::CHeightMapGenerator Generator2;
+//		Generator2.generateBySurface(Data2, Res, Res);
+//		Generator2.dumpHeightMap(Inpainted);
+//
+//		saveMap2Image(Inpainted, "Inpainted.png");
+//		Inpainted.generateMask(InpaintedMask);
+//		saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
+//
+//		/* Output Inpainted Info */
+//		hiveEventLogger::hiveOutputEvent("Inpainted Info: ");
+//		for (int i = 0; i < Inpainted.getWidth(); i++)
+//			for (int k = 0; k < Inpainted.getHeight(); k++)
+//				hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pixel [%1%, %2%]: %3%", i, k, Inpainted.getValueAt(i, k)));
+//	}
+//
+//	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
+//	PC_t::Ptr pNewCloud(new PC_t);
+//	dataManagement::CSurface2CloudMapper Mapper;
+//	EXPECT_TRUE(Mapper.setSurface(pTrSurface));
+//	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 100));
+//	Mapper.dumpCloud(pNewCloud);
+//
+//	for (const auto& e : *pCloud)
+//		pNewCloud->push_back(e);
+//	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
+//}
+
+TEST(TESTSuface2PCMapper, Concave)
 {
-	PC_t::Ptr pCloud = loadPC(ModelPath);
-	resizePC(pCloud, 10);
+	int ResX = 144;
+	int ResY = 64;
+	PC_t::Ptr pCloud = loadPC(ModelPath3);
 	Eigen::Matrix<core::SPoint, -1, -1> CPs;
-	generateCrossPlaneCP(CPs, 10);
+	generateConcaveCP(CPs, 20);
 
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
 	pSurface->setControlPoints(CPs);
@@ -190,14 +289,14 @@ TEST(TESTSuface2PCMapper, CrossPlane)
 
 	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
 	core::CHeightMapGenerator Generator;
-	Generator.generateBySurface(Data, 32, 32);
+	Generator.generateBySurface(Data, ResX, ResY);
 	Generator.dumpHeightMap(Map);
 
 	/* Save HeightMap and Mask */
 	{
 		saveMap2Image(Map, "HeightMap.png");
 		Map.generateMask(Mask);
-		tuneMask(Mask);
+		tuneMask(Mask, ResX);
 		saveMap2Image(Mask, "Mask.png", 255);
 
 		for (int i = 0; i < Map.getWidth(); i++)
@@ -207,14 +306,13 @@ TEST(TESTSuface2PCMapper, CrossPlane)
 
 	/* generate Inpainted */
 	{
-		PC_t::Ptr pGTCloud = loadPC(ModelPath2);
-		resizePC(pGTCloud, 10);
+		PC_t::Ptr pGTCloud = loadPC(ModelPath4);
 
 		std::vector<std::pair<float, Eigen::Vector2f>> Data2;
 		extractProjData(pSurface, pGTCloud, Data2);
 
 		core::CHeightMapGenerator Generator2;
-		Generator2.generateBySurface(Data2, 32, 32);
+		Generator2.generateBySurface(Data2, ResX, ResY);
 		Generator2.dumpHeightMap(Inpainted);
 
 		saveMap2Image(Inpainted, "Inpainted.png");

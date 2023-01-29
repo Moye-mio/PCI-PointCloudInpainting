@@ -2,6 +2,7 @@
 
 #include "MultilayerSurface.h"
 #include "BSplineCurve.h"
+#include "NormalWrapper.h"
 
 using namespace core;
 
@@ -134,12 +135,7 @@ bool CMultilayerSurface::__preCompute()
 					if (auto r = __transPoint2Vertex(p, Eigen::Vector2f((float)Row / (float)m_ControlPoints.rows(), (float)Col / (float)m_ControlPoints.cols())); r.has_value())
 						CurLayer.coeffRef(Row, Col) = r.value();
 					else
-					{
-#ifdef _LOG
-						std::cout << "Error: m_ControlPoints Index (" << Row << ", " << Col << ") \tValues (" << p.x() << ", " << p.y() << ", " << p.z() << ")\n";
-#endif // _LOG
 							return false;
-					}
 				}
 
 			m_Vertices.emplace_back(std::move(CurLayer));
@@ -159,21 +155,13 @@ bool CMultilayerSurface::__preCompute()
 				if (auto r = __sample(LastLayer, (float)Row / (float)(CurRows - 1), (float)Col / (float)(CurCols - 1)); r.has_value())
 					CurLayer.coeffRef(Row, Col) = r.value();
 				else
-				{
-#ifdef _LOG
-					std::cout << "Error: Layer Sample Failed...Layer: " << i << "Index(" << Row << ", " << Col << ")" << std::endl;
-#endif // _LOG
 					return false;
-				}
 			}
 
 		m_Vertices.emplace_back(std::move(CurLayer));
 	}
 
-#ifdef _LOG
-	for (int i = 0; i < m_Vertices.size(); i++)
-		std::cout << "Layer " << i << " Size: " << m_Vertices[i].size() << std::endl;
-#endif // _LOG
+	_HIVE_EARLY_RETURN(__calcVertexNormal(m_Vertices[m_SubLayer - 1]) == false, "Surface: precompute calc vertex normal failed", false);
 
 	if (m_IsSaveMesh == true)
 		_HIVE_EARLY_RETURN(__saveMesh2Obj() == false, "ERROR: Failed to save mesh...", false);
@@ -429,6 +417,15 @@ bool CMultilayerSurface::__saveMesh2Obj()
 
 	Stream << std::endl;
 
+	for (int i = 0; i < Nodes.rows() - 1; i++)
+		for (int k = 0; k < Nodes.cols() - 1; k++)
+		{
+			Stream << "vn " << Nodes.coeff(i, k).nx << " " << Nodes.coeff(i + 1, k).ny << " " << Nodes.coeff(i, k + 1).nz << std::endl;
+			Stream << "vn " << Nodes.coeff(i, k + 1).nx << " " << Nodes.coeff(i + 1, k).ny << " " << Nodes.coeff(i + 1, k + 1).nz << std::endl;
+		}
+
+	Stream << std::endl;
+
 	for (int i = 0; i < Index.rows() - 1; i++)
 		for (int k = 0; k < Index.cols() - 1; k++)
 		{
@@ -478,5 +475,31 @@ bool CMultilayerSurface::__IsUVValid(const Eigen::Vector2f& vUV)
 		return true;
 	else
 		return false;
+}
+
+bool CMultilayerSurface::__calcVertexNormal(Eigen::Matrix<SVertex, -1, -1>& vioVertices)
+{
+	_HIVE_EARLY_RETURN(vioVertices.size() == 0, "Surface: calc vertex normals, Vertices are empty", false);
+
+	std::vector<SVertex> Vertices;
+	for (int i = 0; i < vioVertices.rows(); i++)
+		for (int k = 0; k < vioVertices.cols(); k++)
+			Vertices.emplace_back(vioVertices.coeff(i, k));
+
+	_HIVE_EARLY_RETURN(Vertices.size() != vioVertices.size(), "Surface: calc vertex normals, Unexpected error", false);
+
+	float Radius = 5.0f;
+	std::vector<Eigen::Vector3f> Normals;
+	core::CNormalWrapper Wrapper;
+	_HIVE_EARLY_RETURN(Wrapper.compute(Vertices, Radius, Normals) == false, "Surface: calc vertex normals, wrapper failed", false);
+
+	int Number = 0;
+	for (int i = 0; i < vioVertices.rows(); i++)
+		for (int k = 0; k < vioVertices.cols(); k++)
+		{
+			const auto Normal = Normals[Number++];
+			vioVertices.coeffRef(i, k).setNormals(Normal[0], Normal[1], Normal[2]);
+		}
+	return true;
 }
 

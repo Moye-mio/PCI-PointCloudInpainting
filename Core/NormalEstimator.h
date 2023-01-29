@@ -14,6 +14,9 @@ namespace core
 		void dumpNormals(NormalPC_t::Ptr& voNormals) { voNormals = m_Normals; }
 
 	private:
+		bool __normalize(Normal_t& vioNormal);
+
+	private:
 		PC_t::Ptr			m_Cloud;
 		NormalPC_t::Ptr		m_Normals;
 	};

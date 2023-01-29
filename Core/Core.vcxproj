@@ -177,6 +177,7 @@
     <ClInclude Include="MultiLayerBSplineSurface.h" />
     <ClInclude Include="MultilayerSurface.h" />
     <ClInclude Include="NormalEstimator.h" />
+    <ClInclude Include="NormalWrapper.h" />
     <ClInclude Include="OBB.h" />
     <ClInclude Include="OBBPCA.h" />
     <ClInclude Include="PlaneFitting.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="MultiLayerBSplineSurface.cpp" />
     <ClCompile Include="MultilayerSurface.cpp" />
     <ClCompile Include="NormalEstimator.cpp" />
+    <ClCompile Include="NormalWrapper.cpp" />
     <ClCompile Include="OBBPCA.cpp" />
     <ClCompile Include="PlaneFitting.cpp" />
     <ClCompile Include="RegionRrowing3D.cpp" />

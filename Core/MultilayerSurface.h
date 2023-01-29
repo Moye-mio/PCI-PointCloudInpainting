@@ -36,6 +36,7 @@ namespace core
 		bool __IsUVValid(const Eigen::Vector2f& vUV);
 		void __calcRange(const std::vector<Eigen::Vector2i>& vHit, int vLayer, std::pair<Eigen::Vector2i, Eigen::Vector2i>& voRange);
 		bool __saveMesh2Obj();
+		bool __calcVertexNormal(Eigen::Matrix<SVertex, -1, -1>& vioVertices);
 		std::optional<Eigen::Vector3f>	__calcBaryWeight(const CTriangle& vTriangle, const SPoint& vPoint);
 		std::optional<SProjInfo>		__HitTriangle(const CTriangle& vTri, const SPoint& vPoint);
 		std::optional<SPoint>			__transVertex2Point(const SVertex& vVertex);

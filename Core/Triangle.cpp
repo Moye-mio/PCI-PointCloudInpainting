@@ -101,7 +101,7 @@ bool CTriangle::isRayIntersection(const Eigen::Vector3f& vPoint, const Eigen::Ve
 		return false;
 }
 
-bool CTriangle::calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& vCoor) const
+bool CTriangle::calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& voCoor) const
 {
 	_HIVE_EARLY_RETURN(__isPointValid() == false, "ERROR: Point in Calc BaryCoor is not Valid...", false);
 	_HIVE_EARLY_RETURN(__isValid() == false, "ERROR: Triangle in Calc BaryCoor is not Valid...", false);
@@ -113,9 +113,11 @@ bool CTriangle::calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& vCo
 	_HIVE_EARLY_RETURN(A <= 0, "ERROR: Triangle Area in Calc BaryCoor is not Valid...", false);
 
 	float Epsilon = 0.00001f;
-	_HIVE_EARLY_RETURN(A - (A1 + A2 + A3) >= Epsilon, "ERROR: Area Rate in Calc BaryCoor is not Valid...", false);
+	if (A < Epsilon * 100) Epsilon /= 100;
+	_HIVE_EARLY_RETURN(std::fabsf(A - (A1 + A2 + A3)) >= Epsilon, "ERROR: Area Rate in Calc BaryCoor is not Valid...", false);
 
-	vCoor = Eigen::Vector3f(A1 / A, A2 / A, A3 / A);
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Area: %1%, %2%, %3%, %4%", A1, A2, A3, A));
+	voCoor = Eigen::Vector3f(A1 / (A1 + A2 + A3), A2 / (A1 + A2 + A3), A3 / (A1 + A2 + A3));
 	return true;
 }
 
