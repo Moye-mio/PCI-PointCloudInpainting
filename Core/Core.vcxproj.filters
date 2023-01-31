@@ -90,10 +90,10 @@
     <Filter Include="PCFeature\Trim">
       <UniqueIdentifier>{52594de7-d603-4fac-adf2-69dfb5ac7190}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature">
+    <Filter Include="Geometry\Feature">
       <UniqueIdentifier>{68a8f520-e765-4f11-98d9-ddc1e8e57c42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Feature\Normal">
+    <Filter Include="Geometry\Feature\Normal">
       <UniqueIdentifier>{28cf57b9-9570-4425-bb98-8659dcf0f808}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -207,7 +207,13 @@
       <Filter>Geometry\Surface</Filter>
     </ClInclude>
     <ClInclude Include="NormalWrapper.h">
-      <Filter>Feature\Normal</Filter>
+      <Filter>Geometry\Feature\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="Sorter.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlPointGenerator.h">
+      <Filter>Geometry\Surface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -305,7 +311,13 @@
       <Filter>Geometry\Surface</Filter>
     </ClCompile>
     <ClCompile Include="NormalWrapper.cpp">
-      <Filter>Feature\Normal</Filter>
+      <Filter>Geometry\Feature\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="Sorter.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlPointGenerator.cpp">
+      <Filter>Geometry\Surface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

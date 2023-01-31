@@ -9,7 +9,6 @@ namespace core
 		ProjZ = 2
 	};
 
-
 	class CTrimmer
 	{
 	public:

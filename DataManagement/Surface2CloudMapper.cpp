@@ -23,7 +23,8 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 {
 	core::CHeightMap Mask = vMask;
 	if (!__ValidCheck(vRaw, vInpainted, vSPP)) return false;
-	if (!vMask.isValid()) vRaw.generateMask(Mask);
+	if (!vMask.isValid()) 
+		vRaw.generateMask(Mask);
 
 	_HIVE_EARLY_RETURN(Mask.isValid() == false, "ERROR: Surface 2 Cloud Mapper: Mask Image is not Valid", false);
 
@@ -71,11 +72,12 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 		hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("Point [%1%]: Start Point(%2%, %3%, %4%), Normal(%5%, %6%, %7%), Dist %8%", i, Samples[i].x, Samples[i].y, Samples[i].z, Normals[i][0], Normals[i][1], Normals[i][2], Dists[i]));
 
 		{
-			if (Samples[i].u < 0.5f)
+			if (Samples[i].u > 0.5f)
 				Normals[i] *= -1;
 		}
 
 		auto r = Mapper.generatePoint(Samples[i], Normals[i], Dists[i]);
+
 		_HIVE_EARLY_RETURN(r.has_value() == false, "ERROR: Surface 2 Cloud Mapper: Mapper generate Point Failed", false);
 		m_NewCloud->push_back(r.value());
 	}

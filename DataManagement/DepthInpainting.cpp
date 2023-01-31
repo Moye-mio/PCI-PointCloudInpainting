@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DepthInpainting.h"
-#include "magic_enum.hpp"
 #include "HeightMapGenerator.h"
 #include "GradientMapGenerator.h"
 #include "PMInterface.h"

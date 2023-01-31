@@ -9,7 +9,7 @@ namespace core
 		CNormalWrapper() = default;
 		~CNormalWrapper() = default;
 
-		bool compute(const std::vector<SVertex>& vVertices, float vRadius, std::vector<Eigen::Vector3f>& voNormals);
+		bool compute(const std::vector<SVertex>& vVertices, int vK, std::vector<Eigen::Vector3f>& voNormals);
 
 	private:
 		bool __transVertex2PCLPoint(const std::vector<SVertex>& vVertices, PC_t::Ptr& voCloud);

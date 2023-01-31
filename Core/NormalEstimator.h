@@ -10,10 +10,12 @@ namespace core
 		~CNormalEstimator() {}
 
 		[[nodiscard]] bool setCloud(const PC_t::Ptr& vCloud);
-		void compute(float vRadius);
+		bool compute(float vRadius);
+		bool compute(int vK);
 		void dumpNormals(NormalPC_t::Ptr& voNormals) { voNormals = m_Normals; }
 
 	private:
+		bool __validateNormal();
 		bool __normalize(Normal_t& vioNormal);
 
 	private:

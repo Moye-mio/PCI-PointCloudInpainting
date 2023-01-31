@@ -66,6 +66,9 @@
     <ClInclude Include="PCManagement.h">
       <Filter>Management</Filter>
     </ClInclude>
+    <ClInclude Include="ImageInpainting.h">
+      <Filter>Transaction\DepthInpainting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="PCManagement.cpp">
       <Filter>Management</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageInpainting.cpp">
+      <Filter>Transaction\DepthInpainting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -417,11 +417,10 @@ bool CMultilayerSurface::__saveMesh2Obj()
 
 	Stream << std::endl;
 
-	for (int i = 0; i < Nodes.rows() - 1; i++)
-		for (int k = 0; k < Nodes.cols() - 1; k++)
+	for (int i = 0; i < Nodes.rows(); i++)
+		for (int k = 0; k < Nodes.cols(); k++)
 		{
-			Stream << "vn " << Nodes.coeff(i, k).nx << " " << Nodes.coeff(i + 1, k).ny << " " << Nodes.coeff(i, k + 1).nz << std::endl;
-			Stream << "vn " << Nodes.coeff(i, k + 1).nx << " " << Nodes.coeff(i + 1, k).ny << " " << Nodes.coeff(i + 1, k + 1).nz << std::endl;
+			Stream << "vn " << Nodes.coeff(i, k).nx << " " << Nodes.coeff(i, k).ny << " " << Nodes.coeff(i, k).nz << std::endl;
 		}
 
 	Stream << std::endl;
@@ -435,6 +434,7 @@ bool CMultilayerSurface::__saveMesh2Obj()
 
 	Stream.close();
 	hiveEventLogger::hiveOutputEvent("Mesh Save Succeed...");
+
 	return true;
 }
 
@@ -488,10 +488,10 @@ bool CMultilayerSurface::__calcVertexNormal(Eigen::Matrix<SVertex, -1, -1>& vioV
 
 	_HIVE_EARLY_RETURN(Vertices.size() != vioVertices.size(), "Surface: calc vertex normals, Unexpected error", false);
 
-	float Radius = 5.0f;
+	int K = 8;
 	std::vector<Eigen::Vector3f> Normals;
 	core::CNormalWrapper Wrapper;
-	_HIVE_EARLY_RETURN(Wrapper.compute(Vertices, Radius, Normals) == false, "Surface: calc vertex normals, wrapper failed", false);
+	_HIVE_EARLY_RETURN(Wrapper.compute(Vertices, K, Normals) == false, "Surface: calc vertex normals, wrapper failed", false);
 
 	int Number = 0;
 	for (int i = 0; i < vioVertices.rows(); i++)

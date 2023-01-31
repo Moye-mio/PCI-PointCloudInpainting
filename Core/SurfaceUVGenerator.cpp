@@ -43,6 +43,7 @@ void CSurfaceUVGenerator::__shiftPoints(std::vector<Eigen::Vector2f>& voSamples,
 
 		if (e[0] < 0 || e[0] > 1 || e[1] < 0 || e[1] > 1) continue;
 		Eigen::Vector2i Offset = __calcOffset(e, vSpanPP, Eigen::Vector2i(vMask.getWidth(), vMask.getHeight()));
+
 		if (vMask.getValueAt(Offset[0], Offset[1]) == 1) /* 1 is Empty */
 			Copy.emplace_back(e);
 	}

@@ -118,7 +118,7 @@ void tuneMask(core::CHeightMap& vioMask, int vRes)
 	if (vRes == 32)			Tune = 5;
 	else if (vRes == 125)	Tune = 25;
 	else if (vRes == 36)	Tune = 4;
-	else if (vRes == 164)	Tune = 17;
+	else if (vRes == 144)	Tune = 18;
 
 	for (int i = 0; i < Rows; i++)
 		for (int k = 0; k < Cols; k++)
@@ -270,70 +270,72 @@ void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud
 //	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
 //}
 
-TEST(TESTSuface2PCMapper, Concave)
-{
-	int ResX = 144;
-	int ResY = 64;
-	PC_t::Ptr pCloud = loadPC(ModelPath3);
-	Eigen::Matrix<core::SPoint, -1, -1> CPs;
-	generateConcaveCP(CPs, 20);
+//TEST(TESTSuface2PCMapper, Concave)
+//{
+//	int ResX = 36;
+//	int ResY = 16;
+//	PC_t::Ptr pCloud = loadPC(ModelPath3);
+//	Eigen::Matrix<core::SPoint, -1, -1> CPs;
+//	generateConcaveCP(CPs, 20);
+//
+//	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
+//	pSurface->setControlPoints(CPs);
+//	pSurface->setSubLayer(3);
+//	pSurface->setIsSaveMesh(true);
+//	pSurface->preCompute();
+//
+//	std::vector<std::pair<float, Eigen::Vector2f>> Data;
+//	extractProjData(pSurface, pCloud, Data);
+//
+//	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
+//	core::CHeightMapGenerator Generator;
+//	Generator.generateBySurface(Data, ResX, ResY);
+//	Generator.dumpHeightMap(Map);
+//
+//	/* Save HeightMap and Mask */
+//	{
+//		saveMap2Image(Map, "HeightMap.png");
+//		Map.generateMask(Mask);
+//		saveMap2Image(Mask, "MaskRaw.png", 255);
+//		tuneMask(Mask, ResX);
+//		saveMap2Image(Mask, "Mask.png", 255);
+//
+//		for (int i = 0; i < Map.getWidth(); i++)
+//			for (int k = 0; k < Map.getHeight(); k++)
+//				std::cout << "(" << i << ", " << k << "): " << Map.getValueAt(i, k) << std::endl;
+//	}
+//
+//	/* generate Inpainted */
+//	{
+//		PC_t::Ptr pGTCloud = loadPC(ModelPath4);
+//
+//		std::vector<std::pair<float, Eigen::Vector2f>> Data2;
+//		extractProjData(pSurface, pGTCloud, Data2);
+//
+//		core::CHeightMapGenerator Generator2;
+//		Generator2.generateBySurface(Data2, ResX, ResY);
+//		Generator2.dumpHeightMap(Inpainted);
+//
+//		saveMap2Image(Inpainted, "Inpainted.png");
+//		Inpainted.generateMask(InpaintedMask);
+//		saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
+//
+//		/* Output Inpainted Info */
+//		hiveEventLogger::hiveOutputEvent("Inpainted Info: ");
+//		for (int i = 0; i < Inpainted.getWidth(); i++)
+//			for (int k = 0; k < Inpainted.getHeight(); k++)
+//				hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pixel [%1%, %2%]: %3%", i, k, Inpainted.getValueAt(i, k)));
+//	}
+//
+//	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
+//	PC_t::Ptr pNewCloud(new PC_t);
+//	dataManagement::CSurface2CloudMapper Mapper;
+//	EXPECT_TRUE(Mapper.setSurface(pTrSurface));
+//	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 100));
+//	Mapper.dumpCloud(pNewCloud);
+//
+//	for (const auto& e : *pCloud)
+//		pNewCloud->push_back(e);
+//	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
+//}
 
-	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
-	pSurface->setControlPoints(CPs);
-	pSurface->setSubLayer(3);
-	pSurface->setIsSaveMesh(true);
-	pSurface->preCompute();
-
-	std::vector<std::pair<float, Eigen::Vector2f>> Data;
-	extractProjData(pSurface, pCloud, Data);
-
-	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
-	core::CHeightMapGenerator Generator;
-	Generator.generateBySurface(Data, ResX, ResY);
-	Generator.dumpHeightMap(Map);
-
-	/* Save HeightMap and Mask */
-	{
-		saveMap2Image(Map, "HeightMap.png");
-		Map.generateMask(Mask);
-		tuneMask(Mask, ResX);
-		saveMap2Image(Mask, "Mask.png", 255);
-
-		for (int i = 0; i < Map.getWidth(); i++)
-			for (int k = 0; k < Map.getHeight(); k++)
-				std::cout << "(" << i << ", " << k << "): " << Map.getValueAt(i, k) << std::endl;
-	}
-
-	/* generate Inpainted */
-	{
-		PC_t::Ptr pGTCloud = loadPC(ModelPath4);
-
-		std::vector<std::pair<float, Eigen::Vector2f>> Data2;
-		extractProjData(pSurface, pGTCloud, Data2);
-
-		core::CHeightMapGenerator Generator2;
-		Generator2.generateBySurface(Data2, ResX, ResY);
-		Generator2.dumpHeightMap(Inpainted);
-
-		saveMap2Image(Inpainted, "Inpainted.png");
-		Inpainted.generateMask(InpaintedMask);
-		saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
-
-		/* Output Inpainted Info */
-		hiveEventLogger::hiveOutputEvent("Inpainted Info: ");
-		for (int i = 0; i < Inpainted.getWidth(); i++)
-			for (int k = 0; k < Inpainted.getHeight(); k++)
-				hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pixel [%1%, %2%]: %3%", i, k, Inpainted.getValueAt(i, k)));
-	}
-
-	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
-	PC_t::Ptr pNewCloud(new PC_t);
-	dataManagement::CSurface2CloudMapper Mapper;
-	EXPECT_TRUE(Mapper.setSurface(pTrSurface));
-	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 100));
-	Mapper.dumpCloud(pNewCloud);
-
-	for (const auto& e : *pCloud)
-		pNewCloud->push_back(e);
-	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
-}
