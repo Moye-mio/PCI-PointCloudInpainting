@@ -23,9 +23,9 @@ bool CControlPointGenerator::run(const Eigen::Matrix<Point_t, -1, -1>& vData)
 	for (int i = 1; i < Cols - 1; i++)
 		Points.coeffRef(0, i) = Points(1, i) * 2 - Points(2, i);
 	for (int i = 1; i < Rows - 1; i++)
-		Points.coeffRef(i, Rows - 1) = Points(i, Rows - 2) * 2 - Points(i, Rows - 3);
+		Points.coeffRef(i, Cols - 1) = Points(i, Cols - 2) * 2 - Points(i, Cols - 3);
 	for (int i = 1; i < Cols - 1; i++)
-		Points.coeffRef(Cols - 1, i) = Points(Cols - 2, i) * 2 - Points(Cols - 3, i);
+		Points.coeffRef(Rows - 1, i) = Points(Rows - 2, i) * 2 - Points(Rows - 3, i);
 
 	Points.coeffRef(0, 0) = 0.5 * (Points(0, 1) * 2 - Points(0, 2) + Points(1, 0) * 2 - Points(2, 0));
 	Points.coeffRef(Rows - 1, 0) = 0.5 * (Points(Rows - 1, 1) * 2 - Points(Rows - 1, 2) + Points(Rows - 2, 0) * 2 - Points(Rows - 3, 0));

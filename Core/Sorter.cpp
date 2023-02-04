@@ -29,7 +29,11 @@ bool CSorter::sort(const std::vector<std::pair<Eigen::Vector3i, Point_t>>& vVoxe
 		for (int k = 0; k < Indices.cols(); k++)
 		{
 			const std::vector<int>& Node = Indices.coeff(i, k);
-			if (Node.size() == 0) continue;
+			if (Node.size() == 0)
+			{
+				m_Voxels.coeffRef(i, k) = Point_t(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+				continue;
+			}
 
 			Point_t Point(0, 0, 0);
 			for (auto e : Node)

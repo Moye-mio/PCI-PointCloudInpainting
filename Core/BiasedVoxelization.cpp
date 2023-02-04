@@ -12,8 +12,8 @@ CBiasedVoxelization::CBiasedVoxelization()
 
 bool CBiasedVoxelization::setCloud(const PC_t::Ptr& vCloud)
 {
-	if (vCloud == nullptr) return false;
-	if (vCloud->size() == 0) return false;
+	_HIVE_EARLY_RETURN(vCloud == nullptr, "Voxelization: Cloud is null", false);
+	_HIVE_EARLY_RETURN(vCloud->size() == 0, "Voxelization: Cloud is empty", false);
 
 	m_pCloud = vCloud;
 	return true;
@@ -21,7 +21,7 @@ bool CBiasedVoxelization::setCloud(const PC_t::Ptr& vCloud)
 
 bool CBiasedVoxelization::setAABB(const SAABB& vBox)
 {
-	if (!vBox.isValid()) return false;
+	_HIVE_EARLY_RETURN(vBox.isValid() == false, "Voxelization: Box is Invalid", false);
 
 	m_Box = vBox;
 	return true;
@@ -35,11 +35,11 @@ bool CBiasedVoxelization::setDenoiseThres(std::uint32_t vThres)
 
 bool CBiasedVoxelization::generate(float vDist)
 {
-	if (!__isDistValid(vDist)) return false;
-	if (m_pCloud->size() == 0) return false;
+	_HIVE_EARLY_RETURN(__isDistValid(vDist) == false, "Voxelization: Dist is Invalid", false);
+	_HIVE_EARLY_RETURN(m_pCloud->size() == 0, "Voxelization: Cloud is empty", false);
 
 	std::vector<std::pair<Eigen::Vector3i, std::vector<int>>> VoxelList;
-	__init(VoxelList, vDist);
+	_HIVE_EARLY_RETURN(__init(VoxelList, vDist) == false, "Voxelization: init failed", false);
 
 	for (int i = 0; i < m_pCloud->size(); i++)
 	{
@@ -53,14 +53,7 @@ bool CBiasedVoxelization::generate(float vDist)
 				break;
 			}
 
-		if (IsFind == false)
-		{
-#ifdef _LOG
-			std::cout << "Can not find matching Voxel..." << std::endl;
-			std::cout << "Point: " << m_pCloud->at(i) << "\t, Index: " << i << std::endl;
-#endif // _LOG
-			return false;
-		}
+		_HIVE_EARLY_RETURN(IsFind == false, "Voxelization: Point can not find Voxel", false);
 	}
 
 	std::uint32_t ValidCount = 0;
@@ -91,27 +84,14 @@ bool CBiasedVoxelization::generate(float vDist)
 		m_Voxel.emplace_back(std::make_pair(e.first, Point_t(Pos[0], Pos[1], Pos[2], (std::uint8_t)Color[0], (std::uint8_t)Color[1], (std::uint8_t)Color[2], (std::uint8_t)Color[3])));
 	}
 
-	if (DiscardCount + ValidCount != m_pCloud->size())
-	{
-#ifdef _LOG
-		std::cout << "ERROR: Discard + Valid Can not match Total Point Size..." << m_Voxel.size() << std::endl;
-#endif // _LOG
-		return false;
-	}
-
-#ifdef _LOG
-	std::cout << "Valid Voxel Size: " << m_Voxel.size() << std::endl;
-	std::cout << "Discard: " << DiscardCount << std::endl;
-	std::cout << "Valid: " << ValidCount << std::endl;
-#endif // _LOG
+	_HIVE_EARLY_RETURN(DiscardCount + ValidCount != m_pCloud->size(), "Voxelization: Count conflict", false);
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Voxelization: Valid Number [%1%], Discard Number [%2%], Total Number [%3%]", ValidCount, DiscardCount, m_pCloud->size()));
 
 	return true;
 }
 
 bool CBiasedVoxelization::__init(std::vector<std::pair<Eigen::Vector3i, std::vector<int>>>& voVoxelList, float vDist)
 {
-	if (!__isDistValid(vDist)) return false;
-
 	voVoxelList.clear();
 	voVoxelList.shrink_to_fit();
 
@@ -119,16 +99,8 @@ bool CBiasedVoxelization::__init(std::vector<std::pair<Eigen::Vector3i, std::vec
 	{
 		CAABBEstimation Estimation(m_pCloud);
 		m_Box = Estimation.compute();
-		if (!m_Box.isValid())
-		{
-#ifdef _LOG
-			std::cout << "AABB Estimation Failed..." << std::endl;
-#endif // _LOG
-			return false;
-		}
+		_HIVE_EARLY_RETURN(m_Box.isValid() == false, "Voxelization: AABB failed", false);
 	}
-
-	__biasAABB(vDist);
 
 	Eigen::Vector3f Scale = (m_Box._Max - m_Box._Min) / vDist;
 	m_Scale = Eigen::Vector3i(std::ceil(Scale[0]), std::ceil(Scale[1]), std::ceil(Scale[2]));
@@ -141,20 +113,7 @@ bool CBiasedVoxelization::__init(std::vector<std::pair<Eigen::Vector3i, std::vec
 			for (int m = 0; m < m_Scale[2]; m++)
 				voVoxelList.emplace_back(std::make_pair(Eigen::Vector3i(i, k, m), std::vector<int>()));
 
-	if (voVoxelList.size() == 0)
-	{
-#ifdef _LOG
-		std::cout << "VoxelList Init Failed..." << std::endl;
-#endif // _LOG
-
-		return false;
-	}
-
-#ifdef _LOG
-	std::cout << "VoxelList Init Succeed..." << std::endl;
-	std::cout << "VoxelList Size: (" << m_Scale[0] << ", " << m_Scale[1] << ", " << m_Scale[2] << ")" << std::endl;
-#endif // _LOG
-
+	_HIVE_EARLY_RETURN(voVoxelList.size() == 0, "Voxelization: VoxelList is empty", false);
 	return true;
 }
 

@@ -72,9 +72,12 @@ bool CSurface2CloudMapper::map2Cloud(const core::CHeightMap& vRaw, const core::C
 		hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("Point [%1%]: Start Point(%2%, %3%, %4%), Normal(%5%, %6%, %7%), Dist %8%", i, Samples[i].x, Samples[i].y, Samples[i].z, Normals[i][0], Normals[i][1], Normals[i][2], Dists[i]));
 
 		{
-			if (Samples[i].u > 0.5f)
+			if (Samples[i].u < 0.5f)
 				Normals[i] *= -1;
 		}
+
+		//if (std::isnan(Dists[i]) || std::fabsf(Dists[i]) > 100) continue;
+		Dists[i] = 0;
 
 		auto r = Mapper.generatePoint(Samples[i], Normals[i], Dists[i]);
 

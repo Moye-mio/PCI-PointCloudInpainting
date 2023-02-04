@@ -4,6 +4,8 @@ const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/CrossPlane/W
 const std::string ModelPath2 = TESTMODEL_DIR + std::string("/Trimmed/CrossPlane/GT_CrossPlane.ply");
 const std::string ModelPath3 = TESTMODEL_DIR + std::string("/Trimmed/Concave/WH_Concave.ply");
 const std::string ModelPath4 = TESTMODEL_DIR + std::string("/Trimmed/Concave/GT_Concave.ply");
+const std::string ModelPath5 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway.ply");
+const std::string ModelPath6 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/GT_Walkway.ply");
 
 PC_t::Ptr generatePlanePC()
 {
@@ -114,16 +116,28 @@ void tuneMask(core::CHeightMap& vioMask, int vRes)
 	int Rows = vioMask.getWidth();
 	int Cols = vioMask.getHeight();
 
-	int Tune = 25;
-	if (vRes == 32)			Tune = 5;
+	int Tune = 14;
+	/*if (vRes == 32)			Tune = 5;
 	else if (vRes == 125)	Tune = 25;
 	else if (vRes == 36)	Tune = 4;
-	else if (vRes == 144)	Tune = 18;
+	else if (vRes == 144)	Tune = 18;*/
 
 	for (int i = 0; i < Rows; i++)
 		for (int k = 0; k < Cols; k++)
-			if (i < Tune || i > Rows - Tune - 1 || k < Tune || k > Cols - Tune - 1)
+			if (i < Tune / 2 || i > Rows - Tune / 2 - 1 || k < Tune || k > Cols - Tune - 1)
 				vioMask.setValueAt(0, i, k);
+
+	const core::CHeightMap Map = vioMask;
+
+	for (int i = 1; i < Rows - 1; i++)
+		for (int k = 1; k < Cols - 1; k++)
+		{
+			if (Map.getValueAt(i - 1, k) == 1 || Map.getValueAt(i, k - 1) == 1 || Map.getValueAt(i + 1, k) == 1 || Map.getValueAt(i, k + 1) == 1)
+			vioMask.setValueAt(1, i, k);
+		}
+				
+
+	vioMask.setValueAt(0, 16, 49);
 }
 
 void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData)
@@ -135,8 +149,6 @@ void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud
 	{
 		Point_t Point = vCloud->at(i);
 		auto r = vSurface->calcProj(transPoints(Point));
-		if (r->_Dist > 50)
-			std::cout << "Point Number " << i << ", (" << Point.x << ", " << Point.y << ", " << Point.z << "), D: " << r->_Dist << ", UV: " << r->_UV[0] << ", " << r->_UV[1] << ", Proj: " << r->_Point.x() << ", " << r->_Point.y() << ", " << r->_Point.z() << std::endl;
 		voData.emplace_back(std::make_pair(r->_Dist, r->_UV));
 	}
 }
@@ -272,8 +284,8 @@ void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud
 
 //TEST(TESTSuface2PCMapper, Concave)
 //{
-//	int ResX = 36;
-//	int ResY = 16;
+//	int ResX = 144;
+//	int ResY = 64;
 //	PC_t::Ptr pCloud = loadPC(ModelPath3);
 //	Eigen::Matrix<core::SPoint, -1, -1> CPs;
 //	generateConcaveCP(CPs, 20);
@@ -331,11 +343,105 @@ void extractProjData(core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud
 //	PC_t::Ptr pNewCloud(new PC_t);
 //	dataManagement::CSurface2CloudMapper Mapper;
 //	EXPECT_TRUE(Mapper.setSurface(pTrSurface));
-//	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 100));
+//	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 25));
 //	Mapper.dumpCloud(pNewCloud);
 //
-//	for (const auto& e : *pCloud)
+//	for (auto& e : *pNewCloud)
+//	{
+//		e.r = 253;
+//		e.g = 199;
+//		e.b = 83;
+//	}
+//
+//	for (auto& e : *pCloud)
+//	{
+//		e.r = 255;
+//		e.g = 255;
+//		e.b = 255;
 //		pNewCloud->push_back(e);
+//	}
 //	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
 //}
+
+TEST(TESTSuface2PCMapper, Walkway)
+{
+	Eigen::Matrix<Point_t, -1, -1> ControlPoints;
+	std::shared_ptr<core::CMultilayerSurface> pSurface;
+	std::vector<std::pair<float, Eigen::Vector2f>> DataWH, DataGT;
+	dataManagement::CSurfaceGenerator SurfaceGenerator;
+	EXPECT_TRUE(SurfaceGenerator.run(ModelPath6));
+	SurfaceGenerator.dumpSurface(pSurface);
+	SurfaceGenerator.dumpProjData(DataGT);
+	SurfaceGenerator.dumpControlPoints(ControlPoints);
+
+	/* load WH PC */
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(ModelPath5));
+	EXPECT_TRUE(pTileLoader);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(ModelPath5);
+	EXPECT_TRUE(pData->size());
+
+	extractProjData(pSurface.get(), pData, DataWH);
+
+	int ResX = ControlPoints.rows() * 2;	// 53
+	int ResY = ControlPoints.cols() * 2;	// 16
+
+	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
+	core::CHeightMapGenerator Generator;
+	Generator.generateBySurface(DataWH, ResX, ResY);
+	Generator.dumpHeightMap(Map);
+
+	/* Save HeightMap and Mask */
+	{
+		saveMap2Image(Map, "HeightMap.png");
+		Map.generateMask(Mask);
+		saveMap2Image(Mask, "MaskRaw.png", 255);
+		tuneMask(Mask, ResX);
+		saveMap2Image(Mask, "Mask.png", 255);
+
+		for (int i = 0; i < Map.getWidth(); i++)
+			for (int k = 0; k < Map.getHeight(); k++)
+				std::cout << "(" << i << ", " << k << "): " << Map.getValueAt(i, k) << std::endl;
+	}
+
+	/* generate Inpainted */
+	{
+		core::CHeightMapGenerator Generator2;
+		Generator2.generateBySurface(DataGT, ResX, ResY);
+		Generator2.dumpHeightMap(Inpainted);
+
+		saveMap2Image(Inpainted, "Inpainted.png");
+		Inpainted.generateMask(InpaintedMask);
+		saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
+
+		/* Output Inpainted Info */
+		hiveEventLogger::hiveOutputEvent("Inpainted Info: ");
+		for (int i = 0; i < Inpainted.getWidth(); i++)
+			for (int k = 0; k < Inpainted.getHeight(); k++)
+				hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pixel [%1%, %2%]: %3%", i, k, Inpainted.getValueAt(i, k)));
+	}
+
+	PC_t::Ptr pNewCloud(new PC_t);
+	dataManagement::CSurface2CloudMapper Mapper;
+	EXPECT_TRUE(Mapper.setSurface(pSurface));
+	EXPECT_TRUE(Mapper.map2Cloud(Map, Mask, Inpainted, 100));
+	Mapper.dumpCloud(pNewCloud);
+
+	for (auto& e : *pNewCloud)
+	{
+		e.r = 253;
+		e.g = 199;
+		e.b = 83;
+	}
+
+	for (auto& e : *pData)
+	{
+		e.r = 255;
+		e.g = 255;
+		e.b = 255;
+		pNewCloud->push_back(e);
+	}
+
+	pcl::io::savePLYFileBinary("NewCloud.ply", *pNewCloud);
+}
+
 

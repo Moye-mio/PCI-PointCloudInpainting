@@ -96,6 +96,9 @@
     <Filter Include="Geometry\Feature\Normal">
       <UniqueIdentifier>{28cf57b9-9570-4425-bb98-8659dcf0f808}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry\Fit">
+      <UniqueIdentifier>{ed4034d1-5ada-43d3-ae00-c159eb8bd487}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -215,6 +218,9 @@
     <ClInclude Include="ControlPointGenerator.h">
       <Filter>Geometry\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="NurbsFitting.h">
+      <Filter>Geometry\Fit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -318,6 +324,9 @@
     </ClCompile>
     <ClCompile Include="ControlPointGenerator.cpp">
       <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="NurbsFitting.cpp">
+      <Filter>Geometry\Fit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,4 @@
+// pch.h: 这是预编译标头文件。
 //
 // pch.h
 //
@@ -5,7 +6,6 @@
 #pragma once
 
 #include "gtest/gtest.h"
-
 #include <vector>
 #include <string>
 #include <map>
@@ -19,6 +19,7 @@
 #include <Eigen/Eigen>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
+#include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 
 #include "common/Product.h"
@@ -32,24 +33,20 @@
 
 #include "magic_enum.hpp"
 #include "PointCloudType.h"
-#include "AABB.h"
 #include "HeightMap.h"
-#include "Point.h"
-#include "Triangle.h"
-#include "Plane.h"
-#include "Vertex.h"
-
-#include "BSplineSurface.h"
-#include "BSplineCurve.h"
+#include "GradientMap.h"
+#include "AABB.h"
+#include "AABBEstimation.h"
+#include "DepthInpainting.h"
 #include "HeightMapGenerator.h"
-#include "Surface2CloudMapper.h"
-#include "SurfaceUVGenerator.h"
-#include "VertexSampler.h"
-#include "NormalSampler.h"
-#include "DistSampler.h"
-#include "Surface2PCMapper.h"
-#include "MultilayerSurface.h"
-#include "Image.h"
+#include "GradientMapGenerator.h"
+#include "PMInterface.h"
+#include "SolverBuilder.h"
+#include "SparseLinearSolver.h"
 
 #include "PCLoader.h"
+
+#include "Triangle.h"
+#include "Point.h"
+#include "Vertex.h"
 #include "SurfaceGenerator.h"
