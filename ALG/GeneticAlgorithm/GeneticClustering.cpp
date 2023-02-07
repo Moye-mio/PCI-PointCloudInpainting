@@ -313,9 +313,10 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 	}
 
 	/* Cross */
-	auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(0, int(m_SolutionSize * m_OperatorRate[1] - 1), int(m_SolutionSize * m_OperatorRate[1]));
+	int RandomNumber = int(m_SolutionSize * m_OperatorRate[1] - 1);
+	auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(0, RandomNumber, RandomNumber + 1);
 	//auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(int(m_SolutionSize * m_OperatorRate[0]), int(m_SolutionSize * m_OperatorRate[1] - 1), int(m_SolutionSize * (m_OperatorRate[1] - m_OperatorRate[0])));
-	_ASSERTE(RandomSet.size() % 2 == 0);
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("RandomSet Size [%1%]", RandomSet.size()));
 	for (int i = 0; i < RandomSet.size(); i += 2)
 	{
 		int Major = (RandomSet[i] < RandomSet[i + 1]) ? RandomSet[i] : RandomSet[i + 1];

@@ -17,13 +17,15 @@ bool CNurbsFitting::run(const PC_t::Ptr& vCloud, int vDegree, int vRefinement, i
 
 	int Order = vDegree + 1;
 	pcl::on_nurbs::FittingSurface::Parameter Params;
-	Params.interior_smoothness = 0.2;
+	Params.interior_smoothness = 1.0;
 	Params.interior_weight = 1.0;
-	Params.boundary_smoothness = 0.2;
+	Params.boundary_smoothness = 1.0;
 	Params.boundary_weight = 0.0;
 
 	hiveEventLogger::hiveOutputEvent("Start Fitting Surface");
 	ON_NurbsSurface Nurbs = pcl::on_nurbs::FittingSurface::initNurbsPCABoundingBox(Order, &Data);
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Nurbs Initial Control Point Number: [%1%, %2%]", Nurbs.m_cv_count[0], Nurbs.m_cv_count[1]));
+
 	pcl::on_nurbs::FittingSurface Fit(&Data, Nurbs);
 
 	for (int i = 0; i < vRefinement; i++)
@@ -33,6 +35,7 @@ bool CNurbsFitting::run(const PC_t::Ptr& vCloud, int vDegree, int vRefinement, i
 		Fit.refine(1);
 		Fit.assemble(Params);
 		Fit.solve();
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Nurbs Control Point Number: [%1%, %2%]", Fit.m_nurbs.m_cv_count[0], Fit.m_nurbs.m_cv_count[1]));
 	}
 
 	for (int i = 0; i < vIters; i++)
@@ -40,6 +43,7 @@ bool CNurbsFitting::run(const PC_t::Ptr& vCloud, int vDegree, int vRefinement, i
 		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Iteration [%1%]", i));
 		Fit.assemble(Params);
 		Fit.solve();
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Nurbs Control Point Number: [%1%, %2%]", Fit.m_nurbs.m_cv_count[0], Fit.m_nurbs.m_cv_count[1]));
 	}
 
 	m_Fit = std::make_shared<pcl::on_nurbs::FittingSurface>(Fit);

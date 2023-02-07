@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1dcdd5a0-e016-424c-9493-d77828264755}</ProjectGuid>
+    <ProjectGuid>{a0ad95cb-3704-497d-a8ab-ccb8be808af1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
@@ -48,11 +48,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ALG\GeneticAlgorithm\GeneticAlgorithm.vcxproj">
+      <Project>{9c0be5d6-c719-4a95-8541-15f0698d730e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ALG\PM\PM.vcxproj">
+      <Project>{6d283294-1ba4-49f0-b542-d38e374ef62d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Common\Common.vcxproj">
       <Project>{f3fc1ad4-fae1-4ccd-9687-b5d63a97fb07}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\Core.vcxproj">
       <Project>{39c00d6d-7d00-4846-acd1-b0676b2a2993}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DataManagement\DataManagement.vcxproj">
+      <Project>{ac5b2935-ab28-4ed2-b6b6-f886228b3238}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemDefinitionGroup />
@@ -74,8 +83,11 @@
     <Import Project="D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets" Condition="Exists('D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" />
     <Import Project="D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets" Condition="Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" />
     <Import Project="D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets" Condition="Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" />
-    <Import Project="..\..\..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('..\..\..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
-    <Import Project="..\..\..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('..\..\..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
+    <Import Project="D:\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets" Condition="Exists('D:\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" />
+    <Import Project="D:\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets" Condition="Exists('D:\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" />
+    <Import Project="D:\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets" Condition="Exists('D:\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" />
+    <Import Project="D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
+    <Import Project="D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,16 +109,18 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;TESTMODEL_DIR=R"($(SolutionDir)Models)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;_DEBUG;_CONSOLE;TESTMODEL_DIR=R"($(SolutionDir)Models)";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\ALG\PM;$(SolutionDir)\dataManagement;$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\GeneticAlgorithm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalOptions>/WHOLEARCHIVE:DataManagement.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,18 +143,20 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;TESTMODEL_DIR=R"($(SolutionDir)Models)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>X64;NDEBUG;_CONSOLE;TESTMODEL_DIR=R"($(SolutionDir)Models)";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\ALG\GeneticAlgorithm;$(SolutionDir)\ALG\PM;$(SolutionDir)\dataManagement;$(SolutionDir)\Common;$(SolutionDir)\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <AdditionalOptions>/WHOLEARCHIVE:DataManagement.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -163,7 +179,10 @@
     <Error Condition="!Exists('D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets'))" />
-    <Error Condition="!Exists('..\..\..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
-    <Error Condition="!Exists('..\..\..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_system-vc142.1.76.0.0\build\boost_system-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_thread-vc142.1.76.0.0\build\boost_thread-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\libLAS.v142.x64.1.0.0\build\native\libLAS.v142.x64.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
   </Target>
 </Project>

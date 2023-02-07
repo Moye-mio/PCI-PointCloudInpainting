@@ -152,10 +152,20 @@ bool CMultilayerSurface::__preCompute()
 		for (int Row = 0; Row < CurLayer.rows(); Row++)
 			for (int Col = 0; Col < CurLayer.cols(); Col++)
 			{
-				if (auto r = __sample(LastLayer, (float)Row / (float)(CurRows - 1), (float)Col / (float)(CurCols - 1)); r.has_value())
-					CurLayer.coeffRef(Row, Col) = r.value();
+				if (i != m_SubLayer - 1)
+				{
+					if (auto r = __sample(LastLayer, (float)Row / (float)(CurRows - 1), (float)Col / (float)(CurCols - 1)); r.has_value())
+						CurLayer.coeffRef(Row, Col) = r.value();
+					else
+						return false;
+				}
 				else
-					return false;
+				{
+					if (auto r = __sample(m_Vertices[0], (float)Row / (float)(CurRows - 1), (float)Col / (float)(CurCols - 1)); r.has_value())
+						CurLayer.coeffRef(Row, Col) = r.value();
+					else
+						return false;
+				}
 			}
 
 		m_Vertices.emplace_back(std::move(CurLayer));

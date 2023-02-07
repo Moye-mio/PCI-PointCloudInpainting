@@ -119,6 +119,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Integration_Test_005 (Surfa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_033 (Nurbs)", "Test\UnitTest\Unit_Test_033 (Nurbs)\Unit_Test_033 (Nurbs).vcxproj", "{1DCDD5A0-E016-424C-9493-D77828264755}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Integration_Test_006 (NurbsInpainting)", "Test\IntegrationTest\Integration_Test_006 (NurbsInpainting)\Integration_Test_006 (NurbsInpainting).vcxproj", "{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -539,6 +541,14 @@ Global
 		{1DCDD5A0-E016-424C-9493-D77828264755}.Release|x64.Build.0 = Release|x64
 		{1DCDD5A0-E016-424C-9493-D77828264755}.Release|x86.ActiveCfg = Release|Win32
 		{1DCDD5A0-E016-424C-9493-D77828264755}.Release|x86.Build.0 = Release|Win32
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Debug|x64.ActiveCfg = Debug|x64
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Debug|x64.Build.0 = Debug|x64
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Debug|x86.ActiveCfg = Debug|Win32
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Debug|x86.Build.0 = Debug|Win32
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Release|x64.ActiveCfg = Release|x64
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Release|x64.Build.0 = Release|x64
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Release|x86.ActiveCfg = Release|Win32
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -593,6 +603,7 @@ Global
 		{C3666FCB-61AC-4FF2-98B4-05C7E43936D7} = {6CDF553B-9895-4C24-974F-9EA8776FEBE3}
 		{7F321217-F78F-44B5-A02B-853CBE43477A} = {6CDF553B-9895-4C24-974F-9EA8776FEBE3}
 		{1DCDD5A0-E016-424C-9493-D77828264755} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
+		{A0AD95CB-3704-497D-A8AB-CCB8BE808AF1} = {6CDF553B-9895-4C24-974F-9EA8776FEBE3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22793FDD-3261-4421-BA02-ADEB847FB562}

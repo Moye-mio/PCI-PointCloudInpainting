@@ -31,10 +31,10 @@ int main()
 		break;
 	}*/
 
-	const std::string ModelPath = TESTMODEL_DIR + std::string("/Walkway.ply");
+	const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/Scene/WH_Scene.ply");
 	PC_t::Ptr pCloud2 = loadPC(ModelPath);
-	for (const auto& e : *pCloud2)
-		pCloud->emplace_back(Point_t(e.x, e.z, e.y, e.r, e.g, e.b));
+	/*for (const auto& e : *pCloud2)
+		pCloud->emplace_back(Point_t(e.x, e.y, e.z, e.r, e.g, e.b));
 
 	Eigen::Vector3f Min(FLT_MAX, FLT_MAX, FLT_MAX);
 
@@ -50,9 +50,23 @@ int main()
 		e.x -= Min[0];
 		e.y -= Min[1];
 		e.z -= Min[2];
+	}*/
+	Eigen::Vector3f Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	for (const auto& e : *pCloud2)
+	{
+		Max[0] = (Max[0] > e.x) ? Max[0] : e.x;
+		Max[1] = (Max[1] > e.y) ? Max[1] : e.y;
+		Max[2] = (Max[2] > e.z) ? Max[2] : e.z;
 	}
 
-	pcl::io::savePLYFileBinary("Walkway.ply", *pCloud);
+	float Diff = std::max(Max[0], Max[1]) - std::min(Max[0], Max[1]);
+	for (auto& e : *pCloud2)
+	{
+		if (e.y < Diff / 2 || e.y > Max[1] - Diff / 2) continue;
+		pCloud->emplace_back(e);
+	}
+
+	pcl::io::savePLYFileBinary("Scene.ply", *pCloud);
 
 	return 0;
 }

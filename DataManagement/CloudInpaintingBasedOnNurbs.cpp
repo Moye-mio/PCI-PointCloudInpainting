@@ -1,32 +1,96 @@
 #include "pch.h"
+#include "CloudInpaintingBasedOnNurbs.h"
 
-#include "MultilayerSurface.h"
+#include "GAInterface.h"
+#include "NurbsFitting.h"
 #include "HeightMapGenerator.h"
-#include "Image.h"
-
+#include "ImageInpainting.h"
 #include "SurfaceUVGenerator.h"
-#include "VertexSampler.h"
 #include "NormalSampler.h"
 #include "DistSampler.h"
 #include "Surface2PCMapper.h"
 
-const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway_Trim.ply");
-const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/GT_Walkway_Trim.ply");
+using namespace dataManagement;
 
-PC_t::Ptr loadPC(const std::string& vPath)
+CCloudInpaintingBasedOnNurbs::CCloudInpaintingBasedOnNurbs()
+	: m_pCloud(new PC_t)
+{}
+
+bool CCloudInpaintingBasedOnNurbs::run(const PC_t::Ptr& vCloud)
 {
-	std::string FileName = hiveUtility::hiveLocateFile(vPath);
-	_ASSERTE(!FileName.empty());
+	_HIVE_EARLY_RETURN(vCloud == nullptr, "Cloud is nullptr", false);
+	_HIVE_EARLY_RETURN(vCloud->size() == 0, "Cloud is empty", false);
 
-	PC_t::Ptr pCloud(new PC_t);
-	int r = pcl::io::loadPLYFile<Point_t>(FileName, *pCloud);
-	_ASSERTE(r != -1);
-	_ASSERTE(pCloud->size());
-	std::cout << "Model Point Size: " << pCloud->size() << std::endl;
-	return pCloud;
+	/* GA */
+	/*std::vector<std::vector<int>> Clusters;
+	GA::run(vCloud, Clusters);*/
+
+	/* Generate Nurbs */
+	int Degree = 3;
+	int Refinement = 4;
+	int Iteration = 10;
+	core::CNurbsFitting Fitting;
+	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
+	_HIVE_EARLY_RETURN(Fitting.run(vCloud, Degree, Refinement, Iteration) == false, "Nurbs Fitting failed", false);
+	Fitting.dumpFitting(Fit);
+
+	/* Organize Ctrlpts */
+	Eigen::Matrix<core::SPoint, -1, -1> Ctrlpts;
+	_HIVE_EARLY_RETURN(__extractCtrlpts(Fit->m_nurbs, Ctrlpts) == false, "Extract Ctrlpts failed", false);
+
+	/* Generate Surface Mesh */
+	int SubNumber = 2;
+	int SubLayer = 2;
+	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(Degree));
+	pSurface->setControlPoints(Ctrlpts);
+	pSurface->setIsSaveMesh(true);
+	pSurface->setSubNumber(SubNumber);
+	pSurface->setSubLayer(SubLayer);
+	_HIVE_EARLY_RETURN(pSurface->preCompute() == false, "Surface Mesh precompute failed", false);
+
+	/* Project Point 2 Nurbs */
+	std::vector<std::pair<float, Eigen::Vector2f>> Data;
+	__projPoints(Fit, pSurface, vCloud, Data);
+
+	/* Generate Height Map */
+	core::CHeightMapGenerator MapGenerater;
+	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
+	int Width = 32;
+	int Height = 32;
+	_HIVE_EARLY_RETURN(MapGenerater.generateBySurface(Data, Width, Height) == false, "Generate Height Map failed", false);
+	MapGenerater.dumpHeightMap(Map);
+	Map.generateMask(Mask);
+	__tuneMapBoundary(Mask);
+	
+	/* Image Inpainting */
+	CImageInpainting Inpainter;
+	Inpainter.run(Map, Inpainted);
+	
+	/* Map 2 Cloud */
+	int SPP = 100;
+	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
+	_HIVE_EARLY_RETURN(__map2Cloud(Mask, Inpainted, SPP, Fit, pTrSurface, m_pCloud) == false, "Map 2 Cloud failed", false);
+
+	return true;
 }
 
-void projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData)
+bool CCloudInpaintingBasedOnNurbs::__extractCtrlpts(const ON_NurbsSurface& vNurbs, Eigen::Matrix<core::SPoint, -1, -1>& voCtrlpts)
+{
+	voCtrlpts.resize(vNurbs.m_cv_count[0], vNurbs.m_cv_count[1]);
+	for (int i = 0; i < voCtrlpts.rows(); i++)
+		for (int k = 0; k < voCtrlpts.cols(); k++)
+		{
+			ON_3dPoint p;
+			vNurbs.GetCV(i, k, p);
+			_HIVE_EARLY_RETURN(std::isnan(p.x) || std::isnan(p.y) || std::isnan(p.z), _FORMAT_STR5("Ctrlpts [%1%, %2%]: [%3%, %4%, %5%]", i, k, p.x, p.y, p.z), false);
+			voCtrlpts.coeffRef(i, k) = core::SPoint(p.x, p.y, p.z);
+		}
+
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("extract Ctrlpts successfully [%1%]", voCtrlpts.size()));
+	return true;
+}
+
+void CCloudInpaintingBasedOnNurbs::__projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData)
 {
 	for (int i = 0; i < vCloud->size(); i++)
 	{
@@ -48,9 +112,6 @@ void projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core
 			continue;
 		}
 		const auto Sample = vFit->m_nurbs.PointAt(UV[0], UV[1]);
-		/*hiveEventLogger::hiveOutputEvent(_FORMAT_STR6("[%1%, %2%, %3%] -> [%4%, %5%, %6%]", p.x(), p.y(), p.z(), Sample.x, Sample.y, Sample.z));
-		if ((Eigen::Vector3d(Sample.x, Sample.y, Sample.z) - p).norm() > 0.00001)
-			hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Diff too big [%1%]", (Eigen::Vector3d(Sample.x, Sample.y, Sample.z) - p).norm()));*/
 
 		p = Eigen::Vector3d(Sample.x, Sample.y, Sample.z);
 		float Dist = (Point - p).norm();
@@ -61,24 +122,13 @@ void projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Point Cloud [%1%] convert 2 Data [%2%]", vCloud->size(), voData.size()));
 }
 
-void saveMap2Image(const core::CHeightMap& vMap, const std::string& vPath, int vCoef = 1)
+void CCloudInpaintingBasedOnNurbs::__tuneMapBoundary(core::CHeightMap& vioMask)
 {
-	Eigen::Matrix<float, -1, -1> Image;
-	Image.resize(vMap.getWidth(), vMap.getHeight());
-	for (int i = 0; i < vMap.getWidth(); i++)
-		for (int k = 0; k < vMap.getHeight(); k++)
-			Image.coeffRef(i, k) = vMap.getValueAt(i, k) * vCoef;
-
-	common::saveImage(Image.cast<int>(), vPath);
-}
-
-void tuneMask(core::CHeightMap& vioMask)
-{
-	int Tune = 3;
+	int TuneScale = 3;
 	for (int i = 0; i < vioMask.getWidth(); i++)
 		for (int k = 0; k < vioMask.getHeight(); k++)
 		{
-			if (i < Tune || k < Tune || i > vioMask.getWidth() - Tune - 1 || k > vioMask.getHeight() - Tune - 1)
+			if (i < TuneScale || k < TuneScale || i > vioMask.getWidth() - TuneScale - 1 || k > vioMask.getHeight() - TuneScale - 1)
 			{
 				vioMask.setValueAt(0, i, k);
 			}
@@ -94,13 +144,9 @@ void tuneMask(core::CHeightMap& vioMask)
 		}
 }
 
-bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, const core::CHeightMap& vInpainted, int vSPP, const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, const std::shared_ptr<core::CMultilayerSurface>& vSurface, PC_t::Ptr& vCloud)
+bool CCloudInpaintingBasedOnNurbs::__map2Cloud(const core::CHeightMap& vMask, const core::CHeightMap& vInpainted, int vSPP, const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, const std::shared_ptr<core::CMultilayerSurface>& vSurface, PC_t::Ptr& vCloud)
 {
-	core::CHeightMap Mask = vMask;
-	if (!vMask.isValid())
-		vRaw.generateMask(Mask);
-
-	_HIVE_EARLY_RETURN(Mask.isValid() == false, "ERROR: Mask Image is not Valid", false);
+	_HIVE_EARLY_RETURN(vMask.isValid() == false, "ERROR: Mask Image is not Valid", false);
 
 	std::vector<Eigen::Vector2f> UVs;
 	std::vector<Eigen::Vector3f> Normals;
@@ -113,7 +159,7 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 
 	/* Generate UV */
 	core::CSurfaceUVGenerator Generator;
-	if (Generator.generateUVSamples(Mask, vSPP) == false) return false;
+	if (Generator.generateUVSamples(vMask, vSPP) == false) return false;
 	Generator.dumpSamples(UVs);
 	_HIVE_EARLY_RETURN(UVs.size() == 0, "ERROR: UV Vector is Empty", false);
 
@@ -152,8 +198,8 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 		hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("Point [%1%]: Start Point(%2%, %3%, %4%), Normal(%5%, %6%, %7%), Dist %8%", i, Samples[i].x, Samples[i].y, Samples[i].z, Normals[i][0], Normals[i][1], Normals[i][2], Dists[i]));
 
 		{
-			if (Samples[i].u < 0.5f)
-				Normals[i] *= -1;
+			/*if (Samples[i].u < 0.5f)
+				Normals[i] *= -1;*/
 		}
 
 		//if (std::isnan(Dists[i]) || std::fabsf(Dists[i]) > 100) continue;
@@ -168,89 +214,4 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("New Cloud Size [%1%]", vCloud->size()));
 
 	return true;
-}
-
-TEST(NurbsFitting, DT) 
-{
-	PC_t::Ptr pCloud;
-	core::CNurbsFitting Fitting;
-	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, 10));
-	pCloud = loadPC(Path1);
-	EXPECT_FALSE(Fitting.run(pCloud, -1, 4, 10));
-	EXPECT_FALSE(Fitting.run(pCloud, 3, -1, 10));
-	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, -1));
-}
-
-TEST(NurbsFitting, NT_CrossPlane)
-{
-	PC_t::Ptr pCloudWH = loadPC(Path1);
-	PC_t::Ptr pCloudGT = loadPC(Path2);
-	core::CNurbsFitting Fitting;
-	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
-	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 4, 10));	/* 19 x 19 */
-
-	//Fitting.dumpFittingSurface(Nurbs);
-	Fitting.dumpFitting(Fit);
-	ON_NurbsSurface Nurbs = Fit->m_nurbs;
-
-	Eigen::Matrix<core::SPoint, -1, -1> Ctrlpts;
-	Ctrlpts.resize(Nurbs.m_cv_count[0], Nurbs.m_cv_count[1]);
-	for (int i = 0; i < Ctrlpts.rows(); i++)
-		for (int k = 0; k < Ctrlpts.cols(); k++)
-		{
-			ON_3dPoint p;
-			Nurbs.GetCV(i, k, p);
-			Ctrlpts.coeffRef(i, k) = core::SPoint(p.x, p.y, p.z);
-		}
-
-	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
-	pSurface->setControlPoints(Ctrlpts);
-	pSurface->setIsSaveMesh(true);
-	pSurface->setSubNumber(2);
-	pSurface->setSubLayer(2);
-	EXPECT_TRUE(pSurface->preCompute());
-
-	std::vector<std::pair<float, Eigen::Vector2f>> DataWH, DataGT;
-	projPoints(Fit, pSurface, pCloudWH, DataWH);
-	projPoints(Fit, pSurface, pCloudGT, DataGT);
-
-	core::CHeightMapGenerator MapGeneraterWH, MapGeneraterGT;
-	core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
-	int Width = 32;
-	int Height = 32;
-	EXPECT_TRUE(MapGeneraterWH.generateBySurface(DataWH, Width, Height));
-	MapGeneraterWH.dumpHeightMap(Map);
-	saveMap2Image(Map, "HeightMap.png", 100);
-	Map.generateMask(Mask);
-	saveMap2Image(Mask, "MaskRaw.png", 255);
-	tuneMask(Mask);
-	saveMap2Image(Mask, "MaskTune.png", 255);
-
-	EXPECT_TRUE(MapGeneraterGT.generateBySurface(DataGT, Width, Height));
-	MapGeneraterGT.dumpHeightMap(Inpainted);
-	saveMap2Image(Inpainted, "InpaintedMap.png", 100);
-	Inpainted.generateMask(InpaintedMask);
-	saveMap2Image(InpaintedMask, "InpaintedMask.png", 255);
-
-	int SPP = 100;
-	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
-	PC_t::Ptr pCloud(new PC_t);
-	EXPECT_TRUE(map2Cloud(Map, Mask, Inpainted, SPP, Fit, pTrSurface, pCloud));
-
-	for (auto& e : *pCloud)
-	{
-		e.r = 253;
-		e.g = 199;
-		e.b = 83;
-	}
-
-	for (auto& e : *pCloudWH)
-	{
-		e.r = 255;
-		e.g = 255;
-		e.b = 255;
-		pCloud->emplace_back(e);
-	}
-
-	pcl::io::savePLYFileBinary("newCloud.ply", *pCloud);
 }

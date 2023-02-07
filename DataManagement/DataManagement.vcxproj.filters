@@ -22,6 +22,9 @@
     <Filter Include="Transaction\Surface">
       <UniqueIdentifier>{db261ad8-50e9-4729-a56a-1c365d7628fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transaction\Nurbs">
+      <UniqueIdentifier>{2373b9fa-a07e-42bc-9069-d8b43b98ac9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -72,6 +75,9 @@
     <ClInclude Include="SurfaceGenerator.h">
       <Filter>Transaction\Surface</Filter>
     </ClInclude>
+    <ClInclude Include="CloudInpaintingBasedOnNurbs.h">
+      <Filter>Transaction\Nurbs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -112,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="SurfaceGenerator.cpp">
       <Filter>Transaction\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="CloudInpaintingBasedOnNurbs.cpp">
+      <Filter>Transaction\Nurbs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

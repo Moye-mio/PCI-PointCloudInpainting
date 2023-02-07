@@ -221,6 +221,9 @@
     <ClInclude Include="NurbsFitting.h">
       <Filter>Geometry\Fit</Filter>
     </ClInclude>
+    <ClInclude Include="Tiler.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -327,6 +330,9 @@
     </ClCompile>
     <ClCompile Include="NurbsFitting.cpp">
       <Filter>Geometry\Fit</Filter>
+    </ClCompile>
+    <ClCompile Include="Tiler.cpp">
+      <Filter>PCFeature\Trim</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -126,11 +126,13 @@ TEST_F(TestGC, NT_Concave)
 	GetSystemInfo(&SysInfo);
 	std::cout << "CPU Logic Number: " << SysInfo.dwNumberOfProcessors << std::endl;
 
-	PC_t::Ptr pCloud = loadPC(ModelPath4);
+	PC_t::Ptr pCloud = loadPC(ModelPath3);
 	std::vector<int> Result;
 
 	int ClusterSize = 6;
-	GA::CGeneticClustering GC(ClusterSize, 10, ClusterSize, 40);
+	int SolutionSize = 14;
+	int Iterations = 200;
+	GA::CGeneticClustering GC(ClusterSize, SolutionSize, ClusterSize, Iterations);
 	GC.setCloud(pCloud);
 	GC.setThreadSize(SysInfo.dwNumberOfProcessors);
 

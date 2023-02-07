@@ -76,6 +76,9 @@ StyleCopReport.xml
 # log
 log.txt
 
+# Image
+*.png
+
 # Model file
 *.ply
 *.pcd

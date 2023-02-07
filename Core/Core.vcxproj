@@ -192,6 +192,7 @@
     <ClInclude Include="NormalSampler.h" />
     <ClInclude Include="Surface2PCMapper.h" />
     <ClInclude Include="SurfaceUVGenerator.h" />
+    <ClInclude Include="Tiler.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Trimmer.h" />
     <ClInclude Include="Vertex.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="NormalSampler.cpp" />
     <ClCompile Include="Surface2PCMapper.cpp" />
     <ClCompile Include="SurfaceUVGenerator.cpp" />
+    <ClCompile Include="Tiler.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Trimmer.cpp" />
     <ClCompile Include="VertexSampler.cpp" />

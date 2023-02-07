@@ -119,7 +119,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\PM</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\PM;$(SolutionDir)\ALG\GeneticAlgorithm</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +135,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\PM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\PM;$(SolutionDir)\ALG\GeneticAlgorithm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -150,6 +150,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CloudInpaintingBasedOnNurbs.h" />
     <ClInclude Include="DataCommon.h" />
     <ClInclude Include="DepthInpainting.h" />
     <ClInclude Include="framework.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="SurfaceGenerator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CloudInpaintingBasedOnNurbs.cpp" />
     <ClCompile Include="DepthInpainting.cpp" />
     <ClCompile Include="ImageInpainting.cpp" />
     <ClCompile Include="PC.cpp" />
@@ -185,6 +187,9 @@
     <ClCompile Include="SurfaceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ALG\GeneticAlgorithm\GeneticAlgorithm.vcxproj">
+      <Project>{9c0be5d6-c719-4a95-8541-15f0698d730e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ALG\PM\PM.vcxproj">
       <Project>{6d283294-1ba4-49f0-b542-d38e374ef62d}</Project>
     </ProjectReference>
