@@ -58,7 +58,7 @@ std::optional<Eigen::Vector3f> CNormalSampler::sample(const Eigen::Vector2f& vUV
 						else
 							Normal = m_Vertices(i + 1, k + 1).getNormal3f() * Coor[0] + m_Vertices(i + 1, k).getNormal3f() * Coor[1] + m_Vertices(i, k + 1).getNormal3f() * Coor[2];
 
-						hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Vertex Normal: %1%, %2%, %3%", Normal[0], Normal[1], Normal[2]));
+						//hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Vertex Normal: %1%, %2%, %3%", Normal[0], Normal[1], Normal[2]));
 
 						_HIVE_EARLY_RETURN(std::isnan(Normal[0]) || std::isnan(Normal[1]) || std::isnan(Normal[2]), "Noraml Sampler: normal calc nan", std::nullopt);
 

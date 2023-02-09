@@ -27,7 +27,7 @@ bool CCloudInpaintingBasedOnNurbs::run(const PC_t::Ptr& vCloud)
 
 	/* Generate Nurbs */
 	int Degree = 3;
-	int Refinement = 4;
+	int Refinement = 5;
 	int Iteration = 10;
 	core::CNurbsFitting Fitting;
 	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
@@ -43,7 +43,7 @@ bool CCloudInpaintingBasedOnNurbs::run(const PC_t::Ptr& vCloud)
 	int SubLayer = 2;
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(Degree));
 	pSurface->setControlPoints(Ctrlpts);
-	pSurface->setIsSaveMesh(true);
+	pSurface->setIsSaveMesh(true, "Surface.obj");
 	pSurface->setSubNumber(SubNumber);
 	pSurface->setSubLayer(SubLayer);
 	_HIVE_EARLY_RETURN(pSurface->preCompute() == false, "Surface Mesh precompute failed", false);
@@ -60,16 +60,34 @@ bool CCloudInpaintingBasedOnNurbs::run(const PC_t::Ptr& vCloud)
 	_HIVE_EARLY_RETURN(MapGenerater.generateBySurface(Data, Width, Height) == false, "Generate Height Map failed", false);
 	MapGenerater.dumpHeightMap(Map);
 	Map.generateMask(Mask);
+	__saveImage(Map, "Map.png", 1000);
+	__saveImage(Mask, "Mask.png", 255);
 	__tuneMapBoundary(Mask);
+	//__saveImage(Mask, "NewMask.png", 255);
 	
 	/* Image Inpainting */
 	CImageInpainting Inpainter;
 	Inpainter.run(Map, Inpainted);
+	__saveImage(Inpainted, "Inpainted.png", 1000);
+	Inpainted.generateMask(InpaintedMask);
+	__saveImage(InpaintedMask, "InpaintedMask.png", 1);
 	
 	/* Map 2 Cloud */
-	int SPP = 100;
+	int SPP = 10;
+	PC_t::Ptr pCloud(new PC_t);
 	std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
-	_HIVE_EARLY_RETURN(__map2Cloud(Mask, Inpainted, SPP, Fit, pTrSurface, m_pCloud) == false, "Map 2 Cloud failed", false);
+	_HIVE_EARLY_RETURN(__map2Cloud(Mask, Inpainted, SPP, Fit, pTrSurface, pCloud) == false, "Map 2 Cloud failed", false);
+
+	core::CAABBEstimation Estimation(vCloud);
+	const auto Box = Estimation.compute();
+	_HIVE_EARLY_RETURN(Box.isValid() == false, "AABB is invalid", false);
+	
+	for (const auto& e : *pCloud)
+	{
+		if (e.x < Box._Min.x() || e.y < Box._Min.y() || e.x > Box._Max.x() || e.y > Box._Max.y())
+			continue;
+		m_pCloud->emplace_back(e);
+	}
 
 	return true;
 }
@@ -116,23 +134,23 @@ void CCloudInpaintingBasedOnNurbs::__projPoints(const std::shared_ptr<pcl::on_nu
 		p = Eigen::Vector3d(Sample.x, Sample.y, Sample.z);
 		float Dist = (Point - p).norm();
 		voData.emplace_back(std::make_pair(Dist, UV.cast<float>()));
-		hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("[%1%, %2%, %3%] -> [%4%, %5%, %6%], UV: [%7%, %8%]", Point[0], Point[1], Point[2], p[0], p[1], p[2], UV[0], UV[1]));
-		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Dist: [%1%]", Dist));
+		/*hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("[%1%, %2%, %3%] -> [%4%, %5%, %6%], UV: [%7%, %8%]", Point[0], Point[1], Point[2], p[0], p[1], p[2], UV[0], UV[1]));
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Dist: [%1%]", Dist));*/
 	}
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Point Cloud [%1%] convert 2 Data [%2%]", vCloud->size(), voData.size()));
 }
 
 void CCloudInpaintingBasedOnNurbs::__tuneMapBoundary(core::CHeightMap& vioMask)
 {
-	int TuneScale = 3;
-	for (int i = 0; i < vioMask.getWidth(); i++)
-		for (int k = 0; k < vioMask.getHeight(); k++)
-		{
-			if (i < TuneScale || k < TuneScale || i > vioMask.getWidth() - TuneScale - 1 || k > vioMask.getHeight() - TuneScale - 1)
-			{
-				vioMask.setValueAt(0, i, k);
-			}
-		}
+	//int TuneScale = 3;
+	//for (int i = 0; i < vioMask.getWidth(); i++)
+	//	for (int k = 0; k < vioMask.getHeight(); k++)
+	//	{
+	//		if (i < TuneScale || k < TuneScale || i > vioMask.getWidth() - TuneScale - 1 || k > vioMask.getHeight() - TuneScale - 1)
+	//		{
+	//			vioMask.setValueAt(0, i, k);
+	//		}
+	//	}
 
 	const core::CHeightMap Map = vioMask;
 
@@ -214,4 +232,15 @@ bool CCloudInpaintingBasedOnNurbs::__map2Cloud(const core::CHeightMap& vMask, co
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("New Cloud Size [%1%]", vCloud->size()));
 
 	return true;
+}
+
+void CCloudInpaintingBasedOnNurbs::__saveImage(const core::CHeightMap& vMap, const std::string& vPath, int vCoeff)
+{
+	Eigen::MatrixXf ImageData;
+	ImageData.resize(vMap.getWidth(), vMap.getHeight());
+	for (int i = 0; i < ImageData.rows(); i++)
+		for (int k = 0; k < ImageData.cols(); k++)
+			ImageData.coeffRef(i, k) = vMap.getValueAt(i, k) * vCoeff;
+
+	common::saveImage(ImageData.cast<int>(), vPath);
 }

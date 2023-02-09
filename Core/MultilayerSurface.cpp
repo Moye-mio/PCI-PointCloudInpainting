@@ -30,9 +30,10 @@ bool CMultilayerSurface::setSubLayer(int vSubLayer)
 	return true;
 }
 
-bool CMultilayerSurface::setIsSaveMesh(bool vIsSaveMesh)
+bool CMultilayerSurface::setIsSaveMesh(bool vIsSaveMesh, const std::string& vPath)
 {
 	m_IsSaveMesh = vIsSaveMesh;
+	m_MeshSavePath = vPath;
 	return true;
 }
 
@@ -68,14 +69,11 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 	std::vector<Eigen::Vector2i> Hit;
 	for (int i = m_SubLayer - 1; i >= 0; i--)
 	{
-		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Layer [%1%]", i));
+		//hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Layer [%1%]", i));
 
 		const auto& CurLayer = m_Vertices[i];
 		std::pair<Eigen::Vector2i, Eigen::Vector2i> Range;
-		//if (i == 0)
-		//	Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
-		//else
-		//	__calcRange(Hit, i, Range);
+
 		{
 			Range = std::make_pair(Eigen::Vector2i(0, 0), Eigen::Vector2i(CurLayer.rows() - 2, CurLayer.cols() - 2));
 		}
@@ -83,7 +81,7 @@ std::optional<core::SProjInfo> CMultilayerSurface::calcProj(const SPoint& vPoint
 		std::optional<SProjInfo> r;
 		for (int Step = 1; Step <= 2; Step++)
 		{
-			hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Step %1%", Step));
+			//hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Step %1%", Step));
 			Hit.clear();
 			Hit.shrink_to_fit();
 
@@ -324,7 +322,9 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 		}
 	}
 
-	_HIVE_EARLY_RETURN(Candidates.empty(), "ERROR: Candidates Empty...", std::nullopt);
+	if (Candidates.empty()) return std::nullopt;
+
+	//_HIVE_EARLY_RETURN(Candidates.empty(), "ERROR: Candidates Empty...", std::nullopt);
 	
 	std::sort(Candidates.begin(), Candidates.end(),
 		[&](const std::pair<SProjInfo, std::vector<Eigen::Vector2i>>& a, const std::pair<SProjInfo, std::vector<Eigen::Vector2i>>& b) -> bool
@@ -332,7 +332,7 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 			return a.first._Dist < b.first._Dist;
 		});
 
-	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Hit Number: [%1%]", Candidates.size()));
+	//hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Hit Number: [%1%]", Candidates.size()));
 
 	auto Candidate = Candidates[0];
 	auto Info = Candidate.first;
@@ -414,7 +414,7 @@ bool CMultilayerSurface::__saveMesh2Obj()
 	Index.resize(Nodes.rows(), Nodes.cols());
 
 	std::ofstream Stream;
-	Stream.open("Surface.obj");
+	Stream.open(m_MeshSavePath);
 
 	int Count = 0;
 	for (int i = 0; i < Nodes.rows(); i++)

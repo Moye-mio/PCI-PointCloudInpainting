@@ -44,6 +44,14 @@ bool CImageInpainting::run(const core::CHeightMap& vMap, core::CHeightMap& voInp
 	cv::Mat Raw, Mask;
 	__castMap2CV(GradientMap, Raw, GradientMapCoef);
 	__castMap2CV(MaskMap, Mask, MaskCoef);
+
+	{
+		auto GMask = Mask;
+		for (int i = 0; i < GMask.rows; i++)
+			for (int k = 0; k < GMask.cols; k++)
+				GMask.at<unsigned char>(i, k) *= 255;
+			cv::imwrite("GradientMask.png", GMask);
+	}
 	cv::Mat Result = PM::run(Raw, Mask, PatchSize);
 
 	core::CGradientMap GradientMapFilled, GoG;

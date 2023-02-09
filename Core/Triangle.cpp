@@ -114,9 +114,11 @@ bool CTriangle::calcBaryCoor(const Eigen::Vector3f& vPoint, Eigen::Vector3f& voC
 
 	float Epsilon = 0.00001f;
 	if (A < Epsilon * 100) Epsilon /= 100;
-	_HIVE_EARLY_RETURN(std::fabsf(A - (A1 + A2 + A3)) >= Epsilon, "ERROR: Area Rate in Calc BaryCoor is not Valid...", false);
+	float Diff = std::fabsf(A - (A1 + A2 + A3));
+	if (Diff >= Epsilon) return false;
+	//_HIVE_EARLY_RETURN(Diff >= Epsilon, _FORMAT_STR5("ERROR: Area Rate in Calc BaryCoor is invalid [%1%, %2%, %3%, %4%] Diff: [%5%]", A, A1, A2, A3, Diff), false);
 
-	hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Area: %1%, %2%, %3%, %4%", A1, A2, A3, A));
+	//hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Area: %1%, %2%, %3%, %4%", A1, A2, A3, A));
 	voCoor = Eigen::Vector3f(A1 / (A1 + A2 + A3), A2 / (A1 + A2 + A3), A3 / (A1 + A2 + A3));
 	return true;
 }

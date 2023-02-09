@@ -18,6 +18,7 @@ namespace dataManagement
 		void __projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData);
 		void __tuneMapBoundary(core::CHeightMap& vioMask);
 		bool __map2Cloud(const core::CHeightMap& vMask, const core::CHeightMap& vInpainted, int vSPP, const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, const std::shared_ptr<core::CMultilayerSurface>& vSurface, PC_t::Ptr& vCloud);
+		void __saveImage(const core::CHeightMap& vMap, const std::string& vPath, int vCoeff);
 
 	private:
 		PC_t::Ptr m_pCloud;

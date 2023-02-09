@@ -1,6 +1,6 @@
 #include "pch.h"
 
-const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Scene/WH_Scene.ply");
+const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Scene/WH_Scene_2.ply");
 
 PC_t::Ptr loadPC(const std::string& vPath)
 {
@@ -26,14 +26,15 @@ TEST(TestTiler, DT)
 	EXPECT_FALSE(Tiler.run(pCloud, 2, 3, 10.0f));
 }
 
-TEST(TestTiler, NT_2x2Scene)
+TEST(TestTiler, NT_4x4Scene)
 {
 	PC_t::Ptr pCloud = loadPC(Path1);
 	std::vector<std::vector<int>> Tiles;
+	std::vector<std::pair<int, int>> Coors;
 	core::CTiler Tiler;
-	EXPECT_TRUE(Tiler.run(pCloud, 2, 2, 0.2f));
-	Tiler.dumpResult(Tiles);
-	EXPECT_TRUE(Tiles.size() == 4);
+	EXPECT_TRUE(Tiler.run(pCloud, 4, 4, 0.1f));
+	Tiler.dumpResult(Tiles, Coors);
+	EXPECT_TRUE(Tiles.size() == 16 && Coors.size() == 16);
 
 	for (int i = 0; i < Tiles.size(); i++)
 	{
@@ -44,6 +45,6 @@ TEST(TestTiler, NT_2x2Scene)
 		
 		std::string Path = std::to_string(i) + ".ply";
 		pcl::io::savePLYFileBinary(Path, *pSave);
-		hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Save Cloud [%1%], Size [%2%]", Path, pCloud->size()));
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Save Cloud [%1%], Size [%2%]", Path, pSave->size()));
 	}
 }

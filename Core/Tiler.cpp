@@ -52,7 +52,10 @@ bool CTiler::run(const PC_t::Ptr& vCloud, int vSizeX, int vSizeY, float vRate)
 
 	for (int i = 0; i < vSizeX; i++)
 		for (int k = 0; k < vSizeY; k++)
+		{
 			m_Tiles.emplace_back(std::move(Tiles.coeffRef(i, k)));
+			m_Coors.emplace_back(std::make_pair(i, k));
+		}
 }
 
 bool CTiler::__isInRange(const Eigen::Vector4f& vRange, const Eigen::Vector2f& vPos)

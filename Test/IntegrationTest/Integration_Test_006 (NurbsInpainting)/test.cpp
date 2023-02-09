@@ -1,12 +1,13 @@
 #include "pch.h"
 
 const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway_Trim.ply");
+const std::string Path2 = std::string("28.ply");
 
 TEST(AllTest, PipeLineTest) 
 {
-	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(Path1));
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(Path2));
 	EXPECT_TRUE(pTileLoader);
-	PC_t::Ptr pData = pTileLoader->loadDataFromFile(Path1);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(Path2);
 	EXPECT_TRUE(pData->size());
 
 	PC_t::Ptr pInpainted(new PC_t);

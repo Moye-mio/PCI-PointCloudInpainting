@@ -21,7 +21,7 @@ namespace core
 
 		[[nodiscard]] bool setSubNumber(int vSubNum);
 		[[nodiscard]] bool setSubLayer(int vSubLayer);
-		[[nodiscard]] bool setIsSaveMesh(bool vIsSaveMesh);
+		[[nodiscard]] bool setIsSaveMesh(bool vIsSaveMesh, const std::string& vPath);
 		[[nodiscard]] bool setIsCalcError(bool vIsCalcError);
 		[[nodiscard]] bool IsPreComputed();
 		
@@ -49,6 +49,7 @@ namespace core
 	private:
 		std::vector<Eigen::Matrix<SVertex, -1, -1>>		m_Vertices;
 		std::vector<std::vector<Eigen::Vector3i>>		m_Triangles;
+		std::string										m_MeshSavePath;
 
 		int		m_SubNum;
 		int		m_SubLayer;

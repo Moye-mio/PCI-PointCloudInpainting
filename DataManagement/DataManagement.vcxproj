@@ -138,6 +138,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Common;$(SolutionDir)\Core;$(SolutionDir)\ALG\PM;$(SolutionDir)\ALG\GeneticAlgorithm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,6 +156,7 @@
     <ClInclude Include="DepthInpainting.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageInpainting.h" />
+    <ClInclude Include="Nurbs2CloudMapper.h" />
     <ClInclude Include="PC.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PCLASLoader.h" />
@@ -166,8 +168,10 @@
     <ClInclude Include="SolverBuilder.h" />
     <ClInclude Include="Surface2CloudMapper.h" />
     <ClInclude Include="SurfaceGenerator.h" />
+    <ClInclude Include="TilesInpainting.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Nurbs2CloudMapper.cpp" />
     <ClCompile Include="CloudInpaintingBasedOnNurbs.cpp" />
     <ClCompile Include="DepthInpainting.cpp" />
     <ClCompile Include="ImageInpainting.cpp" />
@@ -185,6 +189,7 @@
     <ClCompile Include="SolverBuilder.cpp" />
     <ClCompile Include="Surface2CloudMapper.cpp" />
     <ClCompile Include="SurfaceGenerator.cpp" />
+    <ClCompile Include="TilesInpainting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ALG\GeneticAlgorithm\GeneticAlgorithm.vcxproj">

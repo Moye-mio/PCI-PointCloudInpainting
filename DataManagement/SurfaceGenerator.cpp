@@ -104,7 +104,7 @@ bool CSurfaceGenerator::run(const std::string& vPath)
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
 	pSurface->setControlPoints(SPoints);
 	pSurface->setSubLayer(3);
-	pSurface->setIsSaveMesh(true);
+	pSurface->setIsSaveMesh(true, "Surface.obj");
 	_HIVE_EARLY_RETURN(pSurface->preCompute() == false, "Surface Generator: Surface precompute failed", false);
 
 	std::vector<std::pair<float, Eigen::Vector2f>> Data;

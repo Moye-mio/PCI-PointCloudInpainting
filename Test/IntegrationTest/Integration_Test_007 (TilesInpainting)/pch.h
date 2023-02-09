@@ -1,15 +1,11 @@
-﻿// pch.h: 这是预编译标头文件。
-// 下方列出的文件仅编译一次，提高了将来生成的生成性能。
-// 这还将影响 IntelliSense 性能，包括代码完成和许多代码浏览功能。
-// 但是，如果此处列出的文件中的任何一个在生成之间有更新，它们全部都将被重新编译。
-// 请勿在此处添加要频繁更新的文件，这将使得性能优势无效。
+// pch.h: ����Ԥ�����ͷ�ļ���
+//
+// pch.h
+//
 
-#ifndef PCH_H
-#define PCH_H
+#pragma once
 
-// 添加要在此处预编译的标头
-#include "framework.h"
-
+#include "gtest/gtest.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -18,17 +14,13 @@
 #include <unordered_set>
 #include <cstdlib>
 
-#include <omp.h>
-#include <mutex>
 #include <boost/format.hpp>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Eigen>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
-#include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/surface/on_nurbs/fitting_surface_tdm.h>
-#include <liblas/liblas.hpp>
 
 #include "common/Product.h"
 #include "common/Factory.h"
@@ -38,16 +30,26 @@
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
-#include "common/CpuTimer.h"
 
+#include "magic_enum.hpp"
 #include "PointCloudType.h"
 #include "HeightMap.h"
 #include "GradientMap.h"
 #include "AABB.h"
 #include "AABBEstimation.h"
-#include "Point.h"
-#include "Triangle.h"
-#include "Plane.h"
-#include "Image.h"
+#include "DepthInpainting.h"
+#include "HeightMapGenerator.h"
+#include "GradientMapGenerator.h"
+#include "PMInterface.h"
+#include "SolverBuilder.h"
+#include "SparseLinearSolver.h"
 
-#endif //PCH_H
+#include "PCLoader.h"
+
+#include "Triangle.h"
+#include "Point.h"
+#include "Vertex.h"
+#include "SurfaceGenerator.h"
+
+#include "NurbsFitting.h"
+#include "TilesInpainting.h"
