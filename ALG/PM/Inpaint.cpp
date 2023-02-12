@@ -201,12 +201,14 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 	Eigen::Vector2f ExtremeValueC2 = __computeRange(RawC2, m_Mask);
 
 	cv::Mat Weights(m_Raw.size(), CV_32F);
-	cv::distanceTransform(m_Mask, Weights, cv::DIST_L2, 3);
+	int ComputePrecision = 5;
+	cv::distanceTransform(m_Mask, Weights, cv::DIST_L2, ComputePrecision);
 
+	float Base = 1.3f;
 	for (int i = 0; i < m_Raw.rows; i++)
 		for (int k = 0; k < m_Raw.cols; k++)
 		{
-			Weights.at<float>(i, k) = std::powf(1.3f, -Weights.at<float>(i, k));	/* init weights */
+			Weights.at<float>(i, k) = std::powf(Base, -Weights.at<float>(i, k));	/* init weights */
 
 			if (m_Mask.at<unsigned char>(i, k))										/* pixels to be filled */
 			{
@@ -216,6 +218,7 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		}
 
 	cv::Mat Cur = cv::Mat(), Work, CurMask;
+	int Count = 0;
 	while (m_Pyramid >= 0)															/* different scales */
 	{
 		float Scale = 1.0f / (1 << m_Pyramid);
@@ -250,6 +253,16 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 			cv::Mat Last = Cur.clone();
 			cv::Mat NNF = PatchMatch(Cur, Cur, CurMask, m_PatchSize);
 
+			/* Log NNF */
+			{
+				for (int i = 0; i < NNF.rows; i++)
+				{
+					for (int k = 0; k < NNF.cols; k++)
+						std::cout << "(" << NNF.at<cv::Vec3f>(i, k)[0] << "-" << NNF.at<cv::Vec3f>(i, k)[1] << "-" << NNF.at<cv::Vec3f>(i, k)[2] << ")";
+					std::cout << std::endl;
+				}
+			}
+
 			for (int i = 0; i < Cur.rows; i++)										/* traverse image */
 				for (int k = 0; k < Cur.cols; k++)
 				{
@@ -262,7 +275,7 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 						{
 							int StartX = i + OffsetX;
 							int StartY = k + OffsetY;
-							if (StartX < 0 || StartY < 0 || StartX + m_PatchSize >= Cur.rows - 1 || StartY + m_PatchSize >= Cur.cols - 1) continue;
+							if (StartX < 0 || StartY < 0 || StartX + m_PatchSize > Cur.rows - 1 || StartY + m_PatchSize > Cur.cols - 1) continue;
 
 							cv::Mat Patch = Cur(cv::Rect(StartY, StartX, m_PatchSize, m_PatchSize));
 							cv::Mat NearesetPatch = Cur(cv::Rect(NNF.at<cv::Vec3f>(StartX, StartY)[0], NNF.at<cv::Vec3f>(StartX, StartY)[1], m_PatchSize, m_PatchSize));
@@ -308,6 +321,19 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 			Diff /= EmptyNumber;
 			std::cout << "Pyramid: " << m_Pyramid << ", Scale: " << Scale << ", PatchSize: " << m_PatchSize << ", Iter: " << Iter << ", Diff: " << Diff << std::endl;
 
+			{
+				cv::Mat X(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+				cv::Mat Y(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+				for (int i = 0; i < X.rows; i++)
+					for (int k = 0; k < X.cols; k++)
+					{
+						X.at<std::uint8_t>(i, k) = (std::uint8_t)(int)Cur.at<cv::Vec2f>(i, k)[0];
+						Y.at<std::uint8_t>(i, k) = (std::uint8_t)(int)Cur.at<cv::Vec2f>(i, k)[1];
+					}
+				cv::imwrite("Output/" + std::to_string(Count) + "_X.png", X);
+				cv::imwrite("Output/" + std::to_string(Count) + "_Y.png", Y);
+			}
+
 			if (vIsWriteVideo)
 			{
 				cv::Mat Show(Cur.size(), CV_8UC1);
@@ -321,7 +347,6 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 				cv::imshow("Cur", Show);
 				cv::waitKey(10);
 			}
-
 
 			if (Diff < m_Threshold * 2) break;
 		}

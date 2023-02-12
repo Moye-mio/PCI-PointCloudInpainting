@@ -15,7 +15,27 @@ using namespace PM;
 
 float computePatchDist(const cv::Mat& vLhs, const cv::Mat& vRhs, int vPatchSize)
 {
-	return cv::norm(vLhs, vRhs) * vPatchSize * vPatchSize;
+	/*{
+		std::cout << "LHS: " << std::endl;
+		for (int i = 0; i < vLhs.rows; i++)
+		{
+			for (int k = 0; k < vLhs.cols; k++)
+				std::cout << "(" << vLhs.at<cv::Vec2f>(i, k)[0] << "-" << vLhs.at<cv::Vec2f>(i, k)[1] << ") ";
+			std::cout << std::endl;
+		}
+
+		std::cout << "RHS: " << std::endl;
+		for (int i = 0; i < vRhs.rows; i++)
+		{
+			for (int k = 0; k < vRhs.cols; k++)
+				std::cout << "(" << vRhs.at<cv::Vec2f>(i, k)[0] << "-" << vRhs.at<cv::Vec2f>(i, k)[1] << ") ";
+			std::cout << std::endl;
+		}
+
+		std::cout << cv::norm(vLhs, vRhs) << std::endl;
+	}*/
+
+	return (float)cv::norm(vLhs, vRhs) * vPatchSize * vPatchSize;
 }
 
 void propagate(const cv::Mat& vSource, const cv::Mat& vTarget, const cv::Mat& vMask, const std::pair<int, int>& vPos /* row, col */, const std::pair<int, int>& vPosGuess /* row, col */, int vPatchSize, cv::Mat vioNN)
@@ -47,35 +67,37 @@ cv::Mat PM::PatchMatch(const cv::Mat& vSource, const cv::Mat& vTarget, const cv:
 {
 	cv::Mat NN = cv::Mat::zeros(vSource.size(), CV_32FC3);		/* Col, Row, Dist */
 
-	for (int i = 0; i < vSource.rows - vPatchSize; i++)
-		for (int k = 0; k < vSource.cols - vPatchSize; k++)
+	for (int i = 0; i < vSource.rows - vPatchSize + 1; i++)
+		for (int k = 0; k < vSource.cols - vPatchSize + 1; k++)
 		{
-			NN.at<cv::Vec3f>(i, k)[0] = hiveMath::hiveGenerateRandomInteger(0, vTarget.cols - vPatchSize - 1);
-			NN.at<cv::Vec3f>(i, k)[1] = hiveMath::hiveGenerateRandomInteger(0, vTarget.rows - vPatchSize - 1);
+			NN.at<cv::Vec3f>(i, k)[0] = hiveMath::hiveGenerateRandomInteger(0, vTarget.cols - vPatchSize);
+			NN.at<cv::Vec3f>(i, k)[1] = hiveMath::hiveGenerateRandomInteger(0, vTarget.rows - vPatchSize);
 
 			cv::Mat SourcePatch = vSource(cv::Rect(k, i, vPatchSize, vPatchSize));
 			cv::Mat TargetPatch = vTarget(cv::Rect(NN.at<cv::Vec3f>(i, k)[0], NN.at<cv::Vec3f>(i, k)[1], vPatchSize, vPatchSize));
 
 			NN.at<cv::Vec3f>(i, k)[2] = computePatchDist(SourcePatch, TargetPatch, vPatchSize);
+			std::cout << "[" << i << ", " << k << "] Patch Dist: " << NN.at<cv::Vec3f>(i, k)[2] << std::endl;
 		}
 
-	for (int Iter = 0; Iter < 5; Iter++)
+	int MaxIters = 5;
+	for (int Iter = 0; Iter < MaxIters; Iter++)
 	{
 		int RowStart, RowEnd, ColStart, ColEnd, Step;
 		if (Iter % 2)
 		{
-			RowStart = vSource.rows - vPatchSize - 2;
+			RowStart = vSource.rows - vPatchSize - 1;
 			RowEnd = -1;
-			ColStart = vSource.cols - vPatchSize - 2;
+			ColStart = vSource.cols - vPatchSize - 1;
 			ColEnd = -1;
 			Step = -1;
 		}
 		else
 		{
 			RowStart = 1;
-			RowEnd = vSource.rows - vPatchSize;
+			RowEnd = vSource.rows - vPatchSize + 1;
 			ColStart = 1;
-			ColEnd = vSource.cols - vPatchSize;
+			ColEnd = vSource.cols - vPatchSize + 1;
 			Step = 1;
 		}
 
@@ -86,7 +108,7 @@ cv::Mat PM::PatchMatch(const cv::Mat& vSource, const cv::Mat& vTarget, const cv:
 				{
 					std::pair<int, int> PosGuess(NN.at<cv::Vec3f>(i, k - Step)[1], NN.at<cv::Vec3f>(i, k - Step)[0] + Step);	 /* row, col */
 
-					if (PosGuess.second < vTarget.cols - vPatchSize && PosGuess.second >= 0)
+					if (PosGuess.second <= vTarget.cols - vPatchSize && PosGuess.second >= 0)
 						propagate(vSource, vTarget, vMask, std::make_pair(i, k), PosGuess, vPatchSize, NN);
 				}
 
@@ -94,7 +116,7 @@ cv::Mat PM::PatchMatch(const cv::Mat& vSource, const cv::Mat& vTarget, const cv:
 				{
 					std::pair<int, int> PosGuess(NN.at<cv::Vec3f>(i - Step, k)[1] + Step, NN.at<cv::Vec3f>(i - Step, k)[0]);	 /* row, col */
 
-					if (PosGuess.first < vTarget.rows - vPatchSize && PosGuess.first >= 0)
+					if (PosGuess.first <= vTarget.rows - vPatchSize && PosGuess.first >= 0)
 						propagate(vSource, vTarget, vMask, std::make_pair(i, k), PosGuess, vPatchSize, NN);
 				}
 

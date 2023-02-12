@@ -5,25 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="HeightMap">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="HeightMap\Struct">
-      <UniqueIdentifier>{b15bf2bf-3ba2-48c6-b2d3-6bebb37b7d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HeightMap\Generator">
-      <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap">
-      <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap\Struct">
-      <UniqueIdentifier>{255dd25e-00f4-4c52-8729-df5df5860fbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap\Generator">
-      <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Solver">
       <UniqueIdentifier>{7b885a95-7ec3-4549-9759-8844a7923fb1}</UniqueIdentifier>
     </Filter>
@@ -99,6 +80,31 @@
     <Filter Include="Geometry\Fit">
       <UniqueIdentifier>{ed4034d1-5ada-43d3-ae00-c159eb8bd487}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{f724a087-675b-4f19-a071-b6ed7e6a1ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\HeightMap">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Map\HeightMap\Struct">
+      <UniqueIdentifier>{b15bf2bf-3ba2-48c6-b2d3-6bebb37b7d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\HeightMap\Generator">
+      <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap">
+      <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap\Struct">
+      <UniqueIdentifier>{255dd25e-00f4-4c52-8729-df5df5860fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap\Generator">
+      <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\IO">
+      <UniqueIdentifier>{491ae3fd-4cab-4860-873d-b665d9cee92b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -108,13 +114,13 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="HeightMap.h">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="StandardHeightMap.h">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="HeightMapGenerator.h">
-      <Filter>HeightMap\Generator</Filter>
+      <Filter>Map\HeightMap\Generator</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>BB\AABB\Struct</Filter>
@@ -123,10 +129,10 @@
       <Filter>BB\AABB\Estimation</Filter>
     </ClInclude>
     <ClInclude Include="GradientMap.h">
-      <Filter>GradientMap\Struct</Filter>
+      <Filter>Map\GradientMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="GradientMapGenerator.h">
-      <Filter>GradientMap\Generator</Filter>
+      <Filter>Map\GradientMap\Generator</Filter>
     </ClInclude>
     <ClInclude Include="SparseLinearSolver.h">
       <Filter>Solver</Filter>
@@ -224,28 +230,31 @@
     <ClInclude Include="Tiler.h">
       <Filter>PCFeature\Trim</Filter>
     </ClInclude>
+    <ClInclude Include="MapSaver.h">
+      <Filter>Map\IO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
     <ClCompile Include="HeightMap.cpp">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="StandardHeightMap.cpp">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="HeightMapGenerator.cpp">
-      <Filter>HeightMap\Generator</Filter>
+      <Filter>Map\HeightMap\Generator</Filter>
     </ClCompile>
     <ClCompile Include="AABBEstimation.cpp">
       <Filter>BB\AABB\Estimation</Filter>
     </ClCompile>
     <ClCompile Include="GradientMap.cpp">
-      <Filter>GradientMap\Struct</Filter>
+      <Filter>Map\GradientMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="GradientMapGenerator.cpp">
-      <Filter>GradientMap\Generator</Filter>
+      <Filter>Map\GradientMap\Generator</Filter>
     </ClCompile>
     <ClCompile Include="SparseLinearSolver.cpp">
       <Filter>Solver</Filter>
@@ -333,6 +342,9 @@
     </ClCompile>
     <ClCompile Include="Tiler.cpp">
       <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSaver.cpp">
+      <Filter>Map\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

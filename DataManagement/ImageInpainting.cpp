@@ -5,6 +5,7 @@
 #include "PMInterface.h"
 #include "SolverBuilder.h"
 #include "SparseLinearSolver.h"
+#include "MapSaver.h"
 
 using namespace dataManagement;
 
@@ -12,24 +13,12 @@ bool CImageInpainting::run(const core::CHeightMap& vMap, core::CHeightMap& voInp
 {
 	_HIVE_EARLY_RETURN(vMap.isValid() == false, "Image Inpainting: Map is Invalid", false);
 
-	{
-		for (int i = 0; i < vMap.getWidth(); i++)
-			for (int k = 0; k < vMap.getHeight(); k++)
-				std::cout << "Map: [" << i << ", " << k << "], Value: " << vMap.getValueAt(i, k) << std::endl;
-	}
-
 	/* Create GradientMap */
 	core::CGradientMap GradientMap;
 	core::CGradientMapGenerator GGenerator;
 	_HIVE_EARLY_RETURN(GGenerator.generate(vMap, true) == false, "Image Inpainting: Gradient Map Generate failed", false);
 	GGenerator.dumpGradientMap(GradientMap);
 	_HIVE_EARLY_RETURN(GradientMap.isValid() == false, "Image Inpainting: GradientMap is InValid", false);
-
-	{
-		for (int i = 0; i < GradientMap.getWidth(); i++)
-			for (int k = 0; k < GradientMap.getHeight(); k++)
-				std::cout << "Gradient: [" << i << ", " << k << "], Value: [" << GradientMap.getValueAt(i, k)[0] << ", " << GradientMap.getValueAt(i, k)[1] << "]" << std::endl;
-	}
 
 	/* Create Mask */
 	core::CHeightMap MaskMap;
@@ -44,18 +33,18 @@ bool CImageInpainting::run(const core::CHeightMap& vMap, core::CHeightMap& voInp
 	cv::Mat Raw, Mask;
 	__castMap2CV(GradientMap, Raw, GradientMapCoef);
 	__castMap2CV(MaskMap, Mask, MaskCoef);
-
-	{
-		auto GMask = Mask;
-		for (int i = 0; i < GMask.rows; i++)
-			for (int k = 0; k < GMask.cols; k++)
-				GMask.at<unsigned char>(i, k) *= 255;
-			cv::imwrite("GradientMask.png", GMask);
-	}
 	cv::Mat Result = PM::run(Raw, Mask, PatchSize);
 
 	core::CGradientMap GradientMapFilled, GoG;
 	__castCV2Map(Result, GradientMapFilled, GradientFilledMapCoef);
+
+	/* Save Maps */
+	core::CMapSaver Saver;
+	Saver.save(MaskMap, "GradientMask.png", 255);
+	Saver.save(vMap, "HeightMap.png", 1);
+	Saver.save(GradientMap, "GradientMap", 100);
+	Saver.save(GradientMapFilled, "GradientInpaintedMap", 100);
+
 	_HIVE_EARLY_RETURN(GradientMapFilled.isValid() == false, "Image Inpainting: PM Result is Invalid", false);
 	_HIVE_EARLY_RETURN(GGenerator.generate(GradientMapFilled) == false, "Image Inpainting: GOG generate failed", false);
 	GGenerator.dumpGradientMap(GoG);
@@ -77,6 +66,7 @@ bool CImageInpainting::run(const core::CHeightMap& vMap, core::CHeightMap& voInp
 	_HIVE_EARLY_RETURN(__setValueInMap(HeightMapInpainted, Unknowns, Solutions) == false, "Image Inpainting: Set Value failed", false);
 
 	voInpainted = HeightMapInpainted;
+	Saver.save(HeightMapInpainted, "HeightInpaintedMap.png", 1);
 
 	return true;
 }
