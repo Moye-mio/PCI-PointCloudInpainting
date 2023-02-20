@@ -84,6 +84,9 @@
     <ClInclude Include="Nurbs2CloudMapper.h">
       <Filter>Transaction\Nurbs</Filter>
     </ClInclude>
+    <ClInclude Include="TilesInpaintingBasedOnGT.h">
+      <Filter>Transaction\Nurbs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -132,6 +135,9 @@
       <Filter>Transaction\Nurbs</Filter>
     </ClCompile>
     <ClCompile Include="Nurbs2CloudMapper.cpp">
+      <Filter>Transaction\Nurbs</Filter>
+    </ClCompile>
+    <ClCompile Include="TilesInpaintingBasedOnGT.cpp">
       <Filter>Transaction\Nurbs</Filter>
     </ClCompile>
   </ItemGroup>

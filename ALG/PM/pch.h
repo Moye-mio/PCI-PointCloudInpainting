@@ -30,6 +30,7 @@
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
+#include "common/CpuTimer.h"
 
 #include "HeightMap.h"
 

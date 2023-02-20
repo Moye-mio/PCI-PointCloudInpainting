@@ -30,5 +30,5 @@ TEST(AllTest, PipeLineTest)
 		pInpainted->emplace_back(e);
 	}
 
-	pcl::io::savePLYFileBinary("NewCloud.ply", *pInpainted);
+	pcl::io::savePLYFileBinary("Inpainted.ply", *pInpainted);
 }

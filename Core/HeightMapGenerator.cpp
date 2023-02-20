@@ -64,12 +64,54 @@ bool CHeightMapGenerator::generateBySurface(const std::vector<std::pair<float, E
 	float CellInRow = 1.0f / vWidth;
 	float CellInCol = 1.0f / vHeight;
 
+	Eigen::Matrix<std::vector<int>, -1, -1> Indices;
+	Indices.resize(vWidth, vHeight);
+
+	int Count = 0;
 	for (const auto& e : vData)
 	{
 		Eigen::Vector2i Offset = __computeOffset(e.second);
-		if (e.first > m_Map.getValueAt(Offset[0], Offset[1]))
-			m_Map.setValueAt(e.first, Offset[0], Offset[1]);
+		/*if (e.first > m_Map.getValueAt(Offset[0], Offset[1]))
+			m_Map.setValueAt(e.first, Offset[0], Offset[1]);*/
+
+		Indices.coeffRef(Offset[0], Offset[1]).emplace_back(Count);
+		Count++;
 	}
+
+	
+	for (int i = 0; i < Indices.rows(); i++)
+		for (int k = 0; k < Indices.cols(); k++)
+		{
+			int Nega = 0;
+			int Posi = 0;
+			Eigen::Vector2f Domain(-FLT_MAX, FLT_MAX);
+			const auto& Data = Indices.coeff(i, k);
+
+			if (Data.size() == 0)
+			{
+				m_Map.setEmptyAt(i, k);
+				hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Pixel [%1%, %2%]: Size [0]", i, k));
+				continue;
+			}
+
+			for (const auto e : Data)
+			{
+				float Dist = vData[e].first;
+				if (Dist < 0)
+					Nega++;
+				else
+					Posi++;
+
+				Domain[0] = (Domain[0] > Dist) ? Domain[0] : Dist;
+				Domain[1] = (Domain[1] < Dist) ? Domain[1] : Dist;
+			}
+			if (Posi > Nega)
+				m_Map.setValueAt(Domain[0], i, k);
+			else
+				m_Map.setValueAt(Domain[1], i, k);
+
+			hiveEventLogger::hiveOutputEvent(_FORMAT_STR5("Pixel [%1%, %2%]: Posi [%3%], Nega [%4%], Value [%5%]", i, k, Posi, Nega, m_Map.getValueAt(i, k)));
+		}
 
 	return true;
 }

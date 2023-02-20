@@ -70,129 +70,136 @@ bool CTilesInpainting::run(const PC_t::Ptr& vRaw, const PC_t::Ptr& vSub, int vSi
 	int ThreadSize = 16;
 	std::mutex Mutex;
 
-#pragma omp parallel for num_threads(ThreadSize)
+	std::vector<std::pair<int, int>> TileIds;
 	for (int i = 0; i < RawTiles.rows(); i++)
 		for (int k = 0; k < RawTiles.cols(); k++)
+			TileIds.emplace_back(std::make_pair(i, k));
+
+#pragma omp parallel for num_threads(TileIds.size())
+	for (int Id = 0; Id < TileIds.size(); Id++)
+	{
+		int i = TileIds[Id].first;
+		int k = TileIds[Id].second;
+
+		const auto& pLocal = RawTiles.coeff(i, k);
+		const auto& pSubLocal = SubTiles.coeff(i, k);
+
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Start Fitting Tile [%1%, %2%], Size [%3%] [%4%]", i, k, pLocal->size(), pSubLocal->size()));
+
+		/* Generate Nurbs */
+		int Degree = 3;
+		int Refinement = 4;
+		int Iteration = 10;
+		core::CNurbsFitting Fitting;
+		std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
+
+		if (Fitting.run(pSubLocal, Degree, Refinement, Iteration) == false) continue;
+		//_HIVE_EARLY_RETURN(Fitting.run(pSubLocal, Degree, Refinement, Iteration) == false, "Nurbs Fitting failed", false);
+		Fitting.dumpFitting(Fit);
+
+		/* Organize Ctrlpts */
+		Eigen::Matrix<core::SPoint, -1, -1> Ctrlpts;
+
+		if (__extractCtrlpts(Fit->m_nurbs, Ctrlpts) == false) continue;
+		//_HIVE_EARLY_RETURN(__extractCtrlpts(Fit->m_nurbs, Ctrlpts) == false, "Extract Ctrlpts failed", false);
+
+		/* Generate Surface Mesh */
+		int SubNumber = 2;
+		int SubLayer = 2;
+		std::string MeshSavePath = std::to_string(i) + "_" + std::to_string(k) + ".obj";
+		core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(Degree));
+		pSurface->setControlPoints(Ctrlpts);
+		pSurface->setIsSaveMesh(true, MeshSavePath);
+		pSurface->setSubNumber(SubNumber);
+		pSurface->setSubLayer(SubLayer);
+
+		if (pSurface->preCompute() == false) continue;
+		//_HIVE_EARLY_RETURN(pSurface->preCompute() == false, "Surface Mesh precompute failed", false);
+
+		/* Project Point 2 Nurbs */
+		std::vector<std::pair<float, Eigen::Vector2f>> Data;
+		__projPoints(Fit, pSurface, pLocal, Data);
+
+		/* Generate Height Map */
+		core::CHeightMapGenerator MapGenerater;
+		core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
+		int Width = 128;
+		int Height = 128;
+
+		if (MapGenerater.generateBySurface(Data, Width, Height) == false) continue;
+		//_HIVE_EARLY_RETURN(MapGenerater.generateBySurface(Data, Width, Height) == false, "Generate Height Map failed", false);
+		MapGenerater.dumpHeightMap(Map);
+		Map.generateMask(Mask);
+		__tuneMapBoundary(Mask);
+
+		if (__isMapNoHole(Map))
 		{
-			const auto& pLocal = RawTiles.coeff(i, k);
-			const auto& pSubLocal = SubTiles.coeff(i, k);
-
-			hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Start Fitting Tile [%1%, %2%], Size [%3%] [%4%]", i, k, pLocal->size(), pSubLocal->size()));
-			
-			/* Generate Nurbs */
-			int Degree = 3;
-			int Refinement = 4;
-			int Iteration = 10;
-			core::CNurbsFitting Fitting;
-			std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
-
-			if (Fitting.run(pSubLocal, Degree, Refinement, Iteration) == false) continue;
-			//_HIVE_EARLY_RETURN(Fitting.run(pSubLocal, Degree, Refinement, Iteration) == false, "Nurbs Fitting failed", false);
-			Fitting.dumpFitting(Fit);
-
-			/* Organize Ctrlpts */
-			Eigen::Matrix<core::SPoint, -1, -1> Ctrlpts;
-
-			if (__extractCtrlpts(Fit->m_nurbs, Ctrlpts) == false) continue;
-			//_HIVE_EARLY_RETURN(__extractCtrlpts(Fit->m_nurbs, Ctrlpts) == false, "Extract Ctrlpts failed", false);
-
-			/* Generate Surface Mesh */
-			int SubNumber = 2;
-			int SubLayer = 2;
-			std::string MeshSavePath = std::to_string(i) + "_" + std::to_string(k) + ".obj";
-			core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(Degree));
-			pSurface->setControlPoints(Ctrlpts);
-			pSurface->setIsSaveMesh(true, MeshSavePath);
-			pSurface->setSubNumber(SubNumber);
-			pSurface->setSubLayer(SubLayer);
-
-			if (pSurface->preCompute() == false) continue;
-			//_HIVE_EARLY_RETURN(pSurface->preCompute() == false, "Surface Mesh precompute failed", false);
-
-			/* Project Point 2 Nurbs */
-			std::vector<std::pair<float, Eigen::Vector2f>> Data;
-			__projPoints(Fit, pSurface, pLocal, Data);
-
-			/* Generate Height Map */
-			core::CHeightMapGenerator MapGenerater;
-			core::CHeightMap Map, Mask, Inpainted, InpaintedMask;
-			int Width = 64;
-			int Height = 64;
-
-			if (MapGenerater.generateBySurface(Data, Width, Height) == false) continue;
-			//_HIVE_EARLY_RETURN(MapGenerater.generateBySurface(Data, Width, Height) == false, "Generate Height Map failed", false);
-			MapGenerater.dumpHeightMap(Map);
-			Map.generateMask(Mask);
-			__tuneMapBoundary(Mask);
-
-			if (__isMapNoHole(Map))
-			{
-				PC_t::Ptr pTemp(new PC_t);
-				CloudCulled.coeffRef(i, k) = pTemp;
-				continue;
-			}
-
-			/* Image Inpainting */
-			CImageInpainting Inpainter;
-			Inpainter.run(Map, Inpainted);
-
-			/* Map 2 Cloud */
-			int SPP = 100;
-			std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
-			CNurbs2CloudMapper Mapper;
-
-			if (Mapper.run(Mask, Inpainted, SPP, Fit, pTrSurface) == false) continue;
-			//_HIVE_EARLY_RETURN(Mapper.run(Mask, Inpainted, SPP, Fit, pTrSurface) == false, "Map 2 Cloud failed", false);
-			PC_t::Ptr pMapper(new PC_t);
-			Mapper.dumpCloud(pMapper);
-
-			/* Cull */
-			core::CAABBEstimation Estimation(pLocal);
-			const auto Box = Estimation.compute();
-
-			if (Box.isValid() == false) continue;
-			//_HIVE_EARLY_RETURN(Box.isValid() == false, "AABB is invalid", false);
-			float ThresX = (Box._Max[0] - Box._Min[0]) * vRate * 0.7f;
-			float ThresY = (Box._Max[1] - Box._Min[1]) * vRate * 0.7f;
-
-			PC_t::Ptr pCulled(new PC_t);
-			for (const auto& e : *pMapper)
-			{
-				if (e.x < Box._Min.x() || e.x > Box._Max.x() || e.y < Box._Min.y() || e.y > Box._Max.y()) continue;
-				if (std::fabsf(e.x - Box._Min.x()) < ThresX || std::fabsf(e.x - Box._Max.x()) < ThresX || std::fabsf(e.y - Box._Min.y()) < ThresY || std::fabsf(e.y - Box._Max.y()) < ThresY) continue;
-
-				pCulled->emplace_back(e);
-			}
-
-			/* Give Color */
-			for (auto& e : *pCulled)
-			{
-				e.r = 253;
-				e.g = 199;
-				e.b = 83;
-			}
-
-			Mutex.lock();
-			CloudCulled.coeffRef(i, k) = pCulled;
-			Mutex.unlock();
-
-			/* Save Single Tile */
-			bool IsSave = false;
-			if (IsSave)
-			{
-				PC_t::Ptr pSave(new PC_t);
-				for (const auto e : *pCulled)
-					pSave->emplace_back(e);
-
-				/* Merge */
-				for (const auto& e : *pLocal)
-					pSave->emplace_back(Point_t(e.x, e.y, e.z, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255));
-
-				std::string Path = std::to_string(i) + "_" + std::to_string(k) + ".ply";
-				pcl::io::savePLYFileBinary(Path, *pSave);
-				hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Save Cloud [%1%] Size [%2%]", Path, pSave->size()));
-			}
+			PC_t::Ptr pTemp(new PC_t);
+			CloudCulled.coeffRef(i, k) = pTemp;
+			continue;
 		}
+
+		/* Image Inpainting */
+		CImageInpainting Inpainter;
+		Inpainter.run(Map, Inpainted);
+
+		/* Map 2 Cloud */
+		int SPP = 10;
+		std::shared_ptr<core::CMultilayerSurface> pTrSurface(pSurface);
+		CNurbs2CloudMapper Mapper;
+
+		if (Mapper.run(Mask, Inpainted, SPP, Fit, pTrSurface) == false) continue;
+		//_HIVE_EARLY_RETURN(Mapper.run(Mask, Inpainted, SPP, Fit, pTrSurface) == false, "Map 2 Cloud failed", false);
+		PC_t::Ptr pMapper(new PC_t);
+		Mapper.dumpCloud(pMapper);
+
+		/* Cull */
+		core::CAABBEstimation Estimation(pLocal);
+		const auto Box = Estimation.compute();
+
+		if (Box.isValid() == false) continue;
+		//_HIVE_EARLY_RETURN(Box.isValid() == false, "AABB is invalid", false);
+		float ThresX = (Box._Max[0] - Box._Min[0]) * vRate * 0.7f;
+		float ThresY = (Box._Max[1] - Box._Min[1]) * vRate * 0.7f;
+
+		PC_t::Ptr pCulled(new PC_t);
+		for (const auto& e : *pMapper)
+		{
+			if (e.x < Box._Min.x() || e.x > Box._Max.x() || e.y < Box._Min.y() || e.y > Box._Max.y()) continue;
+			if (std::fabsf(e.x - Box._Min.x()) < ThresX || std::fabsf(e.x - Box._Max.x()) < ThresX || std::fabsf(e.y - Box._Min.y()) < ThresY || std::fabsf(e.y - Box._Max.y()) < ThresY) continue;
+
+			pCulled->emplace_back(e);
+		}
+
+		/* Give Color */
+		for (auto& e : *pCulled)
+		{
+			e.r = 253;
+			e.g = 199;
+			e.b = 83;
+		}
+
+		Mutex.lock();
+		CloudCulled.coeffRef(i, k) = pCulled;
+		Mutex.unlock();
+
+		/* Save Single Tile */
+		bool IsSave = false;
+		if (IsSave)
+		{
+			PC_t::Ptr pSave(new PC_t);
+			for (const auto e : *pCulled)
+				pSave->emplace_back(e);
+
+			/* Merge */
+			for (const auto& e : *pLocal)
+				pSave->emplace_back(Point_t(e.x, e.y, e.z, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255));
+
+			std::string Path = std::to_string(i) + "_" + std::to_string(k) + ".ply";
+			pcl::io::savePLYFileBinary(Path, *pSave);
+			hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Save Cloud [%1%] Size [%2%]", Path, pSave->size()));
+		}
+	}
 
 	PC_t::Ptr pTotal(new PC_t);
 	for (int i = 0; i < CloudCulled.rows(); i++)
@@ -229,6 +236,17 @@ bool CTilesInpainting::__extractCtrlpts(const ON_NurbsSurface& vNurbs, Eigen::Ma
 
 void CTilesInpainting::__projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData)
 {
+	/* Sample Normal */
+	Eigen::Matrix<core::SVertex, -1, -1> VertexData;
+	vSurface->dumpLatestLayer(VertexData);
+	core::CNormalSampler NormalSampler;
+	_HIVE_EARLY_RETURN(NormalSampler.setData(VertexData) == false, "ERROR: VertexData is empty", );
+
+	int CountPositive = 0;
+	int CountNegative = 0;
+	int Invalid = 0;
+	Eigen::Vector2f Domain = { -FLT_MAX, FLT_MAX };
+	std::pair<Point_t, Point_t> MinPair, MaxPair;
 	for (int i = 0; i < vCloud->size(); i++)
 	{
 		const auto& PCLPoint = vCloud->at(i);
@@ -240,7 +258,7 @@ void CTilesInpainting::__projPoints(const std::shared_ptr<pcl::on_nurbs::Fitting
 		}
 		Eigen::Vector2d Hint((double)r->_UV[0], (double)r->_UV[1]);
 
-		Eigen::Vector3d Point(vCloud->at(i).x, vCloud->at(i).y, vCloud->at(i).z);
+		Eigen::Vector3d Point(PCLPoint.x, PCLPoint.y, PCLPoint.z);
 		Eigen::Vector3d p;
 		Eigen::Vector2d UV = vFit->inverseMapping(vFit->m_nurbs, Point, Hint, p, 100, 1e-6, true);
 		if (UV[0] < 0 || UV[0] > 1 || UV[1] < 0 || UV[1] > 1 || std::isnan(p.x()) || std::isnan(p.y()) || std::isnan(p.z()))
@@ -249,14 +267,41 @@ void CTilesInpainting::__projPoints(const std::shared_ptr<pcl::on_nurbs::Fitting
 			continue;
 		}
 		const auto Sample = vFit->m_nurbs.PointAt(UV[0], UV[1]);
+		const auto Normal = NormalSampler.sample(UV.cast<float>());
+		_HIVE_EARLY_RETURN(Normal.has_value() == false, _FORMAT_STR2("Normal Sampler Failed", UV[0], UV[1]), );
 
 		p = Eigen::Vector3d(Sample.x, Sample.y, Sample.z);
 		float Dist = (Point - p).norm();
+
+		if ((Point - p).dot(Normal.value().cast<double>()) < 0)
+			Dist *= -1;
+
+		core::CAABBEstimation Estimation(vCloud);
+		const auto Box = Estimation.compute();
+		if (Box._Max[2] - Box._Min[2] < std::fabsf(Dist))
+		{
+			Invalid++;
+			continue;
+		}
+
+		if (Dist >= 0)	CountPositive++;
+		else			CountNegative++;
+		if (Domain[0] < Dist)
+		{
+			Domain[0] = Dist;
+			MaxPair = std::make_pair(PCLPoint, Point_t(p.x(), p.y(), p.z(), (std::uint8_t)255, (std::uint8_t)0, (std::uint8_t)0, (std::uint8_t)255));
+		}
+
+		if (Domain[1] > Dist)
+		{
+			Domain[1] = Dist;
+			MinPair = std::make_pair(PCLPoint, Point_t(p.x(), p.y(), p.z(), (std::uint8_t)255, (std::uint8_t)0, (std::uint8_t)0, (std::uint8_t)255));
+		}
+
 		voData.emplace_back(std::make_pair(Dist, UV.cast<float>()));
-		/*hiveEventLogger::hiveOutputEvent(_FORMAT_STR8("[%1%, %2%, %3%] -> [%4%, %5%, %6%], UV: [%7%, %8%]", Point[0], Point[1], Point[2], p[0], p[1], p[2], UV[0], UV[1]));
-		hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("Dist: [%1%]", Dist));*/
 	}
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Point Cloud [%1%] convert 2 Data [%2%]", vCloud->size(), voData.size()));
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR5("Positive: [%1%]; Negative: [%2%]; Invalid [%3%]; Domain [%4%, %5%]", CountPositive, CountNegative, Invalid, Domain[0], Domain[1]));
 }
 
 void CTilesInpainting::__tuneMapBoundary(core::CHeightMap& vioMask)

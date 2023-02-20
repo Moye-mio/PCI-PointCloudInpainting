@@ -16,25 +16,18 @@ PC_t::Ptr loadPC(const std::string& vPath)
 	return pCloud;
 }
 
-int main()
+bool normalizePC(PC_t::Ptr& vCloud, bool vIsChangeCoorYZ = true)
 {
-	std::uint32_t Mode = 0;
-	
+	_ASSERTE(vCloud->size());
+
 	PC_t::Ptr pCloud(new PC_t);
-	/*CCreator Creator;
-	switch (Mode)
+	for (const auto& e : *vCloud)
 	{
-	case 0:
-		Creator.createConcave(pCloud);
-
-	default:
-		break;
-	}*/
-
-	const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/Scene/WH_Scene.ply");
-	PC_t::Ptr pCloud2 = loadPC(ModelPath);
-	/*for (const auto& e : *pCloud2)
-		pCloud->emplace_back(Point_t(e.x, e.y, e.z, e.r, e.g, e.b));
+		if (vIsChangeCoorYZ)
+			pCloud->emplace_back(Point_t(e.x, e.z, e.y, e.r, e.g, e.b));
+		else
+			pCloud->emplace_back(Point_t(e.x, e.y, e.z, e.r, e.g, e.b));
+	}
 
 	Eigen::Vector3f Min(FLT_MAX, FLT_MAX, FLT_MAX);
 
@@ -50,9 +43,17 @@ int main()
 		e.x -= Min[0];
 		e.y -= Min[1];
 		e.z -= Min[2];
-	}*/
+	}
+
+	vCloud = pCloud;
+	return true;
+}
+
+bool square(PC_t::Ptr& vCloud)
+{
+	PC_t::Ptr pCloud(new PC_t);
 	Eigen::Vector3f Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-	for (const auto& e : *pCloud2)
+	for (const auto& e : *vCloud)
 	{
 		Max[0] = (Max[0] > e.x) ? Max[0] : e.x;
 		Max[1] = (Max[1] > e.y) ? Max[1] : e.y;
@@ -60,13 +61,36 @@ int main()
 	}
 
 	float Diff = std::max(Max[0], Max[1]) - std::min(Max[0], Max[1]);
-	for (auto& e : *pCloud2)
+	for (auto& e : *vCloud)
 	{
 		if (e.y < Diff / 2 || e.y > Max[1] - Diff / 2) continue;
 		pCloud->emplace_back(e);
 	}
+	vCloud = pCloud;
+	return true;
+}
 
-	pcl::io::savePLYFileBinary("Scene.ply", *pCloud);
+int main()
+{
+	std::uint32_t Mode = 0;
+	
+	/*CCreator Creator;
+	switch (Mode)
+	{
+	case 0:
+		Creator.createConcave(pCloud);
+
+	default:
+		break;
+	}*/
+
+	const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/Scene/RAW_Scene_GT.ply");
+	PC_t::Ptr pRawCloud = loadPC(ModelPath);
+	
+	normalizePC(pRawCloud, true);
+	square(pRawCloud);
+
+	pcl::io::savePLYFileBinary("RAW_Scene_GT.ply", *pRawCloud);
 
 	return 0;
 }

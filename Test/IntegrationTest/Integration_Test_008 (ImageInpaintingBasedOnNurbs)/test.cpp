@@ -148,7 +148,6 @@ TEST(TestImageInpaintingBasedOnNurbs, GenerateMap)
 	Extreme = calcExtreme(Inpainted);
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR2("Min: %1%, Max: %2%", Extreme.first, Extreme.second));
 
-
 	for (int i = 29; i < 69; i++)
 		for (int k = 16; k < 61; k++)
 			Mask.setValueAt(0, i, k);

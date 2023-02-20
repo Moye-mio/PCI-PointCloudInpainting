@@ -77,7 +77,7 @@ cv::Mat PM::PatchMatch(const cv::Mat& vSource, const cv::Mat& vTarget, const cv:
 			cv::Mat TargetPatch = vTarget(cv::Rect(NN.at<cv::Vec3f>(i, k)[0], NN.at<cv::Vec3f>(i, k)[1], vPatchSize, vPatchSize));
 
 			NN.at<cv::Vec3f>(i, k)[2] = computePatchDist(SourcePatch, TargetPatch, vPatchSize);
-			std::cout << "[" << i << ", " << k << "] Patch Dist: " << NN.at<cv::Vec3f>(i, k)[2] << std::endl;
+			//std::cout << "[" << i << ", " << k << "] Patch Dist: " << NN.at<cv::Vec3f>(i, k)[2] << std::endl;
 		}
 
 	int MaxIters = 5;

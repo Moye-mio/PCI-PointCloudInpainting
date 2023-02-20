@@ -169,6 +169,7 @@
     <ClInclude Include="Surface2CloudMapper.h" />
     <ClInclude Include="SurfaceGenerator.h" />
     <ClInclude Include="TilesInpainting.h" />
+    <ClInclude Include="TilesInpaintingBasedOnGT.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Nurbs2CloudMapper.cpp" />
@@ -190,6 +191,7 @@
     <ClCompile Include="Surface2CloudMapper.cpp" />
     <ClCompile Include="SurfaceGenerator.cpp" />
     <ClCompile Include="TilesInpainting.cpp" />
+    <ClCompile Include="TilesInpaintingBasedOnGT.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ALG\GeneticAlgorithm\GeneticAlgorithm.vcxproj">

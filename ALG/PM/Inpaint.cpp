@@ -31,6 +31,7 @@ void CInpainter::__inpaint(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 	_ASSERTE(m_Raw.data && m_Mask.data);
 	_ASSERTE(m_Raw.rows == m_Mask.rows && m_Raw.cols == m_Mask.cols);
 
+	hiveEventLogger::hiveOutputEvent("Start Inpainting");
 	if (m_Raw.type() == 5)
 		__inpaintC1(vIsWriteVideo, voWritter);
 	else if (m_Raw.type() == 13)
@@ -66,9 +67,20 @@ void CInpainter::__inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 
 			if (m_Mask.at<unsigned char>(i, k))										/* pixels to be filled */
 				m_Inpainted.at<float>(i, k) = hiveMath::hiveGenerateRandomReal(ExtremeValue[1], ExtremeValue[0]);
-
 		}
 
+	{
+		/* save init image */
+		cv::Mat X(cv::Size(m_Inpainted.rows, m_Inpainted.cols), CV_8UC1);
+		for (int i = 0; i < X.rows; i++)
+			for (int k = 0; k < X.cols; k++)
+			{
+				X.at<unsigned char>(i, k) = (unsigned char)m_Inpainted.at<float>(i, k);
+			}
+		cv::imwrite("Output/Init.png", X);
+	}
+
+	int Count = 0;
 	cv::Mat Cur = cv::Mat(), Work, CurMask;
 	while (m_Pyramid >= 0)															/* different scales */
 	{
@@ -91,6 +103,15 @@ void CInpainter::__inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 						Cur.at<float>(i, k) = Work.at<float>(i, k);
 		}
 
+		{
+			/* save resize image */
+			cv::Mat X(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+			for (int i = 0; i < X.rows; i++)
+				for (int k = 0; k < X.cols; k++)
+					X.at<unsigned char>(i, k) = (unsigned char)Cur.at<float>(i, k);
+			cv::imwrite("Output/Pyramid_" + std::to_string(m_Pyramid) + ".png", X);
+		}
+
 		if (std::min(Cur.rows, Cur.cols) < m_PatchSize * 2)
 		{
 			m_Pyramid--;
@@ -101,6 +122,15 @@ void CInpainter::__inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		{
 			cv::Mat Last = Cur.clone();
 			cv::Mat NNF = PatchMatch(Cur, Cur, CurMask, m_PatchSize);
+
+			{
+				for (int i = 0; i < NNF.rows; i++)
+				{
+					for (int k = 0; k < NNF.cols; k++)
+						std::cout << "(" << NNF.at<cv::Vec3f>(i, k)[0] << "-" << NNF.at<cv::Vec3f>(i, k)[1] << "-" << NNF.at<cv::Vec3f>(i, k)[2] << ")";
+					std::cout << std::endl;
+				}
+			}
 
 			for (int i = 0; i < Cur.rows; i++)										/* traverse image */
 				for (int k = 0; k < Cur.cols; k++)
@@ -158,6 +188,15 @@ void CInpainter::__inpaintC1(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 
 			Diff /= EmptyNumber;
 			std::cout << "Pyramid: " << m_Pyramid << ", Scale: " << Scale << ", PatchSize: " << m_PatchSize << ", Iter: " << Iter << ", Diff: " << Diff << std::endl;
+
+			{
+				cv::Mat X(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+				for (int i = 0; i < X.rows; i++)
+					for (int k = 0; k < X.cols; k++)
+						X.at<unsigned char>(i, k) = (unsigned char)Cur.at<float>(i, k);
+				cv::imwrite("Output/" + std::to_string(Count) + ".png", X);
+				Count++;
+			}
 
 			if (vIsWriteVideo)
 			{
@@ -217,6 +256,20 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 			}
 		}
 
+	{
+		/* save init image */
+		cv::Mat X(cv::Size(m_Inpainted.rows, m_Inpainted.cols), CV_8UC1);
+		cv::Mat Y(cv::Size(m_Inpainted.rows, m_Inpainted.cols), CV_8UC1);
+		for (int i = 0; i < X.rows; i++)
+			for (int k = 0; k < X.cols; k++)
+			{
+				X.at<unsigned char>(i, k) = (unsigned char)m_Inpainted.at<cv::Vec2f>(i, k)[0];
+				Y.at<unsigned char>(i, k) = (unsigned char)m_Inpainted.at<cv::Vec2f>(i, k)[1];
+			}
+		cv::imwrite("Output/Init_X.png", X);
+		cv::imwrite("Output/Init_Y.png", Y);
+	}
+
 	cv::Mat Cur = cv::Mat(), Work, CurMask;
 	int Count = 0;
 	while (m_Pyramid >= 0)															/* different scales */
@@ -227,6 +280,8 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 
 		cv::resize(m_Inpainted, Work, Size);
 		cv::resize(m_Mask, CurMask, Size);
+
+		hiveEventLogger::hiveOutputEvent(_FORMAT_STR3("Pyramid: [%1%], Size [%2%, %3%]", m_Pyramid, Size.width, Size.height));
 
 		if (Cur.rows * Cur.cols == 0)												/* first loop */
 			Cur = Work.clone();
@@ -240,6 +295,20 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 						Cur.at<cv::Vec2f>(i, k) = Work.at<cv::Vec2f>(i, k);
 		}
 
+		{
+			/* save resize image */
+			cv::Mat X(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+			cv::Mat Y(cv::Size(Cur.rows, Cur.cols), CV_8UC1);
+			for (int i = 0; i < X.rows; i++)
+				for (int k = 0; k < X.cols; k++)
+				{
+					X.at<unsigned char>(i, k) = (unsigned char)Cur.at<cv::Vec2f>(i, k)[0];
+					Y.at<unsigned char>(i, k) = (unsigned char)Cur.at<cv::Vec2f>(i, k)[1];
+				}
+			cv::imwrite("Output/Pyramid_" + std::to_string(m_Pyramid) + "_X.png", X);
+			cv::imwrite("Output/Pyramid_" + std::to_string(m_Pyramid) + "_Y.png", Y);
+		}
+
 		if (std::min(Cur.rows, Cur.cols) < m_PatchSize * 2)
 		{
 			m_Pyramid--;
@@ -249,18 +318,16 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 		}
 
 		for (int Iter = 0; Iter < m_MaxIterNumber; Iter++)
-		{
+		{		
 			cv::Mat Last = Cur.clone();
 			cv::Mat NNF = PatchMatch(Cur, Cur, CurMask, m_PatchSize);
 
 			/* Log NNF */
+			if (Iter == 0)
 			{
 				for (int i = 0; i < NNF.rows; i++)
-				{
 					for (int k = 0; k < NNF.cols; k++)
-						std::cout << "(" << NNF.at<cv::Vec3f>(i, k)[0] << "-" << NNF.at<cv::Vec3f>(i, k)[1] << "-" << NNF.at<cv::Vec3f>(i, k)[2] << ")";
-					std::cout << std::endl;
-				}
+						std::cout << "[" << i << ", " << k << "]: (" << NNF.at<cv::Vec3f>(i, k)[0] << "-" << NNF.at<cv::Vec3f>(i, k)[1] << "-" << NNF.at<cv::Vec3f>(i, k)[2] << ")" << std::endl;
 			}
 
 			for (int i = 0; i < Cur.rows; i++)										/* traverse image */
@@ -327,11 +394,12 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 				for (int i = 0; i < X.rows; i++)
 					for (int k = 0; k < X.cols; k++)
 					{
-						X.at<std::uint8_t>(i, k) = (std::uint8_t)(int)Cur.at<cv::Vec2f>(i, k)[0];
-						Y.at<std::uint8_t>(i, k) = (std::uint8_t)(int)Cur.at<cv::Vec2f>(i, k)[1];
+						X.at<unsigned char>(i, k) = (unsigned char)Cur.at<cv::Vec2f>(i, k)[0];
+						Y.at<unsigned char>(i, k) = (unsigned char)Cur.at<cv::Vec2f>(i, k)[1];
 					}
-				cv::imwrite("Output/" + std::to_string(Count) + "_X.png", X);
-				cv::imwrite("Output/" + std::to_string(Count) + "_Y.png", Y);
+				cv::imwrite("Output/X/" + std::to_string(Count) + "_X.png", X);
+				cv::imwrite("Output/Y/" + std::to_string(Count) + "_Y.png", Y);
+				Count++;
 			}
 
 			if (vIsWriteVideo)
@@ -358,4 +426,3 @@ void CInpainter::__inpaintC2(bool vIsWriteVideo, cv::VideoWriter& voWritter)
 
 	m_Inpainted = Cur;
 }
-

@@ -53,3 +53,4 @@
 
 #include "NurbsFitting.h"
 #include "TilesInpainting.h"
+#include "TilesInpaintingBasedOnGT.h"
