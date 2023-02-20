@@ -105,6 +105,12 @@
     <Filter Include="Map\IO">
       <UniqueIdentifier>{491ae3fd-4cab-4860-873d-b665d9cee92b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PCFeature\Similarity">
+      <UniqueIdentifier>{5353ba51-e14c-4ed0-8b55-6de3c8c8fed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Distortion">
+      <UniqueIdentifier>{57ab2e40-750d-49d2-8d9f-b8bed4fc81a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -233,6 +239,12 @@
     <ClInclude Include="MapSaver.h">
       <Filter>Map\IO</Filter>
     </ClInclude>
+    <ClInclude Include="SimilarityEstimator.h">
+      <Filter>PCFeature\Similarity</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometric_distortion.h">
+      <Filter>PCFeature\Distortion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -345,6 +357,9 @@
     </ClCompile>
     <ClCompile Include="MapSaver.cpp">
       <Filter>Map\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="SimilarityEstimator.cpp">
+      <Filter>PCFeature\Similarity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

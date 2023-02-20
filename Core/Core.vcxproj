@@ -170,6 +170,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GaussianDistribution1D.h" />
     <ClInclude Include="GaussianDistribution2D.h" />
+    <ClInclude Include="Geometric_distortion.h" />
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
     <ClInclude Include="HeightMap.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="PlaneFitting.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="RegionRrowing3D.h" />
+    <ClInclude Include="SimilarityEstimator.h" />
     <ClInclude Include="Sorter.h" />
     <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
@@ -226,6 +228,7 @@
     <ClCompile Include="OBBPCA.cpp" />
     <ClCompile Include="PlaneFitting.cpp" />
     <ClCompile Include="RegionRrowing3D.cpp" />
+    <ClCompile Include="SimilarityEstimator.cpp" />
     <ClCompile Include="Sorter.cpp" />
     <ClCompile Include="SparseLinearSolver.cpp" />
     <ClCompile Include="StandardHeightMap.cpp" />
