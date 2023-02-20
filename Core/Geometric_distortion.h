@@ -83,7 +83,7 @@ namespace pcl {
                 normFile = "";
                 rtimes = -1.0;
                 radius = 1.0;
-                knn = 0;
+                knn = 12;
                 force = false;
                 singlePass = false;
                 hausdorff = false;
@@ -120,56 +120,6 @@ namespace pcl {
             }
         };
 
-        /*
-         * \brief load a point cloud
-         * \param[in] file_name: the name of the file to load
-         * \param[out] cloud: the resultant templated point cloud
-         */
-        template<typename PointT> int readcloud(const string& file_name, PointCloud<PointT>& cloud)
-        {
-            int(*readfunc)(const string&, PointCloud<PointT> &);
-            std::string suffix;
-            suffix = file_name.substr(file_name.find_last_of(".") + 1);
-            if (suffix == "pcd")
-                readfunc = io::loadPCDFile;
-            else if (suffix == "ply")
-                readfunc = io::loadPLYFile;
-            else
-            {
-                cerr << "Error: File " << file_name << " doesn't have a valid suffix" << endl;
-                return -1;
-            }
-
-            return readfunc(file_name.c_str(), cloud);
-        }
-
-        /*
-         * \brief write a point cloud into file
-         * \param[in] file_name: the name of the file to load
-         * \param[out] cloud: the resultant templated point cloud
-         */
-        template<typename PointT> int writecloud(const string& file_name, PointCloud<PointT>& cloud)
-        {
-            int(*savefunc)(const string&, const pcl::PointCloud<PointT> &, bool);
-            string suffix;
-            suffix = file_name.substr(file_name.find_last_of(".") + 1);
-            if (suffix == "pcd")
-            {
-                savefunc = pcl::io::savePCDFile;
-            }
-            else if (suffix == "ply")
-            {
-                savefunc = pcl::io::savePLYFile;
-            }
-            else
-            {
-                cout << "Error: File " << file_name.c_str() << " doesn't have a valid suffix" << endl;
-                return -1;
-            }
-
-            return savefunc(file_name.c_str(), cloud, false);
-        }
-
         /**!
          * \function
          *   Compute the minimum and maximum NN distances, find out the
@@ -183,8 +133,8 @@ namespace pcl {
          * \author
          *   Dong Tian, MERL
          */
-        template<typename PointT> void
-            findNNdistances(PointCloud<PointT>& cloudA, float& minDist, float& maxDist)
+        template<typename PointT>
+        void findNNdistances(PointCloud<PointT>& cloudA, float& minDist, float& maxDist)
         {
             maxDist = numeric_limits<float>::min();
             minDist = numeric_limits<float>::max();
@@ -194,7 +144,7 @@ namespace pcl {
             treeA.setInputCloud(cloudA.makeShared());
 
 #pragma omp parallel for
-            for (size_t i = 0; i < cloudA.points.size(); ++i)
+            for (int i = 0; i < cloudA.points.size(); ++i)
             {
                 std::vector<int> indices;
                 std::vector<float> sqrDist;
@@ -269,7 +219,7 @@ namespace pcl {
         template<typename PointT> bool
             checkNormalsAvailability(PointCloud<PointT>& cloudA)
         {
-            size_t sz = cloudA.points.size();
+            /*size_t sz = cloudA.points.size();
             size_t i = 0;
             if (cloudA.at(i).normal_x != 0 && cloudA.at(i).normal_x != 0 && cloudA.at(i).normal_x != 0)
                 return true;
@@ -279,6 +229,8 @@ namespace pcl {
             i = sz / 2 - 1;
             if (cloudA.at(i).normal_x != 0 && cloudA.at(i).normal_x != 0 && cloudA.at(i).normal_x != 0)
                 return true;
+            return false;*/
+
             return false;
         }
 
@@ -420,15 +372,20 @@ namespace pcl {
             }
             cout << "   Normal estimation begin.." << endl;
 
+            /* cast data */
+            {
+
+            }
+
             // Step 1 ------------------
             // @DT: Compute the normals of A, the reference point cloud
             // Create the normal estimation class, and pass the input dataset to it
-            NormalEstimationOMP<PointXYZRGBNormal, Normal> ne;
+            NormalEstimationOMP<Point_t, Normal> ne;
             ne.setInputCloud(cloudA.makeShared());
 
             // Create an empty kdtree representation, and pass it to the normal estimation object.
             // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-            search::KdTree<PointXYZRGBNormal>::Ptr tree(new search::KdTree<PointXYZRGBNormal>());
+            search::KdTree<Point_t>::Ptr tree(new search::KdTree<Point_t>());
             ne.setSearchMethod(tree);
 
             // // Output datasets
@@ -460,7 +417,6 @@ namespace pcl {
                 PointCloud<PointXYZRGBNormal>::Ptr cloudWithNormals(new PointCloud<PointXYZRGBNormal>);
                 copyPointCloud(cloudA, *cloudWithNormals);
                 copyPointCloud(*cloudNormals, *cloudWithNormals);
-                writecloud(normFile, *cloudWithNormals);
             }
 
             // Check if any nan normals
@@ -493,8 +449,8 @@ namespace pcl {
          * \author
          *   Dong Tian, MERL
          */
-        template<typename PointT> void
-            computeGeometricQualityMetric(PointCloud<PointT>& cloudA, PointCloud<PointT>& cloudB, commandPar& cPar, qMetric& qual_metric)
+        template<typename PointT> 
+        void computeGeometricQualityMetric(PointCloud<PointT>& cloudA, PointCloud<PointT>& cloudB, commandPar& cPar, qMetric& qual_metric)
         {
             float minDist;
             float maxDist;
@@ -508,9 +464,6 @@ namespace pcl {
             float ratio = 1.0 * newSize / orgSize;
             cout << "Point cloud sizes for org version, dec version, and the scaling ratio: " << orgSize << ", " << newSize << ", " << ratio << endl;
 
-            if (cPar.file2 == "" && cPar.normFile == "") // If no file2 & no normFile provided, return just after checking the NN
-                return;
-
             // Estimate or import normals, only on original point cloud
             PointCloud<Normal>::Ptr cloudNormalsA(new PointCloud<Normal>);
             if (!cPar.c2c_only)
@@ -519,9 +472,6 @@ namespace pcl {
                 cout << "0. Preparing normals.\n";
                 getNormals(cloudA, cPar.normFile, cPar, cloudNormalsA);
             }
-
-            if (cPar.file2 == "")     // If no file2 provided, return just after normal estimations.
-                return;
 
             // Based on normals on original point cloud, derive normals on reconstructed point cloud
             vector< vector<float> > cloudNormalsB(cloudB.points.size());
@@ -650,7 +600,7 @@ namespace pcl {
             search::KdTree<PointT> treeB;
             treeB.setInputCloud(cloudB.makeShared());
 #pragma omp parallel for
-            for (size_t i = 0; i < cloudA.points.size(); i++)
+            for (int i = 0; i < cloudA.points.size(); i++)
             {
                 // Find the nearest neighbor in B. store it in 'j'
                 vector<int> indices(1);
@@ -753,7 +703,7 @@ namespace pcl {
             search::KdTree<PointT> treeA;
             treeA.setInputCloud(cloudA.makeShared());
 #pragma omp parallel for
-            for (size_t i = 0; i < cloudB.points.size(); i++)
+            for (int i = 0; i < cloudB.points.size(); i++)
             {
                 // Find the nearest neighbor in A. store it in 'j'
                 vector<int> indices(1);

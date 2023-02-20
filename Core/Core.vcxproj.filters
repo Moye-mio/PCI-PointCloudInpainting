@@ -245,6 +245,9 @@
     <ClInclude Include="Geometric_distortion.h">
       <Filter>PCFeature\Distortion</Filter>
     </ClInclude>
+    <ClInclude Include="HausdorffDistance.h">
+      <Filter>PCFeature\Distortion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -360,6 +363,9 @@
     </ClCompile>
     <ClCompile Include="SimilarityEstimator.cpp">
       <Filter>PCFeature\Similarity</Filter>
+    </ClCompile>
+    <ClCompile Include="HausdorffDistance.cpp">
+      <Filter>PCFeature\Distortion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

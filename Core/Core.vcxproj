@@ -173,6 +173,7 @@
     <ClInclude Include="Geometric_distortion.h" />
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
+    <ClInclude Include="HausdorffDistance.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="HeightMap2PCMapper.h" />
     <ClInclude Include="HeightMapGenerator.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="GaussianDistribution2D.cpp" />
     <ClCompile Include="GradientMap.cpp" />
     <ClCompile Include="GradientMapGenerator.cpp" />
+    <ClCompile Include="HausdorffDistance.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="HeightMap2PCMapper.cpp" />
     <ClCompile Include="HeightMapGenerator.cpp" />
