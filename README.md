@@ -7,5 +7,9 @@ The low frequency signal is constructed by fitting point clouds to nurbs using p
 - a method to define holes and detect holes automatically.
 - haven't decided yet, hhh \_(:з」∠)\_
 
+# Experiment Result
+![Result1_HW](Images/Result1_WH.png "Rock wall")
+![Result1](Images/Result1.png "")
+
 # Info
 still developing...
