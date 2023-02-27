@@ -13,12 +13,20 @@ CGeneticClustering::CGeneticClustering(float vK, int vSolutionSize, int vCluster
 	, m_ClusterSize(vClusterSize)
 	, m_LoopSize(vLoopSize)
 	, m_DataSize(0)
+	, m_ThreadSize(4)
 	, m_Volume(0.0f)
 	, m_NormalDist(0.3f)
 	, m_OperatorRate({0.3f, 0.6f})
 	, m_Cloud(new PC_t)
 	, m_Normals(new NormalPC_t)
 {}
+
+bool CGeneticClustering::setThreadSize(int vSize)
+{
+	_ASSERTE(vSize >= 4);
+	m_ThreadSize = vSize;
+	return true;
+}
 
 bool CGeneticClustering::setCloud(const PC_t::Ptr& vCloud)
 {
@@ -53,7 +61,7 @@ bool CGeneticClustering::run()
 	
 	std::vector<std::vector<int>> Solutions;	// SolutionSize ¡Á DataSize
 	__init(Solutions);
-	_ASSERTE(m_Volume && m_Normals->size());
+	_ASSERTE(m_Volume && m_Normals->size() == m_DataSize);
 
 	for (int i = 0; i < m_LoopSize; i++)
 	{
@@ -83,14 +91,14 @@ void CGeneticClustering::dumpBestResult(std::vector<int>& voResult)
 
 void CGeneticClustering::__init(std::vector<std::vector<int>>& voSolutions)
 {
-	voSolutions.clear();
-	voSolutions.shrink_to_fit();
+	if (voSolutions.size())
+	{
+		voSolutions.clear();
+		voSolutions.shrink_to_fit();
+	}
 
 	for (int i = 0; i < m_SolutionSize; i++)
-	{
-		std::vector<int> Solution = hiveMath::hiveGenerateRandomIntegerSet<int>(0, m_ClusterSize - 1, m_DataSize);
-		voSolutions.emplace_back(Solution);
-	}
+		voSolutions.emplace_back(hiveMath::hiveGenerateRandomIntegerSet<int>(0, m_ClusterSize - 1, m_DataSize));
 
 	m_Volume = __calcVolume(m_Cloud);
 
@@ -245,7 +253,7 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 	std::unordered_map<int, std::vector<float>> Points2Clusters;	// PCs < index, fc >
 	std::mutex Mutex;
 
-#pragma omp parallel for num_threads(m_SolutionSize)
+#pragma omp parallel for num_threads(m_ThreadSize)
 	for (int i = 0; i < m_SolutionSize; i++)
 	{
 		std::vector<int> CurSolution = vSolutions[ExpectedValue[i].first];
@@ -265,7 +273,7 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 			}
 			std::vector<float> PointFitnessInSolution;
 			__calcPointFitness(CurSolution, PointFitnessInSolution);
-			Points2Clusters.insert(std::make_pair(i, PointFitnessInSolution));
+			Points2Clusters.emplace(std::make_pair(i, PointFitnessInSolution));
 		}
 		
 		if (vMutateAll == false && i < m_SolutionSize * m_OperatorRate[1]) continue;
@@ -305,9 +313,10 @@ void CGeneticClustering::__loop(const std::vector<std::vector<int>>& vSolutions,
 	}
 
 	/* Cross */
-	auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(0, int(m_SolutionSize * m_OperatorRate[1] - 1), int(m_SolutionSize * m_OperatorRate[1]));
+	int RandomNumber = int(m_SolutionSize * m_OperatorRate[1] - 1);
+	auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(0, RandomNumber, RandomNumber + 1);
 	//auto RandomSet = hiveMath::hiveGenerateNoDuplicateRandomIntegerSet(int(m_SolutionSize * m_OperatorRate[0]), int(m_SolutionSize * m_OperatorRate[1] - 1), int(m_SolutionSize * (m_OperatorRate[1] - m_OperatorRate[0])));
-	_ASSERTE(RandomSet.size() % 2 == 0);
+	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("RandomSet Size [%1%]", RandomSet.size()));
 	for (int i = 0; i < RandomSet.size(); i += 2)
 	{
 		int Major = (RandomSet[i] < RandomSet[i + 1]) ? RandomSet[i] : RandomSet[i + 1];

@@ -1,8 +1,10 @@
 #include "pch.h"
+#include <windows.h>
 
 const std::string ModelPath = TESTMODEL_DIR + std::string("/UniformSeg.ply");
 const std::string ModelPath2 = TESTMODEL_DIR + std::string("/Road_Seg_Sim.ply");
 const std::string ModelPath3 = TESTMODEL_DIR + std::string("/Road-test.ply");
+const std::string ModelPath4 = TESTMODEL_DIR + std::string("/CrossPlane.ply");
 
 class TestGC : public testing::Test
 {
@@ -24,6 +26,7 @@ protected:
 		int r = pcl::io::loadPLYFile<Point_t>(FileName, *pCloud);
 		_ASSERTE(r != -1);
 		_ASSERTE(pCloud->size());
+		std::cout << "Model Point Size: " << pCloud->size() << std::endl;
 		return pCloud;
 	}
 
@@ -119,11 +122,19 @@ protected:
 
 TEST_F(TestGC, NT_Concave)
 {
+	SYSTEM_INFO SysInfo;
+	GetSystemInfo(&SysInfo);
+	std::cout << "CPU Logic Number: " << SysInfo.dwNumberOfProcessors << std::endl;
+
 	PC_t::Ptr pCloud = loadPC(ModelPath3);
 	std::vector<int> Result;
 
-	GA::CGeneticClustering GC(4, 20, 4, 250);
+	int ClusterSize = 6;
+	int SolutionSize = 14;
+	int Iterations = 200;
+	GA::CGeneticClustering GC(ClusterSize, SolutionSize, ClusterSize, Iterations);
 	GC.setCloud(pCloud);
+	GC.setThreadSize(SysInfo.dwNumberOfProcessors);
 
 	hiveCommon::CCPUTimer Timer;
 	double t = Timer.getElapsedTime();

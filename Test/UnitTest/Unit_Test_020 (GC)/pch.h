@@ -18,7 +18,6 @@
 #include <numbers>
 #include <array>
 
-
 #include <boost/format.hpp>
 
 #include <pcl/io/ply_io.h>

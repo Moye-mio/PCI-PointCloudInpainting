@@ -120,12 +120,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;_LOG;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -145,6 +146,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -157,40 +159,79 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AABBEstimation.h" />
+    <ClInclude Include="BiasedVoxelization.h" />
     <ClInclude Include="BorderExtractor.h" />
+    <ClInclude Include="BSplineCurve.h" />
+    <ClInclude Include="BSplineSurface.h" />
+    <ClInclude Include="ControlPointGenerator.h" />
+    <ClInclude Include="DataTrimmer.h" />
+    <ClInclude Include="DistSampler.h" />
     <ClInclude Include="ExtremePoint.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GaussianDistribution1D.h" />
     <ClInclude Include="GaussianDistribution2D.h" />
+    <ClInclude Include="Geometric_distortion.h" />
     <ClInclude Include="GradientMap.h" />
     <ClInclude Include="GradientMapGenerator.h" />
+    <ClInclude Include="HausdorffDistance.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="HeightMap2PCMapper.h" />
     <ClInclude Include="HeightMapGenerator.h" />
+    <ClInclude Include="MapSaver.h" />
+    <ClInclude Include="MultiLayerBSplineSurface.h" />
+    <ClInclude Include="MultilayerSurface.h" />
     <ClInclude Include="NormalEstimator.h" />
+    <ClInclude Include="NormalWrapper.h" />
+    <ClInclude Include="NurbsFitting.h" />
     <ClInclude Include="OBB.h" />
     <ClInclude Include="OBBPCA.h" />
     <ClInclude Include="PlaneFitting.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="RegionRrowing3D.h" />
+    <ClInclude Include="SimilarityEstimator.h" />
+    <ClInclude Include="Sorter.h" />
     <ClInclude Include="SparseLinearSolver.h" />
     <ClInclude Include="StandardHeightMap.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="NormalSampler.h" />
+    <ClInclude Include="Surface2PCMapper.h" />
+    <ClInclude Include="SurfaceUVGenerator.h" />
+    <ClInclude Include="Tiler.h" />
+    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Trimmer.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VertexSampler.h" />
+    <ClInclude Include="Voxelization.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AABBEstimation.cpp" />
+    <ClCompile Include="BiasedVoxelization.cpp" />
     <ClCompile Include="BorderExtractor.cpp" />
+    <ClCompile Include="BSplineCurve.cpp" />
+    <ClCompile Include="BSplineSurface.cpp" />
+    <ClCompile Include="ControlPointGenerator.cpp" />
+    <ClCompile Include="DataTrimmer.cpp" />
+    <ClCompile Include="DistSampler.cpp" />
     <ClCompile Include="ExtremePoint.cpp" />
     <ClCompile Include="GaussianDistribution1D.cpp" />
     <ClCompile Include="GaussianDistribution2D.cpp" />
     <ClCompile Include="GradientMap.cpp" />
     <ClCompile Include="GradientMapGenerator.cpp" />
+    <ClCompile Include="HausdorffDistance.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="HeightMap2PCMapper.cpp" />
     <ClCompile Include="HeightMapGenerator.cpp" />
+    <ClCompile Include="MapSaver.cpp" />
+    <ClCompile Include="MultiLayerBSplineSurface.cpp" />
+    <ClCompile Include="MultilayerSurface.cpp" />
     <ClCompile Include="NormalEstimator.cpp" />
+    <ClCompile Include="NormalWrapper.cpp" />
+    <ClCompile Include="NurbsFitting.cpp" />
     <ClCompile Include="OBBPCA.cpp" />
     <ClCompile Include="PlaneFitting.cpp" />
     <ClCompile Include="RegionRrowing3D.cpp" />
+    <ClCompile Include="SimilarityEstimator.cpp" />
+    <ClCompile Include="Sorter.cpp" />
     <ClCompile Include="SparseLinearSolver.cpp" />
     <ClCompile Include="StandardHeightMap.cpp" />
     <ClCompile Include="pch.cpp">
@@ -199,6 +240,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NormalSampler.cpp" />
+    <ClCompile Include="Surface2PCMapper.cpp" />
+    <ClCompile Include="SurfaceUVGenerator.cpp" />
+    <ClCompile Include="Tiler.cpp" />
+    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Trimmer.cpp" />
+    <ClCompile Include="VertexSampler.cpp" />
+    <ClCompile Include="Voxelization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -210,44 +259,44 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\vc_packages\boost.1.76.0.0\build\boost.targets" Condition="Exists('..\..\..\vc_packages\boost.1.76.0.0\build\boost.targets')" />
-    <Import Project="..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
-    <Import Project="..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets" Condition="Exists('..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" />
-    <Import Project="..\..\..\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets" Condition="Exists('..\..\..\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" />
-    <Import Project="..\..\..\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets" Condition="Exists('..\..\..\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" />
-    <Import Project="..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets" Condition="Exists('..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" />
-    <Import Project="..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
-    <Import Project="..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
-    <Import Project="..\..\..\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets" Condition="Exists('..\..\..\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets')" />
-    <Import Project="..\..\..\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" />
-    <Import Project="..\..\..\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets')" />
-    <Import Project="..\..\..\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" />
-    <Import Project="..\..\..\vc_packages\FLANN.1.9.1\build\native\FLANN.targets" Condition="Exists('..\..\..\vc_packages\FLANN.1.9.1\build\native\FLANN.targets')" />
-    <Import Project="..\..\..\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets" Condition="Exists('..\..\..\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets')" />
-    <Import Project="..\..\..\vc_packages\Qhull.8.0.0\build\native\Qhull.targets" Condition="Exists('..\..\..\vc_packages\Qhull.8.0.0\build\native\Qhull.targets')" />
-    <Import Project="..\..\..\vc_packages\VTK.8.2.0\build\native\VTK.targets" Condition="Exists('..\..\..\vc_packages\VTK.8.2.0\build\native\VTK.targets')" />
-    <Import Project="..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets" Condition="Exists('..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets')" />
+    <Import Project="D:\vc_packages\boost.1.76.0.0\build\boost.targets" Condition="Exists('D:\vc_packages\boost.1.76.0.0\build\boost.targets')" />
+    <Import Project="D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
+    <Import Project="D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets" Condition="Exists('D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" />
+    <Import Project="D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets" Condition="Exists('D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" />
+    <Import Project="D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets" Condition="Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" />
+    <Import Project="D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets" Condition="Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" />
+    <Import Project="D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
+    <Import Project="D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
+    <Import Project="D:\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets" Condition="Exists('D:\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets')" />
+    <Import Project="D:\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets" Condition="Exists('D:\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" />
+    <Import Project="D:\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets" Condition="Exists('D:\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets')" />
+    <Import Project="D:\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets" Condition="Exists('D:\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" />
+    <Import Project="D:\vc_packages\FLANN.1.9.1\build\native\FLANN.targets" Condition="Exists('D:\vc_packages\FLANN.1.9.1\build\native\FLANN.targets')" />
+    <Import Project="D:\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets" Condition="Exists('D:\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets')" />
+    <Import Project="D:\vc_packages\Qhull.8.0.0\build\native\Qhull.targets" Condition="Exists('D:\vc_packages\Qhull.8.0.0\build\native\Qhull.targets')" />
+    <Import Project="D:\vc_packages\VTK.8.2.0\build\native\VTK.targets" Condition="Exists('D:\vc_packages\VTK.8.2.0\build\native\VTK.targets')" />
+    <Import Project="D:\vc_packages\PCL.1.11.1\build\native\PCL.targets" Condition="Exists('D:\vc_packages\PCL.1.11.1\build\native\PCL.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\vc_packages\boost.1.76.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost.1.76.0.0\build\boost.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\FLANN.1.9.1\build\native\FLANN.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\FLANN.1.9.1\build\native\FLANN.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\Qhull.8.0.0\build\native\Qhull.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\Qhull.8.0.0\build\native\Qhull.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\VTK.8.2.0\build\native\VTK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\VTK.8.2.0\build\native\VTK.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\PCL.1.11.1\build\native\PCL.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost.1.76.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost.1.76.0.0\build\boost.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\inteltbb.redist.win.2021.2.0.371\build\native\nuget\inteltbb.redist.win.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\Eigen3.3.3.9\build\native\Eigen3.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_date_time-vc142.1.76.0.0\build\boost_date_time-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_filesystem-vc142.1.76.0.0\build\boost_filesystem-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_iostreams-vc142.1.76.0.0\build\boost_iostreams-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\FLANN.1.9.1\build\native\FLANN.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\FLANN.1.9.1\build\native\FLANN.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenNI2.2.2.0\build\native\OpenNI2.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\Qhull.8.0.0\build\native\Qhull.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\Qhull.8.0.0\build\native\Qhull.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\VTK.8.2.0\build\native\VTK.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\VTK.8.2.0\build\native\VTK.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\PCL.1.11.1\build\native\PCL.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\PCL.1.11.1\build\native\PCL.targets'))" />
   </Target>
 </Project>

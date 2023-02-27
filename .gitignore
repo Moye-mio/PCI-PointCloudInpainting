@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# External
+[Ee]xternal/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -73,6 +76,9 @@ StyleCopReport.xml
 # log
 *.txt
 *.log
+
+# Image
+*.png
 
 # Model file
 *.ply

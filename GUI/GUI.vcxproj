@@ -137,9 +137,9 @@
     <Import Project="D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets" Condition="Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" />
     <Import Project="D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets" Condition="Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" />
     <Import Project="D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets" Condition="Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" />
-    <Import Project="..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
-    <Import Project="..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets" Condition="Exists('..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" />
-    <Import Project="..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets" Condition="Exists('..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" />
+    <Import Project="D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets" Condition="Exists('D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" />
+    <Import Project="D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets" Condition="Exists('D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" />
+    <Import Project="D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets" Condition="Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -163,8 +163,8 @@
     <Error Condition="!Exists('D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.redist.4.5.4\build\native\OpenCV.redist.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\OpenCV.4.5.4\build\native\OpenCV.targets'))" />
     <Error Condition="!Exists('D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\inteltbb.devel.win.2021.2.0.371\build\native\nuget\inteltbb.devel.win.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets'))" />
-    <Error Condition="!Exists('..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\vc_packages\hive-common.0.3.9\build\native\hive-common.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost_serialization-vc142.1.76.0.0\build\boost_serialization-vc142.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\hive-common.redist.0.3.9\build\native\hive-common.redist.targets'))" />
+    <Error Condition="!Exists('D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\hive-common.0.3.9\build\native\hive-common.targets'))" />
   </Target>
 </Project>
