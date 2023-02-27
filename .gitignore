@@ -83,7 +83,6 @@ StyleCopReport.xml
 # Model file
 *.ply
 *.pcd
-*.png
 
 # External
 [Ee]xternal/
