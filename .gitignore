@@ -71,11 +71,16 @@ ScaffoldingReadMe.txt
 StyleCopReport.xml
 
 # log
-log.txt
+*.txt
+*.log
 
 # Model file
 *.ply
 *.pcd
+*.png
+
+# External
+[Ee]xternal/
 
 # Files built by Visual Studio
 *_i.c
