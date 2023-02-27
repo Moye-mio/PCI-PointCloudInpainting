@@ -1,6 +1,7 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+#include <pcl/search/kdtree.h>
 
 #include "Creator.h"
 
@@ -70,6 +71,29 @@ bool square(PC_t::Ptr& vCloud)
 	return true;
 }
 
+PC_t::Ptr compute(const PC_t::Ptr& vLhs, const PC_t::Ptr& vRhs)
+{
+	PC_t::Ptr pCloud(new PC_t);
+
+	pcl::search::KdTree<Point_t> TreeA, TreeB;
+	TreeB.setInputCloud(vRhs);
+	float Thres = 0.1f;
+	int Count = 0;
+	for (int i = 0; i < vLhs->size(); i++)
+	{
+		std::vector<int> Indices(1);
+		std::vector<float> SqrDist(1);
+
+		TreeB.nearestKSearch(vLhs->at(i), 1, Indices, SqrDist);
+		if (SqrDist[0] < Thres)
+			pCloud->emplace_back(vLhs->at(i));
+		else
+			Count++;
+	}
+	std::cout << "Discard: " << Count << std::endl;
+	return pCloud;
+}
+
 int main()
 {
 	std::uint32_t Mode = 0;
@@ -84,13 +108,32 @@ int main()
 		break;
 	}*/
 
-	const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/Scene/RAW_Scene_GT.ply");
+	/*const std::string ModelPath = TESTMODEL_DIR + std::string("/Trimmed/Scene/RAW_Scene_GT.ply");
 	PC_t::Ptr pRawCloud = loadPC(ModelPath);
 	
 	normalizePC(pRawCloud, true);
 	square(pRawCloud);
 
-	pcl::io::savePLYFileBinary("RAW_Scene_GT.ply", *pRawCloud);
+	pcl::io::savePLYFileBinary("RAW_Scene_GT.ply", *pRawCloud);*/
+
+	/*PC_t::Ptr pCloud(new PC_t);
+	for (int i = 0; i < 4; i++)
+	{
+		PC_t::Ptr pTemp = loadPC("Merge/" + std::to_string(i) + ".ply");
+		for (const auto& e : *pTemp)
+			pCloud->emplace_back(e);
+	}
+
+	std::cout << "Total point cloud size " << pCloud->size() << std::endl;
+	pcl::io::savePLYFileBinary("Merge/Merge.ply", *pCloud);*/
+
+	const std::string Path = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/MergeBasedOnGT.ply");
+	const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Scene/RAW_Scene_GT.ply");
+	PC_t::Ptr pCloud = loadPC(Path);
+	PC_t::Ptr pCloudGT = loadPC(Path2);
+	auto r = compute(pCloud, pCloudGT);
+	std::cout << r->size() << std::endl;
+	pcl::io::savePLYFileBinary("r.ply", *r);
 
 	return 0;
-}
+}                                                                                                                                                                                                                                                                                                                                
