@@ -107,8 +107,10 @@ void CHeightMap::generateMask(CHeightMap& voMap) const
 	for (int i = 0; i < m_Map.rows(); i++)
 		for (int k = 0; k < m_Map.cols(); k++)
 		{
-			if (m_Map(i, k) == m_Empty)		voMap.setValueAt(1, i, k);
-			else							voMap.setValueAt(0, i, k);
+			if (m_Map(i, k) == m_Empty)		
+				voMap.setValueAt(1, i, k);
+			else
+				voMap.setValueAt(0, i, k);
 		}
 }
 

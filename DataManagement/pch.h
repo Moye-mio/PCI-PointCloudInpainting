@@ -18,6 +18,8 @@
 #include <unordered_set>
 #include <cstdlib>
 
+#include <omp.h>
+#include <mutex>
 #include <boost/format.hpp>
 #include <opencv2/opencv.hpp>
 #include <Eigen/Eigen>
@@ -25,6 +27,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+#include <pcl/surface/on_nurbs/fitting_surface_tdm.h>
 #include <liblas/liblas.hpp>
 
 #include "common/Product.h"
@@ -35,11 +38,16 @@
 #include "common/DesignPatternInterface.h"
 #include "common/UtilityInterface.h"
 #include "common/MathInterface.h"
+#include "common/CpuTimer.h"
 
 #include "PointCloudType.h"
 #include "HeightMap.h"
 #include "GradientMap.h"
 #include "AABB.h"
 #include "AABBEstimation.h"
+#include "Point.h"
+#include "Triangle.h"
+#include "Plane.h"
+#include "Image.h"
 
 #endif //PCH_H

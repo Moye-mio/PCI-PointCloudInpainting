@@ -10,6 +10,7 @@ namespace GA
 		CGeneticClustering(float vK, int vSolutionSize, int vClusterSize, int vLoopSize);
 		~CGeneticClustering() {}
 
+		[[nodiscard]] bool setThreadSize(int vSize);
 		[[nodiscard]] bool setCloud(const PC_t::Ptr& vCloud);
 		[[nodiscard]] bool setNormals(const NormalPC_t::Ptr& vNormals);
 		[[nodiscard]] bool run();
@@ -42,6 +43,6 @@ namespace GA
 		int					m_ClusterSize;
 		int					m_DataSize;
 		int					m_LoopSize;
-
+		int					m_ThreadSize;
 	};
 }

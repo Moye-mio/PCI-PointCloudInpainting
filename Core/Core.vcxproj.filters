@@ -1,32 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="pch">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="HeightMap">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="HeightMap\Struct">
-      <UniqueIdentifier>{b15bf2bf-3ba2-48c6-b2d3-6bebb37b7d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="HeightMap\Generator">
-      <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap">
-      <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap\Struct">
-      <UniqueIdentifier>{255dd25e-00f4-4c52-8729-df5df5860fbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GradientMap\Generator">
-      <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Solver">
       <UniqueIdentifier>{7b885a95-7ec3-4549-9759-8844a7923fb1}</UniqueIdentifier>
@@ -34,23 +11,11 @@
     <Filter Include="PCMap">
       <UniqueIdentifier>{76168b25-2683-4637-9dec-1a8336a61ecc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PCFeature">
-      <UniqueIdentifier>{1ea2d047-1cef-4e4e-9cd6-4e292be5c577}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PCFeature\ExtremeValue">
-      <UniqueIdentifier>{c89cbef1-26b7-4a8b-a66c-921ec733b852}</UniqueIdentifier>
-    </Filter>
     <Filter Include="RegionGrowing">
       <UniqueIdentifier>{b27e26fe-99e2-481e-95f8-63aee1d0f203}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PCFeature\Border">
-      <UniqueIdentifier>{e1f05ee4-1048-43cc-a401-299843776f67}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GaussianDistribution">
       <UniqueIdentifier>{f02a37e7-9990-41dd-b753-9f02e887047b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="PCFeature\Fit">
-      <UniqueIdentifier>{68c809cd-a105-4f63-9883-a64c4d6542c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="BB">
       <UniqueIdentifier>{4d664d0c-286e-4991-8682-7b21c054b525}</UniqueIdentifier>
@@ -73,8 +38,78 @@
     <Filter Include="BB\OBB\Estimation">
       <UniqueIdentifier>{59c89795-4ba8-42e7-82f3-1f52b2969bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{7f051c60-0fcd-4866-a044-ba3d26657b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Curve">
+      <UniqueIdentifier>{00d2a85d-e9a7-4206-b14b-d2ef5d56cf7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Surface">
+      <UniqueIdentifier>{6d1cef4b-f443-487f-914f-27ffc7d327e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Primitive">
+      <UniqueIdentifier>{4c8fb18d-62bc-40c5-9990-d0c82aa99931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature">
+      <UniqueIdentifier>{1ea2d047-1cef-4e4e-9cd6-4e292be5c577}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\ExtremeValue">
+      <UniqueIdentifier>{c89cbef1-26b7-4a8b-a66c-921ec733b852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Border">
+      <UniqueIdentifier>{e1f05ee4-1048-43cc-a401-299843776f67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Fit">
+      <UniqueIdentifier>{68c809cd-a105-4f63-9883-a64c4d6542c6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="PCFeature\Normal">
       <UniqueIdentifier>{31baf9ad-6ac4-4f3f-bbf8-08041b614841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Voxel">
+      <UniqueIdentifier>{a693068d-c7b5-4f58-9843-eb28be42ba34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Trim">
+      <UniqueIdentifier>{52594de7-d603-4fac-adf2-69dfb5ac7190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Feature">
+      <UniqueIdentifier>{68a8f520-e765-4f11-98d9-ddc1e8e57c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Feature\Normal">
+      <UniqueIdentifier>{28cf57b9-9570-4425-bb98-8659dcf0f808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Fit">
+      <UniqueIdentifier>{ed4034d1-5ada-43d3-ae00-c159eb8bd487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{f724a087-675b-4f19-a071-b6ed7e6a1ea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\HeightMap">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Map\HeightMap\Struct">
+      <UniqueIdentifier>{b15bf2bf-3ba2-48c6-b2d3-6bebb37b7d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\HeightMap\Generator">
+      <UniqueIdentifier>{6dc3a314-0894-422c-8d80-0989720044b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap">
+      <UniqueIdentifier>{6ce3762b-6d22-49d7-820d-c2396f51b503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap\Struct">
+      <UniqueIdentifier>{255dd25e-00f4-4c52-8729-df5df5860fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\GradientMap\Generator">
+      <UniqueIdentifier>{93ad8009-68a9-4562-9c2d-2251bdae1dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map\IO">
+      <UniqueIdentifier>{491ae3fd-4cab-4860-873d-b665d9cee92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Similarity">
+      <UniqueIdentifier>{5353ba51-e14c-4ed0-8b55-6de3c8c8fed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PCFeature\Distortion">
+      <UniqueIdentifier>{57ab2e40-750d-49d2-8d9f-b8bed4fc81a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,13 +120,13 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="HeightMap.h">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="StandardHeightMap.h">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="HeightMapGenerator.h">
-      <Filter>HeightMap\Generator</Filter>
+      <Filter>Map\HeightMap\Generator</Filter>
     </ClInclude>
     <ClInclude Include="AABB.h">
       <Filter>BB\AABB\Struct</Filter>
@@ -100,10 +135,10 @@
       <Filter>BB\AABB\Estimation</Filter>
     </ClInclude>
     <ClInclude Include="GradientMap.h">
-      <Filter>GradientMap\Struct</Filter>
+      <Filter>Map\GradientMap\Struct</Filter>
     </ClInclude>
     <ClInclude Include="GradientMapGenerator.h">
-      <Filter>GradientMap\Generator</Filter>
+      <Filter>Map\GradientMap\Generator</Filter>
     </ClInclude>
     <ClInclude Include="SparseLinearSolver.h">
       <Filter>Solver</Filter>
@@ -138,28 +173,103 @@
     <ClInclude Include="NormalEstimator.h">
       <Filter>PCFeature\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="BSplineCurve.h">
+      <Filter>Geometry\Curve</Filter>
+    </ClInclude>
+    <ClInclude Include="BSplineSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiLayerBSplineSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Geometry\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Geometry\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxelization.h">
+      <Filter>PCFeature\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTrimmer.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
+    <ClInclude Include="Trimmer.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
+    <ClInclude Include="MultilayerSurface.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="BiasedVoxelization.h">
+      <Filter>PCFeature\Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Geometry\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalSampler.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface2PCMapper.h">
+      <Filter>PCMap</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexSampler.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceUVGenerator.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="DistSampler.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalWrapper.h">
+      <Filter>Geometry\Feature\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="Sorter.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlPointGenerator.h">
+      <Filter>Geometry\Surface</Filter>
+    </ClInclude>
+    <ClInclude Include="NurbsFitting.h">
+      <Filter>Geometry\Fit</Filter>
+    </ClInclude>
+    <ClInclude Include="Tiler.h">
+      <Filter>PCFeature\Trim</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSaver.h">
+      <Filter>Map\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="SimilarityEstimator.h">
+      <Filter>PCFeature\Similarity</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometric_distortion.h">
+      <Filter>PCFeature\Distortion</Filter>
+    </ClInclude>
+    <ClInclude Include="HausdorffDistance.h">
+      <Filter>PCFeature\Distortion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
     <ClCompile Include="HeightMap.cpp">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="StandardHeightMap.cpp">
-      <Filter>HeightMap\Struct</Filter>
+      <Filter>Map\HeightMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="HeightMapGenerator.cpp">
-      <Filter>HeightMap\Generator</Filter>
+      <Filter>Map\HeightMap\Generator</Filter>
     </ClCompile>
     <ClCompile Include="AABBEstimation.cpp">
       <Filter>BB\AABB\Estimation</Filter>
     </ClCompile>
     <ClCompile Include="GradientMap.cpp">
-      <Filter>GradientMap\Struct</Filter>
+      <Filter>Map\GradientMap\Struct</Filter>
     </ClCompile>
     <ClCompile Include="GradientMapGenerator.cpp">
-      <Filter>GradientMap\Generator</Filter>
+      <Filter>Map\GradientMap\Generator</Filter>
     </ClCompile>
     <ClCompile Include="SparseLinearSolver.cpp">
       <Filter>Solver</Filter>
@@ -190,6 +300,72 @@
     </ClCompile>
     <ClCompile Include="NormalEstimator.cpp">
       <Filter>PCFeature\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="BSplineCurve.cpp">
+      <Filter>Geometry\Curve</Filter>
+    </ClCompile>
+    <ClCompile Include="BSplineSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiLayerBSplineSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Geometry\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxelization.cpp">
+      <Filter>PCFeature\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTrimmer.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="Trimmer.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="MultilayerSurface.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="BiasedVoxelization.cpp">
+      <Filter>PCFeature\Voxel</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalSampler.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface2PCMapper.cpp">
+      <Filter>PCMap</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexSampler.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceUVGenerator.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="DistSampler.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalWrapper.cpp">
+      <Filter>Geometry\Feature\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="Sorter.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlPointGenerator.cpp">
+      <Filter>Geometry\Surface</Filter>
+    </ClCompile>
+    <ClCompile Include="NurbsFitting.cpp">
+      <Filter>Geometry\Fit</Filter>
+    </ClCompile>
+    <ClCompile Include="Tiler.cpp">
+      <Filter>PCFeature\Trim</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSaver.cpp">
+      <Filter>Map\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="SimilarityEstimator.cpp">
+      <Filter>PCFeature\Similarity</Filter>
+    </ClCompile>
+    <ClCompile Include="HausdorffDistance.cpp">
+      <Filter>PCFeature\Distortion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

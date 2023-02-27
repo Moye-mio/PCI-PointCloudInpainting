@@ -5,7 +5,7 @@ namespace PM
 	class CInpainter
 	{
 	public:
-		CInpainter(const cv::Mat& vRaw, const cv::Mat& vMask, int vPatchSize = 7, int vPyramid = 3, int vMaxIterNumber = 25, float vThreshold = 10.0f);
+		CInpainter(const cv::Mat& vRaw, const cv::Mat& vMask, int vPatchSize = 7, int vPyramid = 3, int vMaxIterNumber = 15, float vThreshold = 10.0f);
 		~CInpainter() {}
 
 		void inpaint();
