@@ -129,6 +129,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Integration_Test_008 (Image
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_035 (Geometric_distortion)", "Test\UnitTest\Unit_Test_035 (Geometric_distortion)\Unit_Test_035 (Geometric_distortion).vcxproj", "{1A2559CB-7D14-4D8B-BE6A-85C8E7060936}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unit_Test_036 (Cast2PLY)", "Test\UnitTest\Unit_Test_036 (Cast2PLY)\Unit_Test_036 (Cast2PLY).vcxproj", "{426BCFF9-B376-40C9-A78A-9083ACB62EFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -589,6 +591,14 @@ Global
 		{1A2559CB-7D14-4D8B-BE6A-85C8E7060936}.Release|x64.Build.0 = Release|x64
 		{1A2559CB-7D14-4D8B-BE6A-85C8E7060936}.Release|x86.ActiveCfg = Release|Win32
 		{1A2559CB-7D14-4D8B-BE6A-85C8E7060936}.Release|x86.Build.0 = Release|Win32
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Debug|x64.ActiveCfg = Debug|x64
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Debug|x64.Build.0 = Debug|x64
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Debug|x86.ActiveCfg = Debug|Win32
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Debug|x86.Build.0 = Debug|Win32
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Release|x64.ActiveCfg = Release|x64
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Release|x64.Build.0 = Release|x64
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Release|x86.ActiveCfg = Release|Win32
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -648,6 +658,7 @@ Global
 		{89090136-8553-47CC-A1DF-22D7D5363444} = {6CDF553B-9895-4C24-974F-9EA8776FEBE3}
 		{5BCB62D2-9ADD-46F2-9D6A-DB1001F8A129} = {6CDF553B-9895-4C24-974F-9EA8776FEBE3}
 		{1A2559CB-7D14-4D8B-BE6A-85C8E7060936} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
+		{426BCFF9-B376-40C9-A78A-9083ACB62EFB} = {0CECDE68-A2AC-406C-9371-0BB587525A57}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {22793FDD-3261-4421-BA02-ADEB847FB562}

@@ -5,6 +5,8 @@ const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Scene/RAW_Scene_
 const std::string Path3 = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/MergeBasedOnGT.ply");
 const std::string Path4 = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/CurveShorteningFlow.ply");
 const std::string Path5 = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/MergeBasedOnGT-Culled.ply");
+const std::string Path6 = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/Meshlab.ply");
+const std::string Path7 = TESTMODEL_DIR + std::string("/Trimmed/Scene/Result/MeshFix.ply");
 
 using namespace pcl::geometric_quality;
 
@@ -24,7 +26,7 @@ PC_t::Ptr loadPC(const std::string& vPath)
 TEST(TestPNSR, 1)
 {
 	PC_t::Ptr pCloud1 = loadPC(Path2);
-	PC_t::Ptr pCloud2 = loadPC(Path4);
+	PC_t::Ptr pCloud2 = loadPC(Path7);
 
 	core::CSimilarityEstimator Estimator;
 	auto r1 = Estimator.compute(pCloud1, pCloud2, core::ESimilarityMode::GPSNR);
