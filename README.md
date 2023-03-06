@@ -9,8 +9,11 @@ The low frequency signal is constructed by fitting point clouds to nurbs using p
 
 # Experiment Result
 ### Rock Wall
-![Result1_HW](Images/Result1_WH.jpg "Rock wall")
-![Result1](Images/Result1.jpg "")
+![Result1_HW](Images/RockWall1_WH.jpg "Rock wall")
+![Result1](Images/RockWall1_Filled.jpg "")
+
+![Result1_HW](Images/RockWall2_WH.jpg "Rock wall")
+![Result1](Images/RockWall2_Filled.jpg "")
 
 # Info
 still developing...

@@ -45,7 +45,7 @@ TEST(TestTilesInpainting, NT_BasedOnGT)
 	dataManagement::CTilesInpaintingBasedOnGT Inpainter;
 	Inpainter.setTilesInfo(Rate, SizeX, SizeY);
 	Inpainter.setNurbsInfo(3, 4, 10, 2, 2);
-	Inpainter.setMapInfo(64, 64, 100);
+	Inpainter.setMapInfo(64, 64, 75);
 	EXPECT_TRUE(Inpainter.run(pRaw, pSub, pGT));
 	Inpainter.dumpCloud(pResult);
 
