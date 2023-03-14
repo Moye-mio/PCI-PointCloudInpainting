@@ -226,7 +226,9 @@ bool CTilesInpaintingBasedOnGT::__extractCtrlpts(const ON_NurbsSurface& vNurbs, 
 	hiveEventLogger::hiveOutputEvent(_FORMAT_STR1("extract Ctrlpts successfully [%1%]", voCtrlpts.size()));
 	return true;
 }
+
 int CountMin = 0; int CountMax = 0;
+
 void CTilesInpaintingBasedOnGT::__projPoints(const std::shared_ptr<pcl::on_nurbs::FittingSurface>& vFit, core::CMultilayerSurface* vSurface, const PC_t::Ptr& vCloud, std::vector<std::pair<float, Eigen::Vector2f>>& voData)
 {
 	/* Sample Normal */
@@ -246,7 +248,7 @@ void CTilesInpaintingBasedOnGT::__projPoints(const std::shared_ptr<pcl::on_nurbs
 		auto r = vSurface->calcProj(core::SPoint(PCLPoint.x, PCLPoint.y, PCLPoint.z));
 		if (r.has_value() == false)
 		{
-			hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Point Number [%1%], Pos [%2%, %3%, %4%] calc proj info failed", i, PCLPoint.x, PCLPoint.y, PCLPoint.z));
+			//hiveEventLogger::hiveOutputEvent(_FORMAT_STR4("Point Number [%1%], Pos [%2%, %3%, %4%] calc proj info failed", i, PCLPoint.x, PCLPoint.y, PCLPoint.z));
 			continue;
 		}
 		Eigen::Vector2d Hint((double)r->_UV[0], (double)r->_UV[1]);
@@ -317,10 +319,8 @@ void CTilesInpaintingBasedOnGT::__tuneMapBoundary(const core::CHeightMap& vGT, c
 	const core::CHeightMap Copy = vioRaw;
 	for (int i = 1; i < vioRaw.getWidth() - 1; i++)
 		for (int k = 1; k < vioRaw.getHeight() - 1; k++)
-		{
 			if (Copy.getValueAt(i - 1, k) == 1 || Copy.getValueAt(i, k - 1) == 1 || Copy.getValueAt(i + 1, k) == 1 || Copy.getValueAt(i, k + 1) == 1)
 				vioRaw.setValueAt(1, i, k);
-		}
 
 	for (int i = 1; i < vioRaw.getWidth() - 1; i++)
 		for (int k = 1; k < vioRaw.getHeight() - 1; k++)

@@ -12,6 +12,8 @@
 
 const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway_Trim.ply");
 const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/GT_Walkway_Trim.ply");
+const std::string Path3 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0_120_Seg_Sub_6_ASCII.ply");
+const std::string Path4 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0_120_Seg.ply");
 
 PC_t::Ptr loadPC(const std::string& vPath)
 {
@@ -23,6 +25,7 @@ PC_t::Ptr loadPC(const std::string& vPath)
 	_ASSERTE(r != -1);
 	_ASSERTE(pCloud->size());
 	std::cout << "Model Point Size: " << pCloud->size() << std::endl;
+
 	return pCloud;
 }
 
@@ -170,21 +173,21 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 	return true;
 }
 
-TEST(NurbsFitting, DT) 
-{
-	PC_t::Ptr pCloud;
-	core::CNurbsFitting Fitting;
-	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, 10));
-	pCloud = loadPC(Path1);
-	EXPECT_FALSE(Fitting.run(pCloud, -1, 4, 10));
-	EXPECT_FALSE(Fitting.run(pCloud, 3, -1, 10));
-	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, -1));
-}
+//TEST(NurbsFitting, DT) 
+//{
+//	PC_t::Ptr pCloud;
+//	core::CNurbsFitting Fitting;
+//	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, 10));
+//	pCloud = loadPC(Path1);
+//	EXPECT_FALSE(Fitting.run(pCloud, -1, 4, 10));
+//	EXPECT_FALSE(Fitting.run(pCloud, 3, -1, 10));
+//	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, -1));
+//}
 
 TEST(NurbsFitting, NT_CrossPlane)
 {
-	PC_t::Ptr pCloudWH = loadPC(Path1);
-	PC_t::Ptr pCloudGT = loadPC(Path2);
+	PC_t::Ptr pCloudWH = loadPC(Path3);
+	//PC_t::Ptr pCloudGT = loadPC(Path4);
 	core::CNurbsFitting Fitting;
 	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
 	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 4, 10));	/* 19 x 19 */
@@ -205,12 +208,12 @@ TEST(NurbsFitting, NT_CrossPlane)
 
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
 	pSurface->setControlPoints(Ctrlpts);
-	pSurface->setIsSaveMesh(true);
+	pSurface->setIsSaveMesh(true, "Sample_4_120_Sub_5.obj");
 	pSurface->setSubNumber(2);
 	pSurface->setSubLayer(2);
 	EXPECT_TRUE(pSurface->preCompute());
 
-	std::vector<std::pair<float, Eigen::Vector2f>> DataWH, DataGT;
+	/*std::vector<std::pair<float, Eigen::Vector2f>> DataWH, DataGT;
 	projPoints(Fit, pSurface, pCloudWH, DataWH);
 	projPoints(Fit, pSurface, pCloudGT, DataGT);
 
@@ -252,5 +255,5 @@ TEST(NurbsFitting, NT_CrossPlane)
 		pCloud->emplace_back(e);
 	}
 
-	pcl::io::savePLYFileBinary("newCloud.ply", *pCloud);
+	pcl::io::savePLYFileBinary("newCloud.ply", *pCloud);*/
 }

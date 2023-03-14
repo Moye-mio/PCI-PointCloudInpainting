@@ -25,6 +25,9 @@
     <Filter Include="Transaction\Nurbs">
       <UniqueIdentifier>{2373b9fa-a07e-42bc-9069-d8b43b98ac9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Transaction\TotalPipeLine">
+      <UniqueIdentifier>{d809bcaf-e20d-42e2-87e7-c39e4bae2064}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -87,6 +90,9 @@
     <ClInclude Include="TilesInpaintingBasedOnGT.h">
       <Filter>Transaction\Nurbs</Filter>
     </ClInclude>
+    <ClInclude Include="OneTileInpainting.h">
+      <Filter>Transaction\TotalPipeLine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="TilesInpaintingBasedOnGT.cpp">
       <Filter>Transaction\Nurbs</Filter>
+    </ClCompile>
+    <ClCompile Include="OneTileInpainting.cpp">
+      <Filter>Transaction\TotalPipeLine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

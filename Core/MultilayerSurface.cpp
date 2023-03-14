@@ -347,7 +347,13 @@ std::optional<SProjInfo> CMultilayerSurface::__calcHitNodes(int vLayer, int vSte
 	Point.z() = Info._Point[2];
 
 	auto R = __calcBaryWeight(__geneTriangle(CurNodes(Indices[0].x(), Indices[0].y()), CurNodes(Indices[1].x(), Indices[1].y()), CurNodes(Indices[2].x(), Indices[2].y())).value(), Point);
-	_HIVE_EARLY_RETURN(R.has_value() == false, "ERROR: Failed to calc UV...", std::nullopt);
+	
+	
+	// _HIVE_EARLY_RETURN(R.has_value() == false, "ERROR: Failed to calc UV...", std::nullopt);
+	if (R.has_value() == false) return std::nullopt;
+
+
+
 	Eigen::Vector3f Weight = R.value();
 	Info._UV = UVs[0] * Weight[0] + UVs[1] * Weight[1] + UVs[2] * Weight[2];
 

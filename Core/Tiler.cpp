@@ -11,6 +11,16 @@ bool CTiler::run(const PC_t::Ptr& vCloud, int vSizeX, int vSizeY, float vRate)
 	_HIVE_EARLY_RETURN(vSizeX <= 0 || vSizeY <= 0, "Size is Invalid", false);
 	_HIVE_EARLY_RETURN(vRate < 0 || vRate > 1, "Rate is Invalid", false);
 
+	if (vSizeX == vSizeY && vSizeX == 1)
+	{
+		std::vector<int> Indices;
+		for (int i = 0; i < vCloud->size(); i++)
+			Indices.push_back(i);
+		m_Tiles.emplace_back(Indices);
+		m_Coors.emplace_back(std::make_pair(0, 0));
+		return true;
+	}
+
 	CAABBEstimation Estimation(vCloud);
 	SAABB Box = Estimation.compute();
 	_HIVE_EARLY_RETURN(Box.isValid() == false, "AABB is Invalid", false);

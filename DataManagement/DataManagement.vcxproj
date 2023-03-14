@@ -157,6 +157,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageInpainting.h" />
     <ClInclude Include="Nurbs2CloudMapper.h" />
+    <ClInclude Include="OneTileInpainting.h" />
     <ClInclude Include="PC.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PCLASLoader.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="CloudInpaintingBasedOnNurbs.cpp" />
     <ClCompile Include="DepthInpainting.cpp" />
     <ClCompile Include="ImageInpainting.cpp" />
+    <ClCompile Include="OneTileInpainting.cpp" />
     <ClCompile Include="PC.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
