@@ -10,10 +10,14 @@
 #include "DistSampler.h"
 #include "Surface2PCMapper.h"
 
+#include <opencv2/opencv.hpp>
+
 const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway_Trim.ply");
 const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/GT_Walkway_Trim.ply");
 const std::string Path3 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0_120_Seg_Sub_6_ASCII.ply");
 const std::string Path4 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0_120_Seg.ply");
+const std::string Path5 = TESTMODEL_DIR + std::string("/ExperimentResult/DetectHole/Complete.ply");
+const std::string Path6 = TESTMODEL_DIR + std::string("/ExperimentResult/DetectHole/Hole.ply");
 
 PC_t::Ptr loadPC(const std::string& vPath)
 {
@@ -173,6 +177,19 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 	return true;
 }
 
+Eigen::Vector2i __computeOffset(const Eigen::Vector2f& vUV, int vWidth, int vHeight)
+{
+	Eigen::Vector2f Scale(1.0f / vWidth, 1.0f / vHeight);
+
+	int OffsetX = vUV[0] / Scale[0];
+	int OffsetY = vUV[1] / Scale[1];
+
+	if (OffsetX == vWidth) OffsetX--;
+	if (OffsetY == vHeight) OffsetY--;
+
+	return Eigen::Vector2i(OffsetX, OffsetY);
+}
+
 //TEST(NurbsFitting, DT) 
 //{
 //	PC_t::Ptr pCloud;
@@ -184,13 +201,41 @@ bool map2Cloud(const core::CHeightMap& vRaw, const core::CHeightMap& vMask, cons
 //	EXPECT_FALSE(Fitting.run(pCloud, 3, 4, -1));
 //}
 
+
 TEST(NurbsFitting, NT_CrossPlane)
 {
-	PC_t::Ptr pCloudWH = loadPC(Path3);
+	PC_t::Ptr pCloudWH = loadPC(Path6);
+
+	{
+		for (auto& e : *pCloudWH)
+		{
+			float Temp = e.y;
+			e.y = e.z;
+			e.z = Temp;
+		}
+
+		Eigen::Vector3f Min(FLT_MAX, FLT_MAX, FLT_MAX);
+		for (auto& e : *pCloudWH)
+		{
+			Min.x() = (Min.x() > e.x) ? e.x : Min.x();
+			Min.y() = (Min.y() > e.y) ? e.y : Min.y();
+			Min.z() = (Min.z() > e.z) ? e.z : Min.z();
+		}
+		for (auto& e : *pCloudWH)
+		{
+			e.x -= Min.x();
+			e.y -= Min.y();
+			e.z -= Min.z();
+		}
+	}
+
+	pcl::io::savePLYFileBinary("Mesh/Cloud.ply", *pCloudWH);
+
+
 	//PC_t::Ptr pCloudGT = loadPC(Path4);
 	core::CNurbsFitting Fitting;
 	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
-	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 4, 10));	/* 19 x 19 */
+	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 3, 10));	/* 19 x 19 */
 
 	//Fitting.dumpFittingSurface(Nurbs);
 	Fitting.dumpFitting(Fit);
@@ -208,11 +253,78 @@ TEST(NurbsFitting, NT_CrossPlane)
 
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
 	pSurface->setControlPoints(Ctrlpts);
-	pSurface->setIsSaveMesh(true, "Sample_4_120_Sub_5.obj");
-	pSurface->setSubNumber(2);
+	pSurface->setIsSaveMesh(true, "Mesh/WantedArea.obj");
+	pSurface->setSubNumber(10);
 	pSurface->setSubLayer(2);
 	EXPECT_TRUE(pSurface->preCompute());
 
+	std::vector<std::pair<float, Eigen::Vector2f>> DataWH;
+	projPoints(Fit, pSurface, pCloudWH, DataWH);
+
+	int Res = 64;
+	{
+		std::vector<int> Indices;
+		
+		// 17, 9; 32, 16
+		int Count = 0;
+		for (const auto& e : DataWH)
+		{
+			Eigen::Vector2i Offset = __computeOffset(e.second, Res, Res);
+			if (Offset[0] >= 16 && Offset[0] <= 33 && Offset[1] >= 8 && Offset[1] <= 17)
+				Indices.emplace_back(Count);
+			Count++;
+		}
+
+		std::ofstream OutFile("Mesh/Proj.txt");
+		for (int i = 0; i < Indices.size(); i++)
+		{
+			auto [Dist, Pos] = DataWH[Indices[i]];
+			OutFile << std::to_string(Pos[0]) << " " << std::to_string(Pos[1]) << std::endl;
+		}
+		OutFile.close();
+	}
+
+
+	core::CHeightMapGenerator Generator;
+	core::CHeightMap Map, Mask;
+	Generator.generateBySurface(DataWH, Res, Res);
+	Generator.dumpHeightMap(Map);
+	Map.generateMask(Mask);
+	saveMap2Image(Mask, "Mesh/Mask.png", 255);
+
+	for (int i = 0; i < Res; i++)
+		for (int k = 0; k < Res; k++)
+		{
+			float Value = Mask.getValueAt(i, k);
+			if (Value != 0 && (i < 5 || k < 5 || i > 58 || k > 58)) Mask.setValueAt(0, i, k);
+		}
+
+	Eigen::Vector2i Min(Res, Res);
+	Eigen::Vector2i Max(0, 0);
+
+	for (int i = 0; i < Res; i++)
+		for (int k = 0; k < Res; k++)
+		{
+			if (Mask.getValueAt(i, k) != 0)
+			{
+				Min.x() = (Min.x() > i) ? i : Min.x();
+				Max.x() = (Max.x() < i) ? i : Max.x();
+				Min.y() = (Min.y() > k) ? k : Min.y();
+				Max.y() = (Max.y() < k) ? k : Max.y();
+			}
+		}
+
+	cv::Mat Image(Max[0] - Min[0] + 1, Max[1] - Min[1] + 1, CV_8UC3);
+	for (int i = Min[0]; i <= Max[0]; i++)
+		for (int k = Min[1]; k <= Max[1]; k++)
+		{
+			if (Map.getValueAt(i, k) == 0)
+				Image.at<cv::Vec3b>(i - Min[0], k - Min[1]) = cv::Vec3b(76, 76, 76);
+			else
+				Image.at<cv::Vec3b>(i - Min[0], k - Min[1]) = cv::Vec3b(255, 127, 126);
+		}
+
+	cv::imwrite("Mesh/cvMask.png", Image);
 	/*std::vector<std::pair<float, Eigen::Vector2f>> DataWH, DataGT;
 	projPoints(Fit, pSurface, pCloudWH, DataWH);
 	projPoints(Fit, pSurface, pCloudGT, DataGT);
@@ -257,3 +369,5 @@ TEST(NurbsFitting, NT_CrossPlane)
 
 	pcl::io::savePLYFileBinary("newCloud.ply", *pCloud);*/
 }
+
+

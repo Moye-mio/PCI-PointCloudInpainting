@@ -61,9 +61,6 @@ bool CHeightMapGenerator::generateBySurface(const std::vector<std::pair<float, E
 
 	m_Map.setSize(vWidth, vHeight);
 
-	float CellInRow = 1.0f / vWidth;
-	float CellInCol = 1.0f / vHeight;
-
 	Eigen::Matrix<std::vector<int>, -1, -1> Indices;
 	Indices.resize(vWidth, vHeight);
 
@@ -78,7 +75,6 @@ bool CHeightMapGenerator::generateBySurface(const std::vector<std::pair<float, E
 		Count++;
 	}
 
-	
 	for (int i = 0; i < Indices.rows(); i++)
 		for (int k = 0; k < Indices.cols(); k++)
 		{

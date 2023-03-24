@@ -55,6 +55,42 @@ bool CTilesInpaintingBasedOnGT::run(const PC_t::Ptr& vRaw, const PC_t::Ptr& vSub
 	_HIVE_EARLY_RETURN(__setupTiles(vRaw, TilesRaw) == false, "Raw tiles set up failed", false);
 	_HIVE_EARLY_RETURN(__setupTiles(vSub, TilesSub) == false, "Raw tiles set up failed", false);
 	_HIVE_EARLY_RETURN(__setupTiles(vGT, TilesGT) == false, "Raw tiles set up failed", false);
+
+	{
+		// save target tiles
+		/*{
+			const auto& pCloud1 = TilesRaw.coeffRef(1, 2);
+			const auto& pCloud2 = TilesRaw.coeffRef(0, 2);
+			PC_t::Ptr pCloud(new PC_t);
+			for (const auto& e : *pCloud1)
+				pCloud->emplace_back(e);
+			for (const auto& e : *pCloud2)
+				pCloud->emplace_back(e);
+			pcl::io::savePLYFileBinary("Result/TargetRaw.ply", *pCloud);
+		}
+
+		{
+			const auto& pCloud1 = TilesSub.coeffRef(1, 2);
+			const auto& pCloud2 = TilesSub.coeffRef(0, 2);
+			PC_t::Ptr pCloud(new PC_t);
+			for (const auto& e : *pCloud1)
+				pCloud->emplace_back(e);
+			for (const auto& e : *pCloud2)
+				pCloud->emplace_back(e);
+			pcl::io::savePLYFileBinary("Result/TargetSub.ply", *pCloud);
+		}
+
+		{
+			const auto& pCloud1 = TilesGT.coeffRef(1, 2);
+			const auto& pCloud2 = TilesGT.coeffRef(0, 2);
+			PC_t::Ptr pCloud(new PC_t);
+			for (const auto& e : *pCloud1)
+				pCloud->emplace_back(e);
+			for (const auto& e : *pCloud2)
+				pCloud->emplace_back(e);
+			pcl::io::savePLYFileBinary("Result/TargetGT.ply", *pCloud);
+		}*/
+	}
 	
 	/* Inpaint Tiles */
 	Eigen::Matrix<PC_t::Ptr, -1, -1> CloudCulled;
