@@ -10,7 +10,11 @@
 #include "DistSampler.h"
 #include "Surface2PCMapper.h"
 
+#include <pcl/filters/voxel_grid.h>
+
+
 #include <opencv2/opencv.hpp>
+
 
 const std::string Path1 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/WH_Walkway_Trim.ply");
 const std::string Path2 = TESTMODEL_DIR + std::string("/Trimmed/Walkway/GT_Walkway_Trim.ply");
@@ -18,6 +22,7 @@ const std::string Path3 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0
 const std::string Path4 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/Sample_0_120_Seg.ply");
 const std::string Path5 = TESTMODEL_DIR + std::string("/ExperimentResult/DetectHole/Complete.ply");
 const std::string Path6 = TESTMODEL_DIR + std::string("/ExperimentResult/DetectHole/Hole.ply");
+const std::string Path7 = TESTMODEL_DIR + std::string("/Trimmed/Terrain/ASCII/Sample_0_120_Seg_Sub_6_ASCII.ply");
 
 PC_t::Ptr loadPC(const std::string& vPath)
 {
@@ -206,36 +211,40 @@ TEST(NurbsFitting, NT_CrossPlane)
 {
 	PC_t::Ptr pCloudWH = loadPC(Path6);
 
+	//pcl::VoxelGrid<Point_t> Sor;
+	//Sor.filter(*pCloudWH);
+
 	{
-		for (auto& e : *pCloudWH)
+		/*for (auto& e : *pCloudWH)
 		{
 			float Temp = e.y;
 			e.y = e.z;
 			e.z = Temp;
-		}
-
-		Eigen::Vector3f Min(FLT_MAX, FLT_MAX, FLT_MAX);
-		for (auto& e : *pCloudWH)
-		{
-			Min.x() = (Min.x() > e.x) ? e.x : Min.x();
-			Min.y() = (Min.y() > e.y) ? e.y : Min.y();
-			Min.z() = (Min.z() > e.z) ? e.z : Min.z();
-		}
-		for (auto& e : *pCloudWH)
-		{
-			e.x -= Min.x();
-			e.y -= Min.y();
-			e.z -= Min.z();
-		}
+		}*/
 	}
 
-	pcl::io::savePLYFileBinary("Mesh/Cloud.ply", *pCloudWH);
+	//	Eigen::Vector3f Min(FLT_MAX, FLT_MAX, FLT_MAX);
+	//	for (auto& e : *pCloudWH)
+	//	{
+	//		Min.x() = (Min.x() > e.x) ? e.x : Min.x();
+	//		Min.y() = (Min.y() > e.y) ? e.y : Min.y();
+	//		Min.z() = (Min.z() > e.z) ? e.z : Min.z();
+	//	}
+	//	for (auto& e : *pCloudWH)
+	//	{
+	//		e.x -= Min.x();
+	//		e.y -= Min.y();
+	//		e.z -= Min.z();
+	//	}
+	//}
+
+	//pcl::io::savePLYFileBinary("Mesh/Cloud.ply", *pCloudWH);
 
 
 	//PC_t::Ptr pCloudGT = loadPC(Path4);
 	core::CNurbsFitting Fitting;
 	std::shared_ptr<pcl::on_nurbs::FittingSurface> Fit;
-	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 3, 10));	/* 19 x 19 */
+	EXPECT_TRUE(Fitting.run(pCloudWH, 3, 5, 10));	/* 19 x 19 */
 
 	//Fitting.dumpFittingSurface(Nurbs);
 	Fitting.dumpFitting(Fit);
@@ -250,6 +259,43 @@ TEST(NurbsFitting, NT_CrossPlane)
 			Nurbs.GetCV(i, k, p);
 			Ctrlpts.coeffRef(i, k) = core::SPoint(p.x, p.y, p.z);
 		}
+
+	// save Ctrlpts to file
+	{
+		std::ofstream OutFile("B-spline surface/Ctrlpts_WH.txt");
+		std::ofstream OutFile2("B-spline surface/Knot_WH.txt");
+		for (int i = 0; i < Ctrlpts.rows(); i++)
+		{
+			std::string StrX = "";
+			std::string StrY = "";
+			std::string StrZ = "";
+			for (int k = 0; k < Ctrlpts.cols(); k++)
+			{
+				const auto p = Ctrlpts.coeff(i, k);
+				StrX += std::to_string(p.x()) + " ";
+				StrY += std::to_string(p.y()) + " ";
+				StrZ += std::to_string(p.z()) + " ";
+			}
+
+			OutFile << StrX << std::endl << StrY << std::endl << StrZ << std::endl << std::endl;
+		}
+
+		{
+			std::string StrU = "";
+			std::string StrV = "";
+
+			for (int i = 0; i < Nurbs.m_order[0] + Ctrlpts.rows() - 2; i++)
+			{
+				StrU += std::to_string(Nurbs.m_knot[0][i]) + " ";
+				StrV += std::to_string(Nurbs.m_knot[1][i]) + " ";
+			}
+
+			OutFile2 << StrU << std::endl << StrV << std::endl;
+		}
+
+		OutFile.close();
+		OutFile2.close();
+	}
 
 	core::CMultilayerSurface* pSurface(new core::CMultilayerSurface(3));
 	pSurface->setControlPoints(Ctrlpts);

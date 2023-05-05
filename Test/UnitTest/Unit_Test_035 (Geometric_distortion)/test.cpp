@@ -12,6 +12,7 @@ const std::string Path9 = TESTMODEL_DIR + std::string("/ExperimentResult/CCF/Sub
 const std::string Path9_1 = TESTMODEL_DIR + std::string("/ExperimentResult/CCF/Sub/Merge/Terrain_1_CCF_Sub_8_Merge.ply");
 const std::string Path10 = TESTMODEL_DIR + std::string("/ExperimentResult/MultiTilesInpainting/OneTile_Sub_8.ply");
 const std::string Path11 = TESTMODEL_DIR + std::string("/ExperimentResult/MultiTilesInpainting/MultiTile_Sub_8.ply");
+const std::string Path12 = TESTMODEL_DIR + std::string("/ExperimentResult/DepthMap/Merge_5_DM.ply");
 
 using namespace pcl::geometric_quality;
 
@@ -57,7 +58,7 @@ void normalize(PC_t::Ptr& vioCloud)
 
 TEST(TestPNSR, 1)
 {
-	PC_t::Ptr pCloud1 = loadPC(Path9_1);
+	PC_t::Ptr pCloud1 = loadPC(Path12);
 	PC_t::Ptr pCloud2 = loadPC(Path8);
 
 	normalize(pCloud1);
