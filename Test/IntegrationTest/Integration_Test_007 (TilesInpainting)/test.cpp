@@ -67,7 +67,7 @@ void normalize(PC_t::Ptr& vioCloud)
 	}
 }
 
-TEST(TestTilesInpainting, NT_TilesInpainting)
+TEST(TestTilesInpainting, NT_Tiles)
 {
 	PC_t::Ptr pRaw = load(Path3);
 	PC_t::Ptr pSub = load(Path4);
@@ -80,7 +80,20 @@ TEST(TestTilesInpainting, NT_TilesInpainting)
 	EXPECT_TRUE(Inpainter.run(pRaw, pSub, SizeX, SizeY, Rate));
 }
 
-TEST(TestTilesInpainting, NT_BasedOnGT)
+TEST(TestTilesInpainting, NT_OneTile)
+{
+	PC_t::Ptr pRaw = load(Path3);
+	PC_t::Ptr pSub = load(Path4);
+
+	int SizeX = 1;
+	int SizeY = 1;
+	float Rate = 0.0f;
+
+	dataManagement::CTilesInpainting Inpainter;
+	EXPECT_TRUE(Inpainter.run(pRaw, pSub, SizeX, SizeY, Rate));
+}
+
+TEST(TestTilesInpainting, NT_TilesBasedOnGT)
 {
 	PC_t::Ptr pRaw = load(Path17);
 	PC_t::Ptr pSub = load(Path16);
@@ -116,7 +129,7 @@ TEST(TestTilesInpainting, NT_BasedOnGT)
 	pcl::io::savePLYFileBinary("Result/MergeNoColor.ply", *pResult);
 }
 
-TEST(TestTilesInpainting, NT_OneTile)
+TEST(TestTilesInpainting, NT_OneTileBasedOnGT)
 {
 	PC_t::Ptr pRaw = load(Path39);
 	PC_t::Ptr pSub = load(Path38);
