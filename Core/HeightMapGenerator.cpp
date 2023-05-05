@@ -49,11 +49,6 @@ bool CHeightMapGenerator::generate(int vWidth, int vHeight)
 	return true;
 }
 
-core::SPoint __transPCLPoint2SPoint(const Point_t& vP)
-{
-	return core::SPoint(vP.x, vP.y, vP.z);
-}
-
 bool CHeightMapGenerator::generateBySurface(const std::vector<std::pair<float, Eigen::Vector2f>>& vData, int vWidth, int vHeight)
 {
 	_HIVE_EARLY_RETURN(vWidth <= 0 || vHeight <= 0, "ERROR: HeightMap Generator Size == 0...", false);

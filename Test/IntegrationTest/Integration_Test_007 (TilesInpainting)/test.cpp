@@ -67,73 +67,54 @@ void normalize(PC_t::Ptr& vioCloud)
 	}
 }
 
-//TEST(TestTilesInpainting, NT)
-//{
-//	PC_t::Ptr pRaw = load(Path3);
-//	PC_t::Ptr pSub = load(Path4);
-//
-//	int SizeX = 4;
-//	int SizeY = 4;
-//	float Rate = 0.1f;
-//
-//	dataManagement::CTilesInpainting Inpainter;
-//	EXPECT_TRUE(Inpainter.run(pRaw, pSub, SizeX, SizeY, Rate));
-//}
+TEST(TestTilesInpainting, NT_TilesInpainting)
+{
+	PC_t::Ptr pRaw = load(Path3);
+	PC_t::Ptr pSub = load(Path4);
 
-//TEST()
-//{
-//	PC_t::Ptr pOne = load(Path17);
-//	normalize(pOne);
-//	pcl::io::savePLYFileBinary("Result/comparison/WH.ply", *pOne);
-//}
+	int SizeX = 4;
+	int SizeY = 4;
+	float Rate = 0.1f;
 
-//TEST(TestTilesInpainting, NT_BasedOnGT)
-//{
-//	PC_t::Ptr pRaw = load(Path17);
-//	PC_t::Ptr pSub = load(Path16);
-//	PC_t::Ptr pGT = load(Path15);
-//	PC_t::Ptr pResult(new PC_t);
-//
-//	normalize(pRaw);
-//	normalize(pSub);
-//	normalize(pGT);
-//
-//	int SizeX = 1;
-//	int SizeY = 2;
-//	float Rate = 0.2f;
-//
-//	dataManagement::CTilesInpaintingBasedOnGT Inpainter;
-//	Inpainter.setTilesInfo(Rate, SizeX, SizeY);
-//	Inpainter.setNurbsInfo(3, 4, 10, 2, 2);
-//	Inpainter.setMapInfo(64, 64, 85);
-//	EXPECT_TRUE(Inpainter.run(pRaw, pSub, pGT));
-//	Inpainter.dumpCloud(pResult);
-//
-//	pcl::io::savePLYFileBinary("Result/Result.ply", *pResult);
-//	for (const auto& e : *pRaw)
-//		pResult->emplace_back(Point_t(e.x, e.y, e.z, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255));
-//	pcl::io::savePLYFileBinary("Result/Merge.ply", *pResult);
-//
-//	for (auto& e : *pResult)
-//	{
-//		e.r = (std::uint8_t)255;
-//		e.g = (std::uint8_t)255;
-//		e.b = (std::uint8_t)255;
-//	}
-//	pcl::io::savePLYFileBinary("Result/MergeNoColor.ply", *pResult);
-//}
+	dataManagement::CTilesInpainting Inpainter;
+	EXPECT_TRUE(Inpainter.run(pRaw, pSub, SizeX, SizeY, Rate));
+}
 
-//TEST(TestTilesInpainting, Extract)
-//{
-//	PC_t::Ptr pCloud = load("D:\\Projects\\PCI\\Models\\ExperimentResult\\WalkWayRegion\\WalkWayRegion_0.ply");
-//	PC_t::Ptr pCloud2 = load(Path25);
-//	PC_t::Ptr pNew(new PC_t);
-//	for (auto& e : *pCloud)
-//		for (auto& ee : *pCloud2)
-//			if (!(e.x == ee.x && e.y == ee.y && e.z == ee.z))
-//				pNew->emplace_back(e);
-//	pcl::io::savePLYFileBinary("D:\\Projects\\PCI\\Models\\ExperimentResult\\WalkWayRegion\\WalkWayRegion_1.ply", *pNew);
-//}
+TEST(TestTilesInpainting, NT_BasedOnGT)
+{
+	PC_t::Ptr pRaw = load(Path17);
+	PC_t::Ptr pSub = load(Path16);
+	PC_t::Ptr pGT = load(Path15);
+	PC_t::Ptr pResult(new PC_t);
+
+	normalize(pRaw);
+	normalize(pSub);
+	normalize(pGT);
+
+	int SizeX = 1;
+	int SizeY = 2;
+	float Rate = 0.2f;
+
+	dataManagement::CTilesInpaintingBasedOnGT Inpainter;
+	Inpainter.setTilesInfo(Rate, SizeX, SizeY);
+	Inpainter.setNurbsInfo(3, 4, 10, 2, 2);
+	Inpainter.setMapInfo(64, 64, 85);
+	EXPECT_TRUE(Inpainter.run(pRaw, pSub, pGT));
+	Inpainter.dumpCloud(pResult);
+
+	pcl::io::savePLYFileBinary("Result/Result.ply", *pResult);
+	for (const auto& e : *pRaw)
+		pResult->emplace_back(Point_t(e.x, e.y, e.z, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255, (std::uint8_t)255));
+	pcl::io::savePLYFileBinary("Result/Merge.ply", *pResult);
+
+	for (auto& e : *pResult)
+	{
+		e.r = (std::uint8_t)255;
+		e.g = (std::uint8_t)255;
+		e.b = (std::uint8_t)255;
+	}
+	pcl::io::savePLYFileBinary("Result/MergeNoColor.ply", *pResult);
+}
 
 TEST(TestTilesInpainting, NT_OneTile)
 {

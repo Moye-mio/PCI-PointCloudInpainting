@@ -36,12 +36,12 @@ void dataManagement::CDepthInpaiting::run(const PC_t::Ptr& vCloud, PC_t::Ptr& vo
 
 	/* PM */
 	cv::Mat Raw, Mask;
-	__castMap2CV(GradientMap, Raw, 1000);
+	__castMap2CV(GradientMap, Raw, 1000);			/* Magic Number */
 	__castMap2CV(MaskMap, Mask, 1);
 	cv::Mat Result = PM::run(Raw, Mask);
 
 	core::CGradientMap GradientMapFilled, GoG;
-	__castCV2Map(Result, GradientMapFilled, 0.001f);
+	__castCV2Map(Result, GradientMapFilled, 0.001f);			/* Magic Number */
 	GGenerator.generate(GradientMapFilled);
 	GGenerator.dumpGradientMap(GoG);
 
@@ -60,7 +60,7 @@ void dataManagement::CDepthInpaiting::run(const PC_t::Ptr& vCloud, PC_t::Ptr& vo
 	_ASSERTE(HeightMapInpainted.isValid());
 	__setValueInMap(HeightMapInpainted, Unknowns, Solutions);
 
-	{
+	{	/* Save Intermediate Product */
 		cv::Mat Save(cv::Size(HeightMapInpainted.getWidth(), HeightMapInpainted.getHeight()), CV_8UC1);
 		for (int i = 0; i < Save.rows; i++)
 			for (int k = 0; k < Save.cols; k++)

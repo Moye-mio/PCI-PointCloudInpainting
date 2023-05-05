@@ -32,10 +32,30 @@ protected:
 	{
 	}
 
-	float m_Epsilon = 0.00001;
+	float m_Epsilon = 0.00001f;
 };
 
-TEST_F(TestDepthInpainting, NT_)
+TEST_F(TestDepthInpainting, NT_DepthInpainting)
+{
+	const auto Path = ModelPath17;
+
+	auto* pTileLoader = hiveDesignPattern::hiveGetOrCreateProduct<dataManagement::IPCLoader>(hiveUtility::hiveGetFileSuffix(Path));
+	ASSERT_TRUE(pTileLoader);
+	PC_t::Ptr pData = pTileLoader->loadDataFromFile(Path);
+	ASSERT_TRUE(pData);
+
+	core::CAABBEstimation Estimation(pData);
+	core::SAABB Box = Estimation.compute();
+
+	PC_t::Ptr pOutput;
+	dataManagement::CDepthInpaiting DepthInpainting;
+	DepthInpainting.run(pData, pOutput);
+
+	EXPECT_TRUE(pOutput->size());
+	pcl::io::savePLYFileBinary("Result/Output.ply", *pOutput);
+}
+
+TEST_F(TestDepthInpainting, NT_InpaintingBasedOnGT)
 {
 	{
 		std::string Path = ModelPath19;
@@ -116,8 +136,8 @@ TEST_F(TestDepthInpainting, NT_)
 	//}
 
 	PC_t::Ptr pOutput;
-	/*dataManagement::CDepthInpaiting DepthInpainting;
-	DepthInpainting.run(pData, pOutput);*/
+	dataManagement::CDepthInpaiting DepthInpainting;
+	DepthInpainting.run(pData, pOutput);
 
 	/* Create HeightMap */
 	core::CHeightMap HeightMap;
